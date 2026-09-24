@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hydropredict"
+version = "0.1.0"
+description = "Predictive-maintenance data pipeline for hydroelectric equipment"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+  { name = "Timothy Kimani", email = "timkm254@gmail.com" },
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+  "mypy>=1.15",
+  "pre-commit>=4.0",
+  "pytest>=8.3",
+  "pytest-cov>=6.0",
+  "ruff>=0.11",
+]
+
+[project.scripts]
+hydropredict = "hydropredict.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+hydropredict = ["py.typed"]
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-markers --cov=hydropredict --cov-report=term-missing"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["B", "E", "F", "I", "SIM", "UP"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+packages = ["hydropredict"]

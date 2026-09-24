@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.cache/
+.coverage
+htmlcov/
+
+# Local development environments
+.venv/
+venv/
+
+# Secrets and local settings
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# IDE and operating-system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and local databases
+*.log
+*.sqlite
+*.sqlite3
+
+# Data generated locally; directory placeholders and samples stay tracked
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+data/quarantine/*
+!data/quarantine/.gitkeep
+
+# Trained models and experiment outputs
+models/*
+!models/.gitkeep
+artifacts/
+reports/generated/

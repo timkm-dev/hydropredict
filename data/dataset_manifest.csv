@@ -1,0 +1,4 @@
+dataset_id,name,source_url,expected_schema,license,retrieved_at,local_filename,sha256,status
+shp_anomaly,SHP Anomaly,https://github.com/rodrigosantis1/shp_anomaly/tree/master/data,"t,V1,V2,V3,V4,V5,V6",TO_VERIFY,,,,source_identified
+case_bearing,Case Western Reserve University Bearing Data Center,https://engineering.case.edu/bearingdatacenter/welcome,TO_ASSESS,TO_VERIFY,,,,candidate_source
+
