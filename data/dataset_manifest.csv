@@ -1,4 +1,6 @@
 dataset_id,name,source_url,expected_schema,license,retrieved_at,local_filename,sha256,status
-shp_anomaly,SHP Anomaly,https://github.com/rodrigosantis1/shp_anomaly/tree/master/data,"t,V1,V2,V3,V4,V5,V6",TO_VERIFY,,,,source_identified
+shp_train,SHP Anomaly Training Telemetry,https://raw.githubusercontent.com/rodrigosantis1/shp_anomaly/master/data/train.csv,"t,V1,V2,V3,V4,V5,V6",MIT,2026-09-28,data/raw/shp_train.csv,9561E703783CF4F09000616C17840E5962B3B88EB1DE0C3D421D693188748CD1,validated
+shp_test,SHP Anomaly Test Telemetry,https://raw.githubusercontent.com/rodrigosantis1/shp_anomaly/master/data/test.csv,"t,V1,V2,V3,V4,V5,V6",MIT,2026-09-28,data/raw/shp_test.csv,A773C7A0D47830A18BEC7E08F09BF47F836CA30672164B7DF7423049AD1758AA,validated
+shp_faults,SHP Anomaly Ground-Truth Fault Events,https://raw.githubusercontent.com/rodrigosantis1/shp_anomaly/master/data/faults.csv,t,MIT,2026-09-28,data/raw/shp_faults.csv,A50DCACB60252B654D5D40B2F3546B4A728EE17D95C2F175F9E323AB42CCF522,acquired
 case_bearing,Case Western Reserve University Bearing Data Center,https://engineering.case.edu/bearingdatacenter/welcome,TO_ASSESS,TO_VERIFY,,,,candidate_source
 
