@@ -22,6 +22,8 @@ venv/
 !.env.example
 *.pem
 *.key
+*.local.md
+*.local/
 
 # IDE and operating-system files
 .idea/
