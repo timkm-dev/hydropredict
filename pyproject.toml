@@ -32,7 +32,7 @@ where = ["src"]
 hydropredict = ["py.typed"]
 
 [tool.pytest.ini_options]
-addopts = "-ra --strict-markers --cov=hydropredict --cov-report=term-missing"
+addopts = "-ra --strict-markers --basetemp=.pytest_tmp -o cache_dir=.pytest_tmp/cache --cov=hydropredict --cov-report=term-missing"
 testpaths = ["tests"]
 
 [tool.ruff]
