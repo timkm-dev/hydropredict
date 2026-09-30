@@ -11,11 +11,16 @@ requires-python = ">=3.11"
 authors = [
   { name = "Timothy Kimani", email = "timkm254@gmail.com" },
 ]
-dependencies = []
+dependencies = [
+  "numpy>=2.0",
+  "pandas>=2.2",
+  "scipy>=1.13",
+]
 
 [project.optional-dependencies]
 dev = [
   "mypy>=1.15",
+  "pandas-stubs>=2.2",
   "pre-commit>=4.0",
   "pytest>=8.3",
   "pytest-cov>=6.0",
@@ -43,6 +48,6 @@ target-version = "py311"
 select = ["B", "E", "F", "I", "SIM", "UP"]
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12"
 strict = true
 packages = ["hydropredict"]
