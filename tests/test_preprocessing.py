@@ -47,8 +47,23 @@ def test_load_telemetry_missing_file_or_columns(tmp_path: Path) -> None:
 
     bad_csv = tmp_path / "bad.csv"
     create_sample_csv(bad_csv, [["2026-01-01T00:00:00Z", "1", "2"]], header=["t", "V1", "V2"])
-    with pytest.raises(ValueError, match="Missing required columns"):
+    with pytest.raises(ValueError, match="missing required columns"):
         load_telemetry_dataframe(bad_csv)
+
+    corrupt_csv = tmp_path / "corrupt.csv"
+    create_sample_csv(
+        corrupt_csv,
+        [
+            ["2026-01-01T00:00:00Z", "1", "2", "3", "4", "5", "6"],
+            ["bad-date", "1", "2", "3", "4", "5", "6"],
+        ],
+    )
+    with pytest.raises(ValueError, match="Validation failed"):
+        load_telemetry_dataframe(corrupt_csv)
+
+    # With strict=False, accepted rows are loaded
+    df_non_strict = load_telemetry_dataframe(corrupt_csv, strict=False)
+    assert len(df_non_strict) == 1
 
 
 def test_assess_sampling_cadence_regular_and_gaps() -> None:

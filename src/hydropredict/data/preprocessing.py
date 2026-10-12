@@ -7,10 +7,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
-import numpy as np
 import pandas as pd
 
-from hydropredict.data.schema import MEASUREMENT_COLUMNS, REQUIRED_COLUMNS, TIMESTAMP_COLUMN
+from hydropredict.data.schema import MEASUREMENT_COLUMNS, TIMESTAMP_COLUMN
+from hydropredict.data.validation import validate_csv
 
 
 @dataclass(frozen=True, slots=True)
@@ -50,28 +50,32 @@ class SamplingCadenceReport:
         }
 
 
-def load_telemetry_dataframe(source: Path | str) -> pd.DataFrame:
+def load_telemetry_dataframe(
+    source: Path | str,
+    strict: bool = True,
+    include_source_row: bool = False,
+) -> pd.DataFrame:
     """Load a validated telemetry CSV into a sorted pandas DataFrame.
 
-    Ensures the timestamp column is parsed as datetime and set as index,
-    and measurement columns are float64.
+    Routes through `validate_csv` to enforce the single canonical telemetry
+    contract (required schema, valid timestamps, numeric finite values, and
+    duplicate detection).
     """
     path = Path(source)
     if not path.exists():
         raise FileNotFoundError(f"Telemetry file not found: {path}")
 
-    df = pd.read_csv(path)
-    missing_cols = [c for c in REQUIRED_COLUMNS if c not in df.columns]
-    if missing_cols:
-        raise ValueError(f"Missing required columns in {path}: {missing_cols}")
+    report = validate_csv(path)
+    if strict and report.rejected_count > 0:
+        first_issue = report.issues[0]
+        msg = (
+            f"Validation failed for {path}: {report.rejected_count} row(s) rejected. "
+            f"First issue at row {first_issue.row_number}: "
+            f"[{first_issue.code}] {first_issue.message}"
+        )
+        raise ValueError(msg)
 
-    df[TIMESTAMP_COLUMN] = pd.to_datetime(df[TIMESTAMP_COLUMN], utc=True)
-    df = df.sort_values(by=TIMESTAMP_COLUMN).reset_index(drop=True)
-
-    for col in MEASUREMENT_COLUMNS:
-        df[col] = pd.to_numeric(df[col], errors="raise").astype(np.float64)
-
-    return df
+    return report.to_dataframe(include_source_row=include_source_row)
 
 
 def assess_sampling_cadence(
