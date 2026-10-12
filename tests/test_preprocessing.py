@@ -47,8 +47,23 @@ def test_load_telemetry_missing_file_or_columns(tmp_path: Path) -> None:
 
     bad_csv = tmp_path / "bad.csv"
     create_sample_csv(bad_csv, [["2026-01-01T00:00:00Z", "1", "2"]], header=["t", "V1", "V2"])
-    with pytest.raises(ValueError, match="Missing required columns"):
+    with pytest.raises(ValueError, match="missing required columns"):
         load_telemetry_dataframe(bad_csv)
+
+    corrupt_csv = tmp_path / "corrupt.csv"
+    create_sample_csv(
+        corrupt_csv,
+        [
+            ["2026-01-01T00:00:00Z", "1", "2", "3", "4", "5", "6"],
+            ["bad-date", "1", "2", "3", "4", "5", "6"],
+        ],
+    )
+    with pytest.raises(ValueError, match="Validation failed"):
+        load_telemetry_dataframe(corrupt_csv)
+
+    # With strict=False, accepted rows are loaded
+    df_non_strict = load_telemetry_dataframe(corrupt_csv, strict=False)
+    assert len(df_non_strict) == 1
 
 
 def test_assess_sampling_cadence_regular_and_gaps() -> None:
@@ -160,3 +175,98 @@ def test_robust_telemetry_scaler_roundtrip(tmp_path: Path) -> None:
 
     transformed_again = loaded_scaler.transform(df)
     assert np.allclose(transformed_again["V1"].to_numpy(), scaled["V1"].to_numpy())
+
+
+def test_prepare_telemetry_series_causal_no_lookahead() -> None:
+    from hydropredict.data.preprocessing import prepare_telemetry_series
+
+    # Base series of 4 steps with 1 missing step at 00:10
+    df_a = pd.DataFrame(
+        {
+            "t": [
+                pd.Timestamp("2026-01-01 00:00:00+0000"),
+                pd.Timestamp("2026-01-01 00:05:00+0000"),
+                pd.Timestamp("2026-01-01 00:15:00+0000"),
+            ],
+            "V1": [10.0, 20.0, 100.0],
+            "V2": [1.0, 2.0, 10.0],
+            "V3": [1.0, 2.0, 10.0],
+            "V4": [1.0, 2.0, 10.0],
+            "V5": [1.0, 2.0, 10.0],
+            "V6": [1.0, 2.0, 10.0],
+        }
+    )
+
+    # Series B: future observation at 00:15 is perturbed from 100.0 to 9999.0
+    df_b = df_a.copy()
+    df_b.loc[2, "V1"] = 9999.0
+
+    prep_a, _ = prepare_telemetry_series(df_a, method="forward")
+    prep_b, _ = prepare_telemetry_series(df_b, method="forward")
+
+    # In forward fill, value at 00:10 MUST be carried forward from 00:05 (value = 20.0)
+    # Changing future value at 00:15 must NOT change the earlier value at 00:10!
+    val_a_10 = float(prep_a[prep_a["t"] == pd.Timestamp("2026-01-01 00:10:00+0000")]["V1"].iloc[0])
+    val_b_10 = float(prep_b[prep_b["t"] == pd.Timestamp("2026-01-01 00:10:00+0000")]["V1"].iloc[0])
+    assert val_a_10 == 20.0
+    assert val_b_10 == 20.0
+    assert val_a_10 == val_b_10
+
+
+def test_prepare_telemetry_series_outages_and_segment_boundaries() -> None:
+    from hydropredict.data.preprocessing import prepare_telemetry_series
+
+    # Telemetry with a 3-week outage between day 1 and day 21
+    df = pd.DataFrame(
+        {
+            "t": [
+                pd.Timestamp("2026-01-01 00:00:00+0000"),
+                pd.Timestamp("2026-01-01 00:05:00+0000"),
+                pd.Timestamp("2026-01-22 00:00:00+0000"),
+                pd.Timestamp("2026-01-22 00:05:00+0000"),
+            ],
+            "V1": [1.0, 2.0, 3.0, 4.0],
+            "V2": [1.0, 2.0, 3.0, 4.0],
+            "V3": [1.0, 2.0, 3.0, 4.0],
+            "V4": [1.0, 2.0, 3.0, 4.0],
+            "V5": [1.0, 2.0, 3.0, 4.0],
+            "V6": [1.0, 2.0, 3.0, 4.0],
+        }
+    )
+
+    prep, report = prepare_telemetry_series(df, max_fill_steps=3)
+
+    # Must NOT inflate the grid into thousands of missing rows!
+    assert len(prep) == 4
+    assert report.segment_count == 2
+    assert report.outage_count == 1
+    assert set(prep["segment_id"]) == {0, 1}
+    assert prep[prep["segment_id"] == 0]["V1"].tolist() == [1.0, 2.0]
+    assert prep[prep["segment_id"] == 1]["V1"].tolist() == [3.0, 4.0]
+
+
+def test_gap_longer_than_max_fill_steps_not_partially_filled() -> None:
+    from hydropredict.data.preprocessing import prepare_telemetry_series
+
+    # Gap of 5 intervals (25 minutes) with max_fill_steps=3
+    df = pd.DataFrame(
+        {
+            "t": [
+                pd.Timestamp("2026-01-01 00:00:00+0000"),
+                pd.Timestamp("2026-01-01 00:25:00+0000"),
+            ],
+            "V1": [1.0, 2.0],
+            "V2": [1.0, 2.0],
+            "V3": [1.0, 2.0],
+            "V4": [1.0, 2.0],
+            "V5": [1.0, 2.0],
+            "V6": [1.0, 2.0],
+        }
+    )
+
+    prep, report = prepare_telemetry_series(df, max_fill_steps=3)
+
+    # 25 min gap > (3+1)*5min = 20min threshold -> splits into 2 segments, 0 imputed steps!
+    assert report.segment_count == 2
+    assert report.imputed_step_count == 0
+    assert len(prep) == 2

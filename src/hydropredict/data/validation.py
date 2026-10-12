@@ -5,11 +5,20 @@ from __future__ import annotations
 import csv
 import math
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import TextIO
 
-from hydropredict.data.schema import MEASUREMENT_COLUMNS, REQUIRED_COLUMNS, TelemetryRecord
+import numpy as np
+import pandas as pd
+
+from hydropredict.data.schema import (
+    MEASUREMENT_COLUMNS,
+    REQUIRED_COLUMNS,
+    SENSOR_METADATA,
+    TIMESTAMP_COLUMN,
+    TelemetryRecord,
+)
 
 
 class SchemaError(ValueError):
@@ -52,14 +61,38 @@ class ValidationReport:
             "issue_count": len(self.issues),
         }
 
+    def to_dataframe(self, include_source_row: bool = False) -> pd.DataFrame:
+        """Convert accepted records into a sorted pandas DataFrame."""
+        if not self.accepted:
+            cols = list(REQUIRED_COLUMNS)
+            if include_source_row:
+                cols.append("source_row")
+            empty_df = pd.DataFrame(columns=cols)
+            empty_df[TIMESTAMP_COLUMN] = pd.to_datetime(empty_df[TIMESTAMP_COLUMN], utc=True)
+            for c in MEASUREMENT_COLUMNS:
+                empty_df[c] = empty_df[c].astype(np.float64)
+            return empty_df
+
+        data = [record.as_dict(include_source_row=include_source_row) for record in self.accepted]
+        df = pd.DataFrame.from_records(data)
+        df[TIMESTAMP_COLUMN] = pd.to_datetime(df[TIMESTAMP_COLUMN], utc=True)
+        df = df.sort_values(by=TIMESTAMP_COLUMN).reset_index(drop=True)
+        for col in MEASUREMENT_COLUMNS:
+            df[col] = df[col].astype(np.float64)
+        return df
+
 
 def _parse_timestamp(value: str) -> datetime:
     normalised = value.strip()
-    if normalised.endswith("Z"):
-        normalised = f"{normalised[:-1]}+00:00"
     if not normalised:
         raise ValueError("timestamp is empty")
-    return datetime.fromisoformat(normalised)
+    if normalised.endswith("Z"):
+        normalised = f"{normalised[:-1]}+00:00"
+    ts = datetime.fromisoformat(normalised)
+    # Standardize timezone-naive plant telemetry timestamps to UTC per HydroPredict contract
+    if ts.tzinfo is None:
+        ts = ts.replace(tzinfo=UTC)
+    return ts
 
 
 def _parse_measurements(row: dict[str, str]) -> tuple[float, float, float, float, float, float]:
@@ -73,6 +106,24 @@ def _parse_measurements(row: dict[str, str]) -> tuple[float, float, float, float
             raise ValueError(f"{column} must be finite")
         parsed.append(value)
     return tuple(parsed)  # type: ignore[return-value]
+
+
+def check_physical_plausibility(
+    record: TelemetryRecord,
+) -> list[tuple[str, str]]:
+    """Flag physical plausibility warnings without rejecting unusual operational regimes."""
+    warnings: list[tuple[str, str]] = []
+    for col, val in zip(MEASUREMENT_COLUMNS, record.measurements, strict=True):
+        meta = SENSOR_METADATA.get(col)
+        if meta is None:
+            continue
+        if val < meta.typical_min or val > meta.typical_max:
+            msg = (
+                f"{col} value {val} is outside typical range "
+                f"[{meta.typical_min}, {meta.typical_max}] {meta.unit}"
+            )
+            warnings.append(("range_warning", msg))
+    return warnings
 
 
 def _read_rows(handle: TextIO, source: Path) -> ValidationReport:
@@ -126,7 +177,6 @@ def _read_rows(handle: TextIO, source: Path) -> ValidationReport:
 
 def validate_csv(path: str | Path) -> ValidationReport:
     """Validate a UTF-8 CSV file against the canonical telemetry contract."""
-
     source = Path(path)
     with source.open("r", encoding="utf-8-sig", newline="") as handle:
         return _read_rows(handle, source)
@@ -134,7 +184,6 @@ def validate_csv(path: str | Path) -> ValidationReport:
 
 def write_accepted(report: ValidationReport, destination: str | Path) -> None:
     """Write validated observations in canonical column order."""
-
     output = Path(destination)
     output.parent.mkdir(parents=True, exist_ok=True)
     with output.open("w", encoding="utf-8", newline="") as handle:
@@ -145,7 +194,6 @@ def write_accepted(report: ValidationReport, destination: str | Path) -> None:
 
 def write_quarantine(report: ValidationReport, destination: str | Path) -> None:
     """Write validation issues with the original source values."""
-
     output = Path(destination)
     output.parent.mkdir(parents=True, exist_ok=True)
     fieldnames = ("row_number", "code", "message", *REQUIRED_COLUMNS)
