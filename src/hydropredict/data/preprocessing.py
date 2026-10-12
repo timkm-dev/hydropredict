@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
+from datetime import UTC
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 
 import pandas as pd
 
@@ -47,6 +48,44 @@ class SamplingCadenceReport:
             "min_step_seconds": round(self.min_step_seconds, 2),
             "max_step_seconds": round(self.max_step_seconds, 2),
             "gap_count": self.gap_count,
+        }
+
+
+@dataclass(frozen=True, slots=True)
+class SegmentMetadata:
+    """Metadata describing one continuous, uninterrupted telemetry segment."""
+
+    segment_id: int
+    start_time: pd.Timestamp
+    end_time: pd.Timestamp
+    record_count: int
+    imputed_count: int
+
+
+@dataclass(frozen=True, slots=True)
+class PreparationAccountingReport:
+    """Auditable row and step accounting across preprocessing transformations."""
+
+    total_raw_records: int
+    retained_records: int
+    collision_count: int
+    segment_count: int
+    imputed_step_count: int
+    total_prepared_records: int
+    outage_count: int
+    total_outage_seconds: float
+    segments: tuple[SegmentMetadata, ...]
+
+    def summary(self) -> dict[str, Any]:
+        return {
+            "total_raw_records": self.total_raw_records,
+            "retained_records": self.retained_records,
+            "collision_count": self.collision_count,
+            "segment_count": self.segment_count,
+            "imputed_step_count": self.imputed_step_count,
+            "total_prepared_records": self.total_prepared_records,
+            "outage_count": self.outage_count,
+            "total_outage_seconds": round(self.total_outage_seconds, 2),
         }
 
 
@@ -126,57 +165,145 @@ def assess_sampling_cadence(
     )
 
 
+def prepare_telemetry_series(
+    df: pd.DataFrame,
+    freq: str = "5min",
+    max_fill_steps: int = 3,
+    method: Literal["linear", "forward"] = "forward",
+    nominal_step_seconds: float = 300.0,
+    binning: Literal["ceil", "round"] = "ceil",
+    keep_collision: Literal["last", "first"] = "last",
+) -> tuple[pd.DataFrame, PreparationAccountingReport]:
+    """Prepare telemetry into regular, continuous segments with causal gap handling.
+
+    - Bins observations into uniform time epochs without nearest-neighbor lookahead.
+    - Resolves collisions while preserving original timestamps and accounting for overwritten rows.
+    - Identifies continuous segments bounded by equipment outages (> max_fill_steps * nominal_step).
+    - Fills short gaps within segments causally using bounded forward fill (or linear).
+    - Excludes extended outages from the grid to prevent grid inflation and synthetic hallucination.
+    - Returns prepared DataFrame and a full PreparationAccountingReport.
+    """
+    if df.empty:
+        empty_cols = [
+            TIMESTAMP_COLUMN,
+            *MEASUREMENT_COLUMNS,
+            "segment_id",
+            "is_interpolated",
+            "t_original",
+        ]
+        empty_df = pd.DataFrame(columns=empty_cols)
+        empty_report = PreparationAccountingReport(
+            total_raw_records=0,
+            retained_records=0,
+            collision_count=0,
+            segment_count=0,
+            imputed_step_count=0,
+            total_prepared_records=0,
+            outage_count=0,
+            total_outage_seconds=0.0,
+            segments=(),
+        )
+        return empty_df, empty_report
+
+    work = df.copy()
+    work[TIMESTAMP_COLUMN] = pd.to_datetime(work[TIMESTAMP_COLUMN], utc=True)
+    work["t_original"] = work[TIMESTAMP_COLUMN]
+
+    # Map timestamps to regular frequency bin
+    if binning == "ceil":
+        work["t_bin"] = work[TIMESTAMP_COLUMN].dt.ceil(freq)
+    else:
+        work["t_bin"] = work[TIMESTAMP_COLUMN].dt.round(freq)
+
+    work = work.sort_values(by=["t_bin", "t_original"]).reset_index(drop=True)
+    deduped = work.drop_duplicates(subset=["t_bin"], keep=keep_collision).copy()
+    collision_count = len(work) - len(deduped)
+
+    # Detect segment boundaries where gap exceeds max_fill_steps intervals
+    deltas = deduped["t_bin"].diff().dt.total_seconds()
+    gap_threshold = (max_fill_steps + 1) * nominal_step_seconds
+    is_new_segment = (deltas > gap_threshold) | deltas.isna()
+    deduped["segment_id"] = (is_new_segment.cumsum() - 1).astype(int)
+
+    outage_deltas = deltas[deltas > gap_threshold]
+    total_outage_seconds = float(outage_deltas.sum()) if not outage_deltas.empty else 0.0
+    outage_count = len(outage_deltas)
+
+    prepared_segments: list[pd.DataFrame] = []
+    segment_meta_list: list[SegmentMetadata] = []
+    total_imputed = 0
+
+    for seg_id, group in deduped.groupby("segment_id", sort=True):
+        seg_start = group["t_bin"].iloc[0]
+        seg_end = group["t_bin"].iloc[-1]
+        grid = pd.date_range(start=seg_start, end=seg_end, freq=freq, tz=UTC, name=TIMESTAMP_COLUMN)
+
+        indexed = group.set_index("t_bin")
+        reindexed = indexed.reindex(grid)
+
+        was_missing = reindexed[MEASUREMENT_COLUMNS[0]].isna()
+        if method == "forward":
+            filled_measurements = reindexed[list(MEASUREMENT_COLUMNS)].ffill()
+        else:
+            filled_measurements = reindexed[list(MEASUREMENT_COLUMNS)].interpolate(method="time")
+
+        seg_id_int = int(str(seg_id))
+        filled_measurements["is_interpolated"] = was_missing
+        filled_measurements["segment_id"] = seg_id_int
+        filled_measurements["t_original"] = reindexed["t_original"]
+
+        # For imputed steps, assign effective grid timestamp to t_original
+        filled_measurements.loc[was_missing, "t_original"] = filled_measurements.index[was_missing]
+
+        seg_imputed_count = int(was_missing.sum())
+        total_imputed += seg_imputed_count
+
+        seg_df = filled_measurements.reset_index().rename(columns={"index": TIMESTAMP_COLUMN})
+        prepared_segments.append(seg_df)
+
+        segment_meta_list.append(
+            SegmentMetadata(
+                segment_id=seg_id_int,
+                start_time=seg_start,
+                end_time=seg_end,
+                record_count=len(seg_df),
+                imputed_count=seg_imputed_count,
+            )
+        )
+
+    prepared = (
+        pd.concat(prepared_segments, ignore_index=True) if prepared_segments else pd.DataFrame()
+    )
+
+    report = PreparationAccountingReport(
+        total_raw_records=len(df),
+        retained_records=len(deduped),
+        collision_count=collision_count,
+        segment_count=len(segment_meta_list),
+        imputed_step_count=total_imputed,
+        total_prepared_records=len(prepared),
+        outage_count=outage_count,
+        total_outage_seconds=total_outage_seconds,
+        segments=tuple(segment_meta_list),
+    )
+
+    return prepared, report
+
+
 def resample_regular_grid(
     df: pd.DataFrame,
     freq: str = "5min",
     max_fill_steps: int = 3,
-    method: Literal["linear", "forward"] = "linear",
+    method: Literal["linear", "forward"] = "forward",
 ) -> pd.DataFrame:
-    """Resample telemetry onto an exact regular temporal grid.
-
-    - Snaps timestamps to the specified frequency grid.
-    - Interpolates small gaps up to `max_fill_steps` intervals.
-    - Large gaps (> `max_fill_steps`) remain NaN to avoid synthetic hallucinations.
-    - Adds an `is_interpolated` boolean column.
-    """
-    if df.empty:
-        return df.copy()
-
-    work = df.copy()
-    work[TIMESTAMP_COLUMN] = pd.to_datetime(work[TIMESTAMP_COLUMN], utc=True)
-    work = work.sort_values(by=TIMESTAMP_COLUMN).drop_duplicates(
-        subset=[TIMESTAMP_COLUMN], keep="last"
+    """Resample telemetry onto an exact regular temporal grid with segment preservation."""
+    prepared, _ = prepare_telemetry_series(
+        df=df,
+        freq=freq,
+        max_fill_steps=max_fill_steps,
+        method=method,
     )
-
-    dt_index = pd.DatetimeIndex(work[TIMESTAMP_COLUMN])
-    work = work.set_index(dt_index)
-
-    # Floor the start and ceil the end to ensure clean grid boundaries
-    start = dt_index.min().floor(freq)
-    end = dt_index.max().ceil(freq)
-    grid_index = pd.date_range(
-        start=start, end=end, freq=freq, tz=dt_index.tz, name=TIMESTAMP_COLUMN
-    )
-
-    # Reindex onto regular grid
-    # To handle raw timestamps that have small second-level jitters, reindex nearest within 1.5 min
-    reindexed = work.reindex(grid_index, method="nearest", tolerance=pd.Timedelta("90s"))
-
-    # Track missing indicator before interpolation
-    was_missing = reindexed[MEASUREMENT_COLUMNS[0]].isna()
-
-    # Interpolate small gaps
-    if method == "linear":
-        interpolated = reindexed[list(MEASUREMENT_COLUMNS)].interpolate(
-            method="time", limit=max_fill_steps, limit_direction="forward"
-        )
-    else:
-        interpolated = reindexed[list(MEASUREMENT_COLUMNS)].ffill(limit=max_fill_steps)
-
-    interpolated["is_interpolated"] = was_missing & interpolated[MEASUREMENT_COLUMNS[0]].notna()
-
-    result = interpolated.reset_index()
-    return result
+    return prepared
 
 
 class RobustTelemetryScaler:
