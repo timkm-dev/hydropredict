@@ -1,20 +1,29 @@
 # HydroPredict
 
-HydroPredict is a predictive-maintenance system for hydroelectric power-plant
-equipment. It will ingest time-series telemetry, identify anomalous operating
-conditions, explain alerts, and support operator review.
+HydroPredict is an AI-driven predictive-maintenance prototype for hydroelectric power-plant equipment, supporting the academic investigation documented in `Munyiri_Timothy_Kimani_166095.docx`.
 
-## Sprint 1 scope
+The system comprises two distinct analytical workflows sharing common platform services:
 
-This repository currently provides:
+1. **Primary Small Hydroelectric Plant (SHP) Workflow (Unsupervised Anomaly Detection)**:
+   - Ingests operational telemetry ($t, V_1, \dots, V_6$) at nominal 5-minute sampling.
+   - Learns normal operating regimes using **Isolation Forest** and **LSTM Autoencoder**.
+   - Replays held-out historical observations chronologically without future lookahead.
+   - Evaluates early-warning alerts against 59 ground-truth fault events (fault-event recall, false-alert frequency, and warning lead time).
+2. **Supplementary Bearing Classification Workflow (Laboratory Benchmark)**:
+   - Ingests Case Western Reserve University (CWRU) vibration recordings in MATLAB format.
+   - Partitions whole recordings before window segmentation.
+   - Extracts time-domain and frequency-domain features.
+   - Classifies 4 bearing health states using **XGBoost** (Healthy, Inner Race Fault, Outer Race Fault, Rolling Element Fault).
+3. **Shared Platform Services**:
+   - Role-based authentication (ML Engineer vs. Maintenance Operator).
+   - Provenance tracking, model versioning, and feature drift monitoring.
+   - Durable persistence for telemetry records, analysis runs, alerts, and operator responses.
+   - Web-based operator dashboard.
 
-- an isolated and repeatable Python development environment;
-- a `src`-based, testable application layout;
-- CSV validation for the required `t, V1, V2, V3, V4, V5, V6` schema;
-- separate locations for raw, processed, and quarantined data;
-- a dataset provenance manifest;
-- linting, formatting, type-checking, tests, pre-commit hooks, and CI automation;
-- Git version control scoped to this application only.
+## Execution Environment & Hardware Profile
+
+- **Local Development & Inference**: Tested for Intel Core i5-1235U CPU with 16 GB RAM. Ingestion, preprocessing, feature extraction, Isolation Forest, XGBoost, and CPU inference execute locally.
+- **Deep Learning Training**: The LSTM Autoencoder is trained in a Google Colab hosted GPU runtime using the repository implementation called via `notebooks/train_lstm_colab.ipynb`. The resulting bundle is exported for local CPU loading and inference.
 
 ## Quick start on Windows
 
@@ -26,64 +35,53 @@ Set-ExecutionPolicy -Scope Process Bypass
 .\scripts\setup.ps1
 ```
 
-Activate the environment in future terminals:
+Activate the environment:
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
 ```
 
-Validate the included sample telemetry:
-
-```powershell
-hydropredict validate data\sample\telemetry_sample.csv
-```
-
-Write accepted and rejected records to the appropriate local directories:
-
-```powershell
-hydropredict validate data\sample\telemetry_sample.csv `
-  --accepted-output data\processed\accepted.csv `
-  --quarantine-output data\quarantine\rejected.csv
-```
-
-Run all development checks:
+Run all development checks (Ruff format, Ruff lint, Mypy strict types, Pytest):
 
 ```powershell
 .\scripts\check.ps1
 ```
 
-## Project layout
+## CLI Workflows
+
+```powershell
+# 1. Validate telemetry against canonical schema
+hydropredict validate data\raw\shp_train.csv --accepted-output data\processed\shp_train_accepted.csv --quarantine-output data\quarantine\shp_train_rejected.csv
+
+# 2. Partition telemetry chronologically
+hydropredict partition data\raw\shp_train.csv data\raw\shp_test.csv --output-dir data\processed\partitions
+
+# 3. Preprocess and fit scaler on training partition
+hydropredict preprocess data\processed\partitions\shp_train_part.csv --output data\processed\shp_train_preprocessed.csv --scaler-output data\processed\scaler.json
+
+# 4. Extract segment-aware features
+hydropredict extract-features data\processed\shp_train_preprocessed.csv --output data\processed\shp_train_features.csv
+
+# 5. Retrospective fault alignment for evaluation
+hydropredict align-faults data\raw\shp_test.csv data\raw\shp_faults.csv --output data\processed\shp_test_labeled.csv
+```
+
+## Project Layout
 
 ```text
 hydropredict/
 |-- .github/workflows/       Continuous integration
-|-- data/                    Dataset manifest, samples, and local data stages
-|-- docs/                    Architecture decisions and project documentation
-|-- models/                  Local trained models (ignored by Git)
-|-- scripts/                 Environment and quality-check automation
-|-- src/hydropredict/        Application source code
-|-- tests/                   Automated tests
+|-- data/                    Dataset manifest, samples, raw and processed data stages
+|-- docs/                    Architecture decisions and requirement traceability
+|-- models/                  Trained model bundles and scalers (ignored by Git)
+|-- notebooks/               Colab GPU training notebooks
+|-- scripts/                 Environment setup and verification scripts
+|-- src/hydropredict/        Application source code (data, features, models, app)
+|-- tests/                   Automated tests (unit, integration, regression)
 |-- pyproject.toml           Package and tool configuration
-`-- README.md                Project entry point
+`-- README.md                Project documentation
 ```
 
-## Data policy
+## Data Policy
 
-Raw data is immutable. Never edit files in `data/raw` in place. Validation and
-cleaning output belongs in `data/processed`; rejected records belong in
-`data/quarantine`. These local data directories are excluded from Git to avoid
-publishing large or restricted datasets. Dataset origin, licensing, retrieval
-date, and checksums must be recorded in `data/dataset_manifest.csv`.
-
-## Git workflow
-
-The stable branch is `main`. Develop each unit of work on a short-lived branch:
-
-```powershell
-git switch -c feature/telemetry-ingestion
-git add .
-git commit -m "feat: add telemetry ingestion"
-```
-
-See `CONTRIBUTING.md` for the full quality workflow.
-
+Raw data in `data/raw/` is immutable. Validation outputs belong in `data/processed/`, while invalid records belong in `data/quarantine/`. These directories are ignored by Git. Dataset checksums, provenance, and licenses are tracked in `data/dataset_manifest.csv`.
