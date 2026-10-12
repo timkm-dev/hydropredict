@@ -14,6 +14,7 @@ from hydropredict.data.faults import (
     FaultAlignmentConfig,
     align_telemetry_file,
 )
+from hydropredict.data.partitioning import create_shp_partitions
 from hydropredict.data.preprocessing import (
     RobustTelemetryScaler,
     assess_sampling_cadence,
@@ -98,6 +99,41 @@ def build_parser() -> argparse.ArgumentParser:
     eda.add_argument("input", help="path to labeled telemetry CSV (with fault_state column)")
     eda.add_argument(
         "--json", action="store_true", help="output JSON summary instead of text table"
+    )
+
+    # 6. partition
+    partition_parser = subparsers.add_parser(
+        "partition", help="partition SHP telemetry into chronological or published benchmark sets"
+    )
+    partition_parser.add_argument(
+        "--train-source", default="data/raw/shp_train.csv", help="path to raw training telemetry"
+    )
+    partition_parser.add_argument(
+        "--test-source", default="data/raw/shp_test.csv", help="path to raw test telemetry"
+    )
+    partition_parser.add_argument(
+        "--faults-source", default="data/raw/shp_faults.csv", help="path to raw fault log"
+    )
+    partition_parser.add_argument(
+        "--strategy",
+        choices=["chronological", "published"],
+        default="chronological",
+        help="partition strategy (default: chronological)",
+    )
+    partition_parser.add_argument(
+        "--output-dir",
+        default="data/processed/partitions",
+        help="output directory for partition files and manifest",
+    )
+    partition_parser.add_argument(
+        "--train-end",
+        default="2019-02-01T00:00:00Z",
+        help="cutoff timestamp ending training partition in chronological mode",
+    )
+    partition_parser.add_argument(
+        "--val-end",
+        default="2019-05-01T00:00:00Z",
+        help="cutoff timestamp ending validation partition in chronological mode",
     )
 
     return parser
@@ -216,6 +252,23 @@ def main(arguments: Sequence[str] | None = None) -> int:
                 print(json.dumps(profile, indent=2))
             else:
                 print(format_eda_summary(profile))
+            return 0
+        except Exception as error:
+            print(json.dumps({"status": "error", "message": str(error)}, indent=2))
+            return 2
+
+    if args.command == "partition":
+        try:
+            manifest = create_shp_partitions(
+                train_source=args.train_source,
+                test_source=args.test_source,
+                faults_source=args.faults_source,
+                output_dir=args.output_dir,
+                strategy=args.strategy,
+                train_end_boundary=args.train_end,
+                val_end_boundary=args.val_end,
+            )
+            print(json.dumps({"status": "complete", **manifest.to_dict()}, indent=2))
             return 0
         except Exception as error:
             print(json.dumps({"status": "error", "message": str(error)}, indent=2))

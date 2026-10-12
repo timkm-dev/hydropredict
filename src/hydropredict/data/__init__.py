@@ -5,6 +5,12 @@ from hydropredict.data.faults import (
     align_telemetry_file,
     load_fault_log,
 )
+from hydropredict.data.partitioning import (
+    PartitionManifest,
+    PartitionMetadata,
+    compute_file_sha256,
+    create_shp_partitions,
+)
 from hydropredict.data.preprocessing import (
     PreparationAccountingReport,
     RobustTelemetryScaler,
@@ -28,6 +34,8 @@ __all__ = [
     "FaultAlignmentConfig",
     "FaultState",
     "MEASUREMENT_COLUMNS",
+    "PartitionManifest",
+    "PartitionMetadata",
     "PreparationAccountingReport",
     "REQUIRED_COLUMNS",
     "RobustTelemetryScaler",
@@ -41,6 +49,8 @@ __all__ = [
     "align_telemetry_file",
     "assess_sampling_cadence",
     "check_physical_plausibility",
+    "compute_file_sha256",
+    "create_shp_partitions",
     "load_fault_log",
     "load_telemetry_dataframe",
     "prepare_telemetry_series",
