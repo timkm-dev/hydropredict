@@ -20,6 +20,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+analysis = ["matplotlib>=3.9,<4"]
 dev = [
   "mypy>=1.15",
   "pandas-stubs>=2.2",
