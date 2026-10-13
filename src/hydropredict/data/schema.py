@@ -23,57 +23,10 @@ class SensorChannelMetadata:
     typical_max: float
 
 
-# Sensor semantics verified against de Santis & Costa (2020) and project report specifications
-SENSOR_METADATA: dict[str, SensorChannelMetadata] = {
-    "V1": SensorChannelMetadata(
-        channel_id="V1",
-        description="Generator guide bearing horizontal radial vibration",
-        physical_quantity="vibration_rms",
-        unit="mm/s",
-        typical_min=0.0,
-        typical_max=10.0,
-    ),
-    "V2": SensorChannelMetadata(
-        channel_id="V2",
-        description="Generator guide bearing vertical radial vibration",
-        physical_quantity="vibration_rms",
-        unit="mm/s",
-        typical_min=0.0,
-        typical_max=10.0,
-    ),
-    "V3": SensorChannelMetadata(
-        channel_id="V3",
-        description="Turbine guide bearing radial vibration",
-        physical_quantity="vibration_rms",
-        unit="mm/s",
-        typical_min=0.0,
-        typical_max=10.0,
-    ),
-    "V4": SensorChannelMetadata(
-        channel_id="V4",
-        description="Thrust bearing axial vibration",
-        physical_quantity="vibration_rms",
-        unit="mm/s",
-        typical_min=0.0,
-        typical_max=10.0,
-    ),
-    "V5": SensorChannelMetadata(
-        channel_id="V5",
-        description="Bearing lubrication operating temperature",
-        physical_quantity="temperature",
-        unit="°C",
-        typical_min=0.0,
-        typical_max=100.0,
-    ),
-    "V6": SensorChannelMetadata(
-        channel_id="V6",
-        description="Generator active electrical power output",
-        physical_quantity="active_power",
-        unit="kW",
-        typical_min=0.0,
-        typical_max=10000.0,
-    ),
-}
+# Channel order, units and physical limits require a source data dictionary.
+# The paper names vibration, HLU inflow and apparent power, not temperature.
+# Leave unverified physical metadata unset; numerical validation remains enforced.
+SENSOR_METADATA: dict[str, SensorChannelMetadata] = {}
 
 
 @dataclass(frozen=True, slots=True)

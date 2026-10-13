@@ -108,11 +108,19 @@ def test_validation_report_to_dataframe(tmp_path: Path) -> None:
     assert df["V1"].iloc[0] == 1.0
 
 
-def test_physical_plausibility_warnings(tmp_path: Path) -> None:
+def test_physical_plausibility_warnings(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    from hydropredict.data.schema import SENSOR_METADATA, SensorChannelMetadata
     from hydropredict.data.validation import check_physical_plausibility
 
+    for col in ("V5", "V6"):
+        monkeypatch.setitem(
+            SENSOR_METADATA,
+            col,
+            SensorChannelMetadata(col, "Test-only channel", "test", "test units", 0, 100),
+        )
+
     source = tmp_path / "extreme.csv"
-    # V5 = 120 °C (typical max 100), V6 = 15000 kW (typical max 10000)
+    # Explicit test limits exercise the helper without asserting real sensor semantics.
     write_csv(source, [["2026-01-01T00:00:00Z", "0.5", "0.5", "0.5", "0.5", "120.0", "15000.0"]])
 
     report = validate_csv(source)
