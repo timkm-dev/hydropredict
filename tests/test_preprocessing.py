@@ -401,3 +401,26 @@ def test_rejects_inconsistent_grid_configuration() -> None:
         prepare_telemetry_series(pd.DataFrame(), freq="1min", nominal_step_seconds=300)
     with pytest.raises(ValueError, match="nonnegative"):
         prepare_telemetry_series(pd.DataFrame(), max_fill_steps=-1)
+
+
+def test_standard_scaler_single_observation_has_finite_fallback() -> None:
+    df = pd.DataFrame({"V1": [2.0]})
+    scaler = StandardTelemetryScaler().fit(df, columns=("V1",))
+    assert scaler.stds == {"V1": 1.0}
+    assert scaler.transform(df)["V1"].tolist() == [0.0]
+
+
+@pytest.mark.parametrize("scale", [0.0, -1.0, float("nan"), float("inf")])
+def test_rejects_invalid_scaler_artifacts(scale: float) -> None:
+    with pytest.raises(ValueError, match="finite"):
+        StandardTelemetryScaler.from_dict({"means": {"V1": 1.0}, "stds": {"V1": scale}})
+    with pytest.raises(ValueError, match="finite"):
+        RobustTelemetryScaler.from_dict({"medians": {"V1": 1.0}, "iqrs": {"V1": scale}})
+
+
+def test_scaler_rejects_missing_fitted_columns() -> None:
+    scaler = StandardTelemetryScaler().fit(pd.DataFrame({"V1": [1.0, 2.0]}), columns=("V1",))
+    with pytest.raises(ValueError, match="Missing fitted"):
+        scaler.transform(pd.DataFrame({"V2": [1.0]}))
+    with pytest.raises(ValueError, match="matching"):
+        RobustTelemetryScaler.from_dict({"medians": {"V1": 1.0}, "iqrs": {"V2": 1.0}})

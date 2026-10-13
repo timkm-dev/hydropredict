@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 from dataclasses import dataclass
 from datetime import UTC
 from pathlib import Path
@@ -12,6 +13,21 @@ import pandas as pd
 
 from hydropredict.data.schema import MEASUREMENT_COLUMNS, TIMESTAMP_COLUMN
 from hydropredict.data.validation import validate_csv
+
+
+def _validate_scaler_parameters(centers: dict[str, float], scales: dict[str, float]) -> None:
+    if not centers or centers.keys() != scales.keys():
+        raise ValueError("Scaler must contain matching nonempty parameter columns.")
+    if any(not math.isfinite(v) for v in centers.values()) or any(
+        not math.isfinite(v) or v <= 0 for v in scales.values()
+    ):
+        raise ValueError("Scaler parameters must be finite with positive scales.")
+
+
+def _require_scaler_columns(df: pd.DataFrame, columns: dict[str, float]) -> None:
+    missing = set(columns) - set(df.columns)
+    if missing:
+        raise ValueError(f"Missing fitted scaler columns: {sorted(missing)}")
 
 
 @dataclass(frozen=True, slots=True)
@@ -347,6 +363,7 @@ class RobustTelemetryScaler:
             self.medians[col] = median_val
             self.iqrs[col] = iqr_val
 
+        _validate_scaler_parameters(self.medians, self.iqrs)
         self.is_fitted = True
         return self
 
@@ -355,6 +372,8 @@ class RobustTelemetryScaler:
         if not self.is_fitted:
             raise RuntimeError("RobustTelemetryScaler must be fitted before transforming data.")
 
+        _validate_scaler_parameters(self.medians, self.iqrs)
+        _require_scaler_columns(df, self.medians)
         scaled = df.copy()
         for col, median_val in self.medians.items():
             if col in scaled.columns:
@@ -398,6 +417,7 @@ class RobustTelemetryScaler:
         scaler = cls()
         scaler.medians = {k: float(v) for k, v in data.get("medians", {}).items()}
         scaler.iqrs = {k: float(v) for k, v in data.get("iqrs", {}).items()}
+        _validate_scaler_parameters(scaler.medians, scaler.iqrs)
         scaler.is_fitted = bool(scaler.medians and scaler.iqrs)
         return scaler
 
@@ -439,13 +459,14 @@ class StandardTelemetryScaler:
             if series.empty:
                 raise ValueError(f"Column '{col}' contains no valid data for scaling.")
             mean_val = float(series.mean())
-            std_val = float(series.std())
+            std_val = float(series.std()) if len(series) > 1 else 1.0
             if std_val <= 1e-8:
                 std_val = 1.0
 
             self.means[col] = mean_val
             self.stds[col] = std_val
 
+        _validate_scaler_parameters(self.means, self.stds)
         self.is_fitted = True
         return self
 
@@ -454,6 +475,8 @@ class StandardTelemetryScaler:
         if not self.is_fitted:
             raise RuntimeError("StandardTelemetryScaler must be fitted before transforming data.")
 
+        _validate_scaler_parameters(self.means, self.stds)
+        _require_scaler_columns(df, self.means)
         scaled = df.copy()
         for col, mean_val in self.means.items():
             if col in scaled.columns:
@@ -497,6 +520,7 @@ class StandardTelemetryScaler:
         scaler = cls()
         scaler.means = {k: float(v) for k, v in data.get("means", {}).items()}
         scaler.stds = {k: float(v) for k, v in data.get("stds", {}).items()}
+        _validate_scaler_parameters(scaler.means, scaler.stds)
         scaler.is_fitted = bool(scaler.means and scaler.stds)
         return scaler
 
@@ -525,4 +549,6 @@ def load_scaler(path: Path | str) -> RobustTelemetryScaler | StandardTelemetrySc
     scaler_type = data.get("scaler_type", "robust")
     if scaler_type == "standard":
         return StandardTelemetryScaler.from_dict(data)
-    return RobustTelemetryScaler.from_dict(data)
+    if scaler_type == "robust":
+        return RobustTelemetryScaler.from_dict(data)
+    raise ValueError(f"Unsupported scaler_type: {scaler_type}")
