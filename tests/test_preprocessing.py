@@ -375,3 +375,29 @@ def test_scaler_unfitted_raises_runtime_error() -> None:
         scaler.inverse_transform(df)
     with pytest.raises(RuntimeError, match="Cannot serialize unfitted"):
         scaler.to_dict()
+
+
+@pytest.mark.parametrize("freq,minutes", [("1min", 10), ("10min", 50)])
+def test_gap_limit_tracks_configured_frequency(freq: str, minutes: int) -> None:
+    from hydropredict.data.preprocessing import prepare_telemetry_series
+
+    df = pd.DataFrame(
+        {
+            "t": pd.to_datetime(["2026-01-01T00:00:00Z", "2026-01-01T00:00:00Z"]),
+            **{f"V{i}": [1.0, 2.0] for i in range(1, 7)},
+        }
+    )
+    df.loc[1, "t"] += pd.Timedelta(minutes=minutes)
+    prepared, report = prepare_telemetry_series(df, freq=freq, max_fill_steps=3)
+    assert len(prepared) == 2
+    assert report.segment_count == 2
+    assert report.imputed_step_count == 0
+
+
+def test_rejects_inconsistent_grid_configuration() -> None:
+    from hydropredict.data.preprocessing import prepare_telemetry_series
+
+    with pytest.raises(ValueError, match="must match"):
+        prepare_telemetry_series(pd.DataFrame(), freq="1min", nominal_step_seconds=300)
+    with pytest.raises(ValueError, match="nonnegative"):
+        prepare_telemetry_series(pd.DataFrame(), max_fill_steps=-1)

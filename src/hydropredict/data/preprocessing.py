@@ -170,7 +170,7 @@ def prepare_telemetry_series(
     freq: str = "5min",
     max_fill_steps: int = 3,
     method: Literal["linear", "forward"] = "forward",
-    nominal_step_seconds: float = 300.0,
+    nominal_step_seconds: float | None = None,
     binning: Literal["ceil", "round"] = "ceil",
     keep_collision: Literal["last", "first"] = "last",
 ) -> tuple[pd.DataFrame, PreparationAccountingReport]:
@@ -183,6 +183,11 @@ def prepare_telemetry_series(
     - Excludes extended outages from the grid to prevent grid inflation and synthetic hallucination.
     - Returns prepared DataFrame and a full PreparationAccountingReport.
     """
+    step_seconds = pd.Timedelta(freq).total_seconds()
+    if step_seconds <= 0 or max_fill_steps < 0:
+        raise ValueError("Frequency must be positive and max_fill_steps must be nonnegative.")
+    if nominal_step_seconds is not None and nominal_step_seconds != step_seconds:
+        raise ValueError("nominal_step_seconds must match freq.")
     if df.empty:
         empty_cols = [
             TIMESTAMP_COLUMN,
@@ -221,7 +226,7 @@ def prepare_telemetry_series(
 
     # Detect segment boundaries where gap exceeds max_fill_steps intervals
     deltas = deduped["t_bin"].diff().dt.total_seconds()
-    gap_threshold = (max_fill_steps + 1) * nominal_step_seconds
+    gap_threshold = (max_fill_steps + 1) * step_seconds
     is_new_segment = (deltas > gap_threshold) | deltas.isna()
     deduped["segment_id"] = (is_new_segment.cumsum() - 1).astype(int)
 
