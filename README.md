@@ -2,7 +2,8 @@
 
 HydroPredict is an AI-driven predictive-maintenance prototype for hydroelectric power-plant equipment, supporting the academic investigation documented in `Munyiri_Timothy_Kimani_166095.docx`.
 
-The system comprises two distinct analytical workflows sharing common platform services:
+The target system comprises two distinct analytical workflows sharing common platform services.
+The following describes the planned system, not completed model or application functionality:
 
 1. **Primary Small Hydroelectric Plant (SHP) Workflow (Unsupervised Anomaly Detection)**:
    - Ingests operational telemetry ($t, V_1, \dots, V_6$) at nominal 5-minute sampling.
@@ -20,10 +21,21 @@ The system comprises two distinct analytical workflows sharing common platform s
    - Durable persistence for telemetry records, analysis runs, alerts, and operator responses.
    - Web-based operator dashboard.
 
-## Execution Environment & Hardware Profile
+## Current Implementation Status
 
-- **Local Development & Inference**: Tested for Intel Core i5-1235U CPU with 16 GB RAM. Ingestion, preprocessing, feature extraction, Isolation Forest, XGBoost, and CPU inference execute locally.
-- **Deep Learning Training**: The LSTM Autoencoder is trained in a Google Colab hosted GPU runtime using the repository implementation called via `notebooks/train_lstm_colab.ipynb`. The resulting bundle is exported for local CPU loading and inference.
+Implemented and tested: SHP validation, chronological partitioning, segmented offline
+preparation, training-scaler fitting and reuse, segment-aware features, fault alignment
+and EDA. Each preparation run records provenance, row accounting and artifact checksums.
+
+Pending: Isolation Forest, LSTM training and sequence construction, the Colab notebook,
+CWRU acquisition and XGBoost, sequential replay, event-level evaluation, authentication,
+durable application records, dashboard, model registry, drift monitoring and deployment.
+Fault-alignment labels are retrospective analysis assumptions, not evaluated predictions.
+
+## Planned Execution Environment
+
+- **Local development and inference**: Target laptop is an Intel Core i5-1235U with 16 GB RAM. Data preparation runs locally; model training and inference performance have not yet been benchmarked.
+- **LSTM training**: Planned for a Google Colab hosted GPU runtime. A thin notebook will call the same repository training code and export a complete bundle for local CPU inference. The notebook and training module are not implemented yet. No live laptop connection or synchronisation service is required.
 
 ## Quick start on Windows
 
@@ -54,10 +66,13 @@ Run all development checks (Ruff format, Ruff lint, Mypy strict types, Pytest):
 hydropredict validate data\raw\shp_train.csv --accepted-output data\processed\shp_train_accepted.csv --quarantine-output data\quarantine\shp_train_rejected.csv
 
 # 2. Partition telemetry chronologically
-hydropredict partition data\raw\shp_train.csv data\raw\shp_test.csv --output-dir data\processed\partitions
+hydropredict partition --train-source data\raw\shp_train.csv --test-source data\raw\shp_test.csv --output-dir data\processed\partitions
 
 # 3. Preprocess and fit scaler on training partition
-hydropredict preprocess data\processed\partitions\shp_train_part.csv --output data\processed\shp_train_preprocessed.csv --scaler-output data\processed\scaler.json
+hydropredict preprocess data\processed\partitions\shp_train.csv --output data\processed\shp_train_preprocessed.csv --fit-scaler data\processed\scaler.json --scaler-type standard
+
+# Export scaled model measurements separately from physical feature inputs
+hydropredict preprocess data\processed\partitions\shp_validation.csv --output data\processed\shp_validation_scaled.csv --scaler data\processed\scaler.json --scale
 
 # 4. Extract segment-aware features
 hydropredict extract-features data\processed\shp_train_preprocessed.csv --output data\processed\shp_train_features.csv
@@ -65,6 +80,34 @@ hydropredict extract-features data\processed\shp_train_preprocessed.csv --output
 # 5. Retrospective fault alignment for evaluation
 hydropredict align-faults data\raw\shp_test.csv data\raw\shp_faults.csv --output data\processed\shp_test_labeled.csv
 ```
+
+For a complete repeatable preparation run, choose a new run directory:
+
+```powershell
+python scripts\prepare_shp.py --run-dir data\processed\runs\my-first-run
+```
+
+This command exports chronological partitions, unscaled prepared data, separately scaled
+measurements, physical features and manifests. It refuses to overwrite an existing run.
+Standard scaling fits only the prepared training measurements and is reused for validation
+and testing. Domain features use engineering-unit measurements, not scaled values.
+Do not pass timestamp or segment identifiers to a future estimator as numeric predictors.
+
+The default cutoffs are 1 February and 1 May 2019. They exclude later training-source
+rows and earlier test-source rows; manifests count these exclusions. Their suitability
+for event coverage still needs evaluation. The optional published split is a comparison
+only and does not satisfy the report's chronological evaluation requirement.
+
+Preparation is currently offline and excludes entire extended outages. A future streaming
+replay must define when bins close, when gaps become ineligible and how warm-up operates;
+passing an offline forward-fill test does not prove full streaming causality.
+Linear interpolation remains available for exploratory use and must not be used for
+causal early-warning training or replay. Timestamp-naive source times are consistently
+interpreted as UTC by the current contract; source timezone evidence remains to be confirmed.
+Sensor descriptions and typical ranges also require a recorded source reference before
+claiming validated physical semantics; range warnings are currently an explicit helper.
+
+See `docs/data-preparation-status.md` for verification and remaining scientific limitations.
 
 ## Project Layout
 
@@ -74,9 +117,9 @@ hydropredict/
 |-- data/                    Dataset manifest, samples, raw and processed data stages
 |-- docs/                    Architecture decisions and requirement traceability
 |-- models/                  Trained model bundles and scalers (ignored by Git)
-|-- notebooks/               Colab GPU training notebooks
+|-- notebooks/               Planned Colab notebook directory (not implemented)
 |-- scripts/                 Environment setup and verification scripts
-|-- src/hydropredict/        Application source code (data, features, models, app)
+|-- src/hydropredict/        Current data, feature and analysis modules
 |-- tests/                   Automated tests (unit, integration, regression)
 |-- pyproject.toml           Package and tool configuration
 `-- README.md                Project documentation
