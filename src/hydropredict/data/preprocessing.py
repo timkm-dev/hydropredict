@@ -377,17 +377,18 @@ class RobustTelemetryScaler:
 
         return unscaled
 
-    def to_dict(self) -> dict[str, dict[str, float]]:
+    def to_dict(self) -> dict[str, Any]:
         """Serialize parameters for model artifact persistence."""
         if not self.is_fitted:
             raise RuntimeError("Cannot serialize unfitted scaler.")
         return {
+            "scaler_type": "robust",
             "medians": self.medians,
             "iqrs": self.iqrs,
         }
 
     @classmethod
-    def from_dict(cls, data: dict[str, dict[str, float]]) -> RobustTelemetryScaler:
+    def from_dict(cls, data: dict[str, Any]) -> RobustTelemetryScaler:
         """Instantiate scaler from serialized parameters."""
         scaler = cls()
         scaler.medians = {k: float(v) for k, v in data.get("medians", {}).items()}
@@ -409,3 +410,114 @@ class RobustTelemetryScaler:
         with target.open("r", encoding="utf-8") as handle:
             data = json.load(handle)
         return cls.from_dict(data)
+
+
+class StandardTelemetryScaler:
+    """Standard z-score scaler using mean and standard deviation.
+
+    Formula: z = (x - mean) / std
+    """
+
+    def __init__(self) -> None:
+        self.means: dict[str, float] = {}
+        self.stds: dict[str, float] = {}
+        self.is_fitted: bool = False
+
+    def fit(
+        self, df: pd.DataFrame, columns: tuple[str, ...] = MEASUREMENT_COLUMNS
+    ) -> StandardTelemetryScaler:
+        """Compute mean and standard deviation for target measurement columns."""
+        for col in columns:
+            if col not in df.columns:
+                raise ValueError(f"Column '{col}' not found in DataFrame for scaling.")
+            series = df[col].dropna()
+            if series.empty:
+                raise ValueError(f"Column '{col}' contains no valid data for scaling.")
+            mean_val = float(series.mean())
+            std_val = float(series.std())
+            if std_val <= 1e-8:
+                std_val = 1.0
+
+            self.means[col] = mean_val
+            self.stds[col] = std_val
+
+        self.is_fitted = True
+        return self
+
+    def transform(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Apply standard z-score scaling transformation."""
+        if not self.is_fitted:
+            raise RuntimeError("StandardTelemetryScaler must be fitted before transforming data.")
+
+        scaled = df.copy()
+        for col, mean_val in self.means.items():
+            if col in scaled.columns:
+                std_val = self.stds[col]
+                scaled[col] = (scaled[col] - mean_val) / std_val
+
+        return scaled
+
+    def fit_transform(
+        self, df: pd.DataFrame, columns: tuple[str, ...] = MEASUREMENT_COLUMNS
+    ) -> pd.DataFrame:
+        """Fit scaler and transform the DataFrame in one step."""
+        return self.fit(df, columns).transform(df)
+
+    def inverse_transform(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Revert scaled columns back to original engineering units."""
+        if not self.is_fitted:
+            raise RuntimeError("StandardTelemetryScaler must be fitted before inverse transform.")
+
+        unscaled = df.copy()
+        for col, mean_val in self.means.items():
+            if col in unscaled.columns:
+                std_val = self.stds[col]
+                unscaled[col] = (unscaled[col] * std_val) + mean_val
+
+        return unscaled
+
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize parameters for model artifact persistence."""
+        if not self.is_fitted:
+            raise RuntimeError("Cannot serialize unfitted scaler.")
+        return {
+            "scaler_type": "standard",
+            "means": self.means,
+            "stds": self.stds,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> StandardTelemetryScaler:
+        """Instantiate scaler from serialized parameters."""
+        scaler = cls()
+        scaler.means = {k: float(v) for k, v in data.get("means", {}).items()}
+        scaler.stds = {k: float(v) for k, v in data.get("stds", {}).items()}
+        scaler.is_fitted = bool(scaler.means and scaler.stds)
+        return scaler
+
+    def save(self, path: Path | str) -> None:
+        """Save scaler parameters as JSON."""
+        target = Path(path)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        with target.open("w", encoding="utf-8") as handle:
+            json.dump(self.to_dict(), handle, indent=2)
+
+    @classmethod
+    def load(cls, path: Path | str) -> StandardTelemetryScaler:
+        """Load scaler from JSON file."""
+        target = Path(path)
+        with target.open("r", encoding="utf-8") as handle:
+            data = json.load(handle)
+        return cls.from_dict(data)
+
+
+def load_scaler(path: Path | str) -> RobustTelemetryScaler | StandardTelemetryScaler:
+    """Load scaler artifact auto-detecting robust vs standard type."""
+    target = Path(path)
+    with target.open("r", encoding="utf-8") as handle:
+        data = json.load(handle)
+
+    scaler_type = data.get("scaler_type", "robust")
+    if scaler_type == "standard":
+        return StandardTelemetryScaler.from_dict(data)
+    return RobustTelemetryScaler.from_dict(data)

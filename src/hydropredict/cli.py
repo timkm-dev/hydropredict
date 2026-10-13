@@ -17,9 +17,11 @@ from hydropredict.data.faults import (
 from hydropredict.data.partitioning import create_shp_partitions
 from hydropredict.data.preprocessing import (
     RobustTelemetryScaler,
+    StandardTelemetryScaler,
     assess_sampling_cadence,
+    load_scaler,
     load_telemetry_dataframe,
-    resample_regular_grid,
+    prepare_telemetry_series,
 )
 from hydropredict.data.validation import (
     SchemaError,
@@ -47,15 +49,39 @@ def build_parser() -> argparse.ArgumentParser:
 
     # 2. preprocess
     preprocess = subparsers.add_parser(
-        "preprocess", help="resample onto regular grid and scale telemetry"
+        "preprocess", help="resample onto regular grid, isolate segments, and scale telemetry"
     )
     preprocess.add_argument("input", help="path to validated telemetry CSV")
-    preprocess.add_argument("--output", help="optional output path for resampled telemetry CSV")
+    preprocess.add_argument("--output", help="optional output path for preprocessed telemetry CSV")
     preprocess.add_argument(
-        "--scaler-output", help="optional output path to save fitted scaler JSON"
+        "--fit-scaler", help="optional output path to fit and save a new scaler JSON"
+    )
+    preprocess.add_argument(
+        "--scaler-output", help="alias for --fit-scaler for backwards compatibility"
+    )
+    preprocess.add_argument(
+        "--scaler", help="path to an existing frozen scaler JSON to load and apply"
+    )
+    preprocess.add_argument(
+        "--scale", action="store_true", help="apply fitted or loaded scaler to exported telemetry"
+    )
+    preprocess.add_argument(
+        "--scaler-type",
+        choices=["robust", "standard"],
+        default="robust",
+        help="scaler type to fit: robust (median/IQR) or standard (mean/std) (default: robust)",
     )
     preprocess.add_argument(
         "--freq", default="5min", help="regular temporal frequency (default: 5min)"
+    )
+    preprocess.add_argument(
+        "--method",
+        choices=["forward", "linear"],
+        default="forward",
+        help="gap filling method: forward (causal) or linear (default: forward)",
+    )
+    preprocess.add_argument(
+        "--accounting-output", help="optional path to export row accounting JSON report"
     )
 
     # 3. extract-features
@@ -160,24 +186,52 @@ def main(arguments: Sequence[str] | None = None) -> int:
     if args.command == "preprocess":
         try:
             df = load_telemetry_dataframe(args.input)
-            cadence = assess_sampling_cadence(df)
-            resampled = resample_regular_grid(df, freq=args.freq)
+            cadence = assess_sampling_cadence(df).summary() if len(df) >= 2 else None
+            prepared, accounting = prepare_telemetry_series(
+                df,
+                freq=args.freq,
+                method=args.method,
+            )
 
-            if args.scaler_output:
-                scaler = RobustTelemetryScaler()
-                scaler.fit(resampled)
-                scaler.save(args.scaler_output)
+            # Resolve scaler fitting or loading
+            scaler: RobustTelemetryScaler | StandardTelemetryScaler | None = None
+            fit_path = args.fit_scaler or args.scaler_output
+            if fit_path:
+                if args.scaler_type == "standard":
+                    scaler = StandardTelemetryScaler().fit(prepared)
+                else:
+                    scaler = RobustTelemetryScaler().fit(prepared)
+                scaler.save(fit_path)
+            elif args.scaler:
+                scaler = load_scaler(args.scaler)
+
+            export_df = prepared
+            if args.scale:
+                if scaler is None:
+                    raise ValueError(
+                        "Cannot apply scaling without a scaler. Specify --fit-scaler or --scaler."
+                    )
+                export_df = scaler.transform(prepared)
 
             if args.output:
                 out_path = Path(args.output)
                 out_path.parent.mkdir(parents=True, exist_ok=True)
-                resampled.to_csv(out_path, index=False)
+                export_df.to_csv(out_path, index=False)
+
+            if args.accounting_output:
+                acc_path = Path(args.accounting_output)
+                acc_path.parent.mkdir(parents=True, exist_ok=True)
+                with acc_path.open("w", encoding="utf-8") as handle:
+                    json.dump(accounting.summary(), handle, indent=2)
 
             result_summary = {
                 "status": "complete",
                 "original_records": len(df),
-                "resampled_records": len(resampled),
-                "cadence": cadence.summary(),
+                "prepared_records": len(prepared),
+                "is_scaled": bool(args.scale),
+                "segments": accounting.segment_count,
+                "imputed_steps": accounting.imputed_step_count,
+                "cadence": cadence,
             }
             print(json.dumps(result_summary, indent=2))
             return 0

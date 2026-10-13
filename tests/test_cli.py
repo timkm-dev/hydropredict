@@ -71,6 +71,77 @@ def test_cli_preprocess_and_features(tmp_path: Path) -> None:
     assert features_csv.exists()
 
 
+def test_cli_preprocess_fit_and_reuse_scaler(tmp_path: Path) -> None:
+    train_csv = tmp_path / "train.csv"
+    val_csv = tmp_path / "val.csv"
+    train_prep = tmp_path / "train_prep.csv"
+    val_prep = tmp_path / "val_prep.csv"
+    scaler_file = tmp_path / "fitted_scaler.json"
+    accounting_file = tmp_path / "accounting.json"
+
+    write_test_csv(
+        train_csv,
+        [
+            ["2026-01-01T00:00:00Z", "10.0", "1.0", "1.0", "1.0", "20.0", "3000.0"],
+            ["2026-01-01T00:05:00Z", "20.0", "1.0", "1.0", "1.0", "20.0", "3000.0"],
+        ],
+        header=["t", "V1", "V2", "V3", "V4", "V5", "V6"],
+    )
+    write_test_csv(
+        val_csv,
+        [
+            ["2026-01-01T01:00:00Z", "100.0", "1.0", "1.0", "1.0", "20.0", "3000.0"],
+        ],
+        header=["t", "V1", "V2", "V3", "V4", "V5", "V6"],
+    )
+
+    # 1. Preprocess train: fit standard scaler, apply scaling, export accounting report
+    train_code = main(
+        [
+            "preprocess",
+            str(train_csv),
+            "--output",
+            str(train_prep),
+            "--fit-scaler",
+            str(scaler_file),
+            "--scaler-type",
+            "standard",
+            "--scale",
+            "--accounting-output",
+            str(accounting_file),
+        ]
+    )
+    assert train_code == 0
+    assert train_prep.exists()
+    assert scaler_file.exists()
+    assert accounting_file.exists()
+
+    # 2. Preprocess val: load training scaler, apply scaling without refitting
+    val_code = main(
+        [
+            "preprocess",
+            str(val_csv),
+            "--output",
+            str(val_prep),
+            "--scaler",
+            str(scaler_file),
+            "--scale",
+        ]
+    )
+    assert val_code == 0
+    assert val_prep.exists()
+
+    # 3. Requesting scaling without scaler fails with exit code 2
+    err_code = main(
+        [
+            "preprocess",
+            str(val_csv),
+            "--scale",
+        ]
+    )
+    assert err_code == 2
+
+
 def test_cli_align_faults_and_eda(tmp_path: Path) -> None:
     tel_csv = tmp_path / "tel.csv"
     faults_csv = tmp_path / "faults.csv"
