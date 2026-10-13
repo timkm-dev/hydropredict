@@ -27,14 +27,21 @@ Implemented and tested: SHP validation, chronological partitioning, segmented of
 preparation, training-scaler fitting and reuse, segment-aware features, fault alignment
 and EDA. Each preparation run records provenance, row accounting and artifact checksums.
 
-Pending: Isolation Forest, LSTM training and sequence construction, the Colab notebook,
+Also implemented: source-readiness and fault-coverage auditing, an exploratory six-channel
+Isolation Forest, disjoint normal-reference threshold calibration, saved-bundle CPU
+inference and retrospective event evaluation. See `docs/shp-readiness-audit.md` and
+`docs/isolation-forest-baseline.md`. The first baseline detected only 1 of 5 eligible test
+events and is not ready for operational warning use. Physical metadata was withdrawn after
+the source-paper audit; exact channel semantics still need a source data dictionary.
+
+Pending: LSTM training and sequence construction, the Colab notebook,
 CWRU acquisition and XGBoost, sequential replay, event-level evaluation, authentication,
 durable application records, dashboard, model registry, drift monitoring and deployment.
 Fault-alignment labels are retrospective analysis assumptions, not evaluated predictions.
 
 ## Planned Execution Environment
 
-- **Local development and inference**: Target laptop is an Intel Core i5-1235U with 16 GB RAM. Data preparation runs locally; model training and inference performance have not yet been benchmarked.
+- **Local development and inference**: Target laptop is an Intel Core i5-1235U with 16 GB RAM. Data preparation and the Isolation Forest baseline run locally. The initial baseline fit and calibration took about 0.36 seconds; this excludes setup and is not a general performance guarantee.
 - **LSTM training**: Planned for a Google Colab hosted GPU runtime. A thin notebook will call the same repository training code and export a complete bundle for local CPU inference. The notebook and training module are not implemented yet. No live laptop connection or synchronisation service is required.
 
 ## Quick start on Windows
@@ -108,6 +115,18 @@ Sensor descriptions and typical ranges also require a recorded source reference 
 claiming validated physical semantics; range warnings are currently an explicit helper.
 
 See `docs/data-preparation-status.md` for verification and remaining scientific limitations.
+
+Audit and train the initial pointwise baseline using new artifact paths:
+
+```powershell
+python scripts\audit_shp.py --preparation-run data\processed\runs\2026-10-13-verified --output data\processed\runs\2026-10-13-verified\readiness_audit.json
+python scripts\train_isolation_forest.py --preparation-run data\processed\runs\2026-10-13-verified --output models\isolation-forest-my-new-run
+```
+
+The baseline selects only raw V1..V6 and calibrates on a later separate normal-reference
+subset; it does not consume the earlier prepared physical features. Source test excerpts
+are fault-selected, so general false-alert frequency remains unverified. Save the reported
+poor initial result rather than repeatedly tuning on the same final test period.
 
 ## Project Layout
 

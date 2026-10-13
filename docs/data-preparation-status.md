@@ -2,6 +2,13 @@
 
 Updated 13 October 2026. This records preparation evidence, not trained-model performance.
 
+Subsequent source audit: physical sensor metadata was withdrawn because the temperature
+and active-power assumptions conflict with the source paper. Earlier physical feature
+exports are experimental and must not be interpreted as verified physics. The new baseline
+uses raw channels only. Model implementation and evaluation now exist separately in
+`isolation-forest-baseline.md`; the historical preparation limitations below describe the
+earlier run, not the latest implementation checklist.
+
 Verified local artifacts: `data/processed/runs/2026-10-13-verified/run_manifest.json`,
 produced from source commit `74bbc8d`. All 56 tests passed, with Ruff lint, formatting and
 strict Mypy checks passing. Data artifacts remain ignored by Git; source and documentation
