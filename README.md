@@ -128,6 +128,11 @@ subset; it does not consume the earlier prepared physical features. Source test 
 are fault-selected, so general false-alert frequency remains unverified. Save the reported
 poor initial result rather than repeatedly tuning on the same final test period.
 
+The validation-only temporal feature and threshold comparison is documented in
+`docs/validation-model-comparison.md`. It found a limited temporal signal but substantial
+warm-up coverage loss; no replacement model was promoted. Install `.[analysis]` for the
+optional Matplotlib diagnostics and run `scripts/compare_validation_models.py` as documented.
+
 ## Project Layout
 
 ```text
