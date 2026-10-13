@@ -46,3 +46,11 @@ def test_temporal_model_roundtrip_and_warmup(tmp_path: object) -> None:
     model.save(tmp_path / "bundle", {})
     actual = SHPIsolationForest.load(tmp_path / "bundle").score(data.iloc[400:])
     pd.testing.assert_frame_equal(expected, actual)
+
+
+def test_derivative_uses_real_elapsed_seconds() -> None:
+    data = readings(40)
+    data["V1"] = np.arange(40, dtype=float)
+    data.loc[39, "t"] += pd.Timedelta(seconds=30)
+    result = causal_feature_frame(data, "temporal")
+    assert result.V1_roc.iloc[-1] == pytest.approx(1 / 330)

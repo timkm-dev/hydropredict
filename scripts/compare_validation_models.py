@@ -218,6 +218,11 @@ def main() -> None:
                 "nominal": nominal_metrics(normal_scores),
                 "paired_nominal": nominal_metrics(paired_normal),
             }
+            scored_eligible = {e["fault_time"] for e in result["scored_coverage"] if e["eligible"]}
+            result["effective_coverage_detected_events"] = sum(
+                e["detected"] and e["fault_time"] in scored_eligible
+                for e in result["paired"]["events"]
+            )
             results.append(result)
             scored.to_csv(args.output / f"{mode}-q{quantile}-validation.csv", index=False)
             normal_scores.to_csv(args.output / f"{mode}-q{quantile}-nominal.csv", index=False)
@@ -230,6 +235,38 @@ def main() -> None:
                 result["paired_nominal"]["point_alert_fraction"],
             )
     (args.output / "comparison.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
+    figure, axis = plt.subplots(figsize=(9, 5.5))
+    for mode in policy["modes"]:
+        selected = [r for r in results if r["mode"] == mode]
+        x = [100 * r["paired_nominal"]["point_alert_fraction"] for r in selected]
+        y = [r["paired"]["detected_events"] for r in selected]
+        axis.plot(x, y, marker="o", label=mode)
+        for a, b, result in zip(x, y, selected, strict=True):
+            axis.annotate(
+                f"q={result['quantile']}",
+                (a, b),
+                xytext=(5, 7),
+                textcoords="offset points",
+                fontsize=8,
+            )
+    axis.axvline(2, color="gray", linestyle="--", label="2% development alert budget")
+    axis.set_xlabel("Point alerts on matched selected normal-reference readings (%)")
+    axis.set_ylabel("Warnings before originally eligible validation events (of 6)")
+    axis.set_title("Validation sensitivity and alert burden")
+    axis.set_ylim(-0.2, 6.5)
+    axis.grid(alpha=0.2)
+    axis.legend(fontsize=8)
+    figure.text(
+        0.5,
+        0.02,
+        "Temporal warm-up: 400/605 readings; only 2 events retain full scored coverage. "
+        "No test evaluation.",
+        ha="center",
+        fontsize=8,
+    )
+    figure.tight_layout(rect=(0, 0.05, 1, 1))
+    figure.savefig(args.output / "validation_tradeoff.png", dpi=140)
+    plt.close(figure)
     hashes = {p.name: compute_file_sha256(p) for p in args.output.iterdir() if p.is_file()}
     (args.output / "checksums.json").write_text(json.dumps(hashes, indent=2), encoding="utf-8")
 
