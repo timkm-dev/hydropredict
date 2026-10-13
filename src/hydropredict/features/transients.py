@@ -48,13 +48,13 @@ def compute_transient_features(
         return features
 
     # Segment-aware calculation
-    roc_dict: dict[str, list[float]] = {f"{col}_roc": [] for col in columns if col in df.columns}
-    abs_roc_dict: dict[str, list[float]] = {
-        f"{col}_abs_roc": [] for col in columns if col in df.columns
-    }
-    acc_dict: dict[str, list[float]] = {f"{col}_acc": [] for col in columns if col in df.columns}
+    for col in columns:
+        if col in df.columns:
+            for suffix in ("roc", "abs_roc", "acc"):
+                features[f"{col}_{suffix}"] = np.zeros(len(df))
 
-    for _, group in df.groupby("segment_id", sort=False):
+    for positions in df.groupby("segment_id", sort=False).indices.values():
+        group = df.iloc[positions]
         if time_column in group.columns:
             g_dt = pd.to_datetime(group[time_column], utc=True).diff().dt.total_seconds()
             g_dt = g_dt.fillna(nominal_step_seconds)
@@ -70,15 +70,8 @@ def compute_transient_features(
             roc = diff1 / dt_arr
             diff2 = np.diff(roc, prepend=roc[0])
             acc = diff2 / dt_arr
-            roc_dict[f"{col}_roc"].extend(roc)
-            abs_roc_dict[f"{col}_abs_roc"].extend(np.abs(roc))
-            acc_dict[f"{col}_acc"].extend(acc)
-
-    for col in columns:
-        if col not in df.columns:
-            continue
-        features[f"{col}_roc"] = roc_dict[f"{col}_roc"]
-        features[f"{col}_abs_roc"] = abs_roc_dict[f"{col}_abs_roc"]
-        features[f"{col}_acc"] = acc_dict[f"{col}_acc"]
+            for suffix, values in (("roc", roc), ("abs_roc", np.abs(roc)), ("acc", acc)):
+                column_index = features.columns.get_indexer(pd.Index([f"{col}_{suffix}"]))[0]
+                features.iloc[positions, column_index] = values
 
     return features

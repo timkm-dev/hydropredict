@@ -13,6 +13,28 @@ from hydropredict.features import (
 )
 
 
+def test_segment_derivatives_preserve_original_row_positions() -> None:
+    df = pd.DataFrame(
+        {
+            "t": pd.date_range("2026-01-01", periods=4, freq="5min", tz="UTC"),
+            "V1": [0.0, 10.0, 2.0, 14.0],
+            "segment_id": [0, 1, 0, 1],
+        }
+    )
+    from hydropredict.features.transients import compute_transient_features
+
+    result = compute_transient_features(df, columns=("V1",))
+    assert result.V1_roc.tolist() == pytest.approx([0.0, 0.0, 2.0 / 600, 4.0 / 600])
+
+
+def test_feature_pipeline_rejects_unsorted_timestamps() -> None:
+    from hydropredict.features.pipeline import extract_feature_matrix
+
+    df = pd.DataFrame({"t": ["2026-01-02", "2026-01-01"], "V1": [1.0, 2.0]})
+    with pytest.raises(ValueError, match="chronological"):
+        extract_feature_matrix(df)
+
+
 @pytest.fixture
 def sample_telemetry() -> pd.DataFrame:
     # 10 rows spaced 300 seconds apart

@@ -45,6 +45,10 @@ def extract_feature_matrix(
     evaluation metadata are strictly excluded from predictor outputs.
     """
     cfg = config or FeatureConfig()
+    if TIMESTAMP_COLUMN in df.columns:
+        times = pd.to_datetime(df[TIMESTAMP_COLUMN], utc=True)
+        if times.isna().any() or not times.is_monotonic_increasing or times.duplicated().any():
+            raise ValueError("Feature timestamps must be valid, unique and chronological.")
     feature_parts: list[pd.DataFrame] = []
 
     if cfg.include_raw:
