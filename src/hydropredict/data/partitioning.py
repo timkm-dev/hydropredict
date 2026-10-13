@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Literal
@@ -32,8 +32,8 @@ class PartitionMetadata:
     partition_name: str
     relative_path: str
     record_count: int
-    start_time: str
-    end_time: str
+    start_time: str | None
+    end_time: str | None
     sha256: str
     source_origins: tuple[str, ...]
     fault_events_count: int
@@ -60,6 +60,8 @@ class PartitionManifest:
     is_strictly_chronological: bool
     partitions: dict[str, PartitionMetadata]
     scope_notes: str
+    source_accounting: dict[str, Any] = field(default_factory=dict)
+    source_checksums: dict[str, str] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -68,6 +70,8 @@ class PartitionManifest:
             "is_strictly_chronological": self.is_strictly_chronological,
             "partitions": {name: meta.to_dict() for name, meta in self.partitions.items()},
             "scope_notes": self.scope_notes,
+            "source_accounting": self.source_accounting,
+            "source_checksums": self.source_checksums,
         }
 
     def save(self, path: Path | str) -> None:
@@ -100,6 +104,8 @@ class PartitionManifest:
             is_strictly_chronological=bool(data["is_strictly_chronological"]),
             partitions=parts,
             scope_notes=data.get("scope_notes", ""),
+            source_accounting=data.get("source_accounting", {}),
+            source_checksums=data.get("source_checksums", {}),
         )
 
 
@@ -122,19 +128,25 @@ def create_shp_partitions(
        (47,857 train, 4,897 test) as quoted in the project report.
     """
     out_path = Path(output_dir)
-    out_path.mkdir(parents=True, exist_ok=True)
+    if strategy not in ("chronological", "published"):
+        raise ValueError(f"Unsupported partition strategy: {strategy}")
+
+    train_origin = str(Path(train_source).as_posix())
+    test_origin = str(Path(test_source).as_posix())
 
     raw_train = load_telemetry_dataframe(train_source)
     raw_test = load_telemetry_dataframe(test_source)
-    fault_timestamps = load_fault_log(faults_source) if Path(faults_source).exists() else []
+    fault_timestamps = load_fault_log(faults_source)
 
     parts_dict: dict[str, PartitionMetadata] = {}
     is_chronological = False
 
     if strategy == "chronological":
         is_chronological = True
-        t_split_train = pd.Timestamp(train_end_boundary)
-        t_split_val = pd.Timestamp(val_end_boundary)
+        t_split_train = pd.to_datetime(train_end_boundary, utc=True)
+        t_split_val = pd.to_datetime(val_end_boundary, utc=True)
+        if pd.isna(t_split_train) or pd.isna(t_split_val) or t_split_train >= t_split_val:
+            raise ValueError("Training cutoff must precede validation cutoff.")
 
         # Train partition from normal operating source up to cutoff
         df_train = raw_train[raw_train[TIMESTAMP_COLUMN] < t_split_train].copy()
@@ -145,6 +157,11 @@ def create_shp_partitions(
         ].copy()
         # Final test partition from test source after val cutoff
         df_test = raw_test[raw_test[TIMESTAMP_COLUMN] >= t_split_val].copy()
+
+        if df_train.empty or df_val.empty or df_test.empty:
+            raise ValueError(
+                "Chronological train, validation and test partitions must be nonempty."
+            )
 
         # Verify strict non-overlap and temporal ordering
         if not df_train.empty and not df_val.empty:
@@ -157,65 +174,79 @@ def create_shp_partitions(
             )
 
         partition_specs = [
-            ("train", df_train, ("data/raw/shp_train.csv",), 0),
+            ("train", df_train, (train_origin,), 0),
             (
                 "validation",
                 df_val,
-                ("data/raw/shp_test.csv",),
+                (test_origin,),
                 len([f for f in fault_timestamps if t_split_train <= f < t_split_val]),
             ),
             (
                 "test",
                 df_test,
-                ("data/raw/shp_test.csv",),
+                (test_origin,),
                 len([f for f in fault_timestamps if f >= t_split_val]),
             ),
         ]
         notes = (
-            "Strict chronological partition: train (< 2019-02-01), validation (2019-02-01 to "
-            "2019-05-01), test (>= 2019-05-01). Enforces zero temporal leakage. Fault timestamps "
-            "are excluded from training and reserved strictly for retrospective evaluation."
+            f"Chronological partition: train source before {t_split_train.isoformat()}, "
+            f"test source validation from {t_split_train.isoformat()} to "
+            f"{t_split_val.isoformat()}, final test from {t_split_val.isoformat()}. "
+            "Other source rows are excluded and counted in source_accounting. Fault counts "
+            "describe cutoff intervals, not verified observable events; evaluation must assess "
+            "coverage. Fault timestamps never determine training membership."
         )
     else:
         # Published benchmark strategy: train (47,857 rows) vs test (4,897 rows)
         is_chronological = False
         partition_specs = [
-            ("train", raw_train.copy(), ("data/raw/shp_train.csv",), 0),
+            ("train", raw_train.copy(), (train_origin,), 0),
             (
                 "test",
                 raw_test.copy(),
-                ("data/raw/shp_test.csv",),
+                (test_origin,),
                 len(fault_timestamps),
             ),
         ]
         notes = (
             "Published benchmark partition: replicates the original de Santis & Costa (2020) split "
-            "(47,857 normal operating observations in train, 4,897 fault-adjacent observations in "
-            "test) as cited in Section 4.2 and DR-05 of the project report."
+            "with overlapping calendar coverage. This optional comparison is NOT compliant "
+            "with the report's DR-05 chronological evaluation requirement."
         )
 
+    selected_train = len(partition_specs[0][1])
+    selected_test = sum(len(spec[1]) for spec in partition_specs[1:])
+    accounting = {
+        "train_source": {
+            "path": train_origin,
+            "input_rows": len(raw_train),
+            "selected_rows": selected_train,
+            "excluded_rows": len(raw_train) - selected_train,
+        },
+        "test_source": {
+            "path": test_origin,
+            "input_rows": len(raw_test),
+            "selected_rows": selected_test,
+            "excluded_rows": len(raw_test) - selected_test,
+        },
+    }
+    source_checksums = {
+        str(Path(p).as_posix()): compute_file_sha256(p)
+        for p in (train_source, test_source, faults_source)
+    }
+    out_path.mkdir(parents=True, exist_ok=True)
     for p_name, p_df, p_origins, p_faults in partition_specs:
         file_name = f"shp_{p_name}.csv"
         file_path = out_path / file_name
 
         p_df_export = p_df[list(REQUIRED_COLUMNS)].copy()
         # Ensure ISO formatted timestamps
-        p_df_export[TIMESTAMP_COLUMN] = p_df_export[TIMESTAMP_COLUMN].dt.strftime(
-            "%Y-%m-%dT%H:%M:%S%z"
-        )
+        p_df_export[TIMESTAMP_COLUMN] = p_df_export[TIMESTAMP_COLUMN].map(lambda t: t.isoformat())
         p_df_export.to_csv(file_path, index=False)
 
         sha256_hash = compute_file_sha256(file_path)
-        t_start = (
-            p_df[TIMESTAMP_COLUMN].min().isoformat()
-            if not p_df.empty
-            else datetime.now(UTC).isoformat()
-        )
-        t_end = (
-            p_df[TIMESTAMP_COLUMN].max().isoformat()
-            if not p_df.empty
-            else datetime.now(UTC).isoformat()
-        )
+        t_start = p_df[TIMESTAMP_COLUMN].min().isoformat() if not p_df.empty else None
+        t_end = p_df[TIMESTAMP_COLUMN].max().isoformat() if not p_df.empty else None
 
         parts_dict[p_name] = PartitionMetadata(
             partition_name=p_name,
@@ -234,6 +265,8 @@ def create_shp_partitions(
         is_strictly_chronological=is_chronological,
         partitions=parts_dict,
         scope_notes=notes,
+        source_accounting=accounting,
+        source_checksums=source_checksums,
     )
 
     manifest_path = out_path / "partitions_manifest.json"
