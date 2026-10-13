@@ -16,12 +16,18 @@ from sklearn.ensemble import IsolationForest  # type: ignore[import-untyped]
 from hydropredict.data.partitioning import compute_file_sha256
 from hydropredict.data.preprocessing import StandardTelemetryScaler
 from hydropredict.data.schema import MEASUREMENT_COLUMNS
+from hydropredict.features.causal import causal_feature_frame
 
 
 class SHPIsolationForest:
     """No labels, outcome metadata or engineered physical assumptions enter predictors."""
 
-    def __init__(self, *, n_estimators: int = 200, random_state: int = 42) -> None:
+    def __init__(
+        self, *, n_estimators: int = 200, random_state: int = 42, feature_mode: str = "raw"
+    ) -> None:
+        if feature_mode not in ("raw", "temporal"):
+            raise ValueError("Feature mode must be raw or temporal.")
+        self.feature_mode = feature_mode
         self.estimator = IsolationForest(
             n_estimators=n_estimators,
             max_samples=256,
@@ -45,8 +51,7 @@ class SHPIsolationForest:
             raise ValueError("Model timestamps must be valid, unique and chronological.")
 
     def _matrix(self, frame: pd.DataFrame) -> np.ndarray[Any, np.dtype[np.float64]]:
-        self._validate(frame)
-        return self.scaler.transform(frame)[list(MEASUREMENT_COLUMNS)].to_numpy(dtype=float)
+        return self.scaler.transform(frame)[list(self.scaler.means)].to_numpy(dtype=float)
 
     def fit(
         self,
@@ -58,7 +63,9 @@ class SHPIsolationForest:
     ) -> SHPIsolationForest:
         self._validate(training)
         self._validate(calibration)
-        if len(training) < 256 or len(calibration) < 100:
+        training_features = causal_feature_frame(training, self.feature_mode)
+        calibration_features = causal_feature_frame(calibration, self.feature_mode)
+        if len(training_features) < 256 or len(calibration_features) < 100:
             raise ValueError(
                 "Baseline needs at least 256 fitting and 100 calibration observations."
             )
@@ -69,9 +76,10 @@ class SHPIsolationForest:
             >= pd.to_datetime(calibration.t, utc=True).min()
         ):
             raise ValueError("Fitting must strictly precede calibration.")
-        self.scaler.fit(training)
-        self.estimator.fit(self._matrix(training))
-        scores = -self.estimator.score_samples(self._matrix(calibration))
+        columns = tuple(c for c in training_features.columns if c != "t")
+        self.scaler.fit(training_features, columns=columns)
+        self.estimator.fit(self._matrix(training_features))
+        scores = -self.estimator.score_samples(self._matrix(calibration_features))
         self.threshold = float(np.quantile(scores, calibration_quantile))
         self.version = version
         return self
@@ -79,10 +87,14 @@ class SHPIsolationForest:
     def score(self, frame: pd.DataFrame) -> pd.DataFrame:
         if self.threshold is None:
             raise RuntimeError("Model must be fitted or loaded before scoring.")
-        scores = -self.estimator.score_samples(self._matrix(frame))
+        self._validate(frame)
+        features = causal_feature_frame(frame, self.feature_mode)
+        if features.empty:
+            raise ValueError("No observations remain after feature warm-up.")
+        scores = -self.estimator.score_samples(self._matrix(features))
         return pd.DataFrame(
             {
-                "t": pd.to_datetime(frame.t, utc=True).to_numpy(),
+                "t": pd.to_datetime(features.t, utc=True).to_numpy(),
                 "anomaly_score": scores,
                 "is_alert": scores > self.threshold,
                 "threshold": self.threshold,
@@ -100,7 +112,9 @@ class SHPIsolationForest:
         metadata = {
             "format_version": 1,
             "model_version": self.version,
-            "feature_columns": list(MEASUREMENT_COLUMNS),
+            "feature_columns": list(self.scaler.means),
+            "feature_mode": self.feature_mode,
+            "temporal_policy": "30/120min mean/std and roc; 450s reset; 2h warm-up",
             "threshold": self.threshold,
             "score_definition": "negative sklearn score_samples; higher is more anomalous",
             "alert_rule": "score > threshold; no persistence or cooldown",
@@ -124,17 +138,18 @@ class SHPIsolationForest:
             if compute_file_sha256(target / name) != checksums[name]:
                 raise ValueError(f"Model bundle checksum mismatch: {name}")
         metadata = json.loads((target / "metadata.json").read_text(encoding="utf-8"))
-        if metadata["feature_columns"] != list(MEASUREMENT_COLUMNS):
+        mode = metadata.get("feature_mode", "raw")
+        if mode == "raw" and metadata["feature_columns"] != list(MEASUREMENT_COLUMNS):
             raise ValueError("Incompatible model feature schema.")
         if metadata["sklearn_version"] != sklearn.__version__:
             raise ValueError("Load using the recorded scikit-learn version.")
         threshold = float(metadata["threshold"])
         if not math.isfinite(threshold):
             raise ValueError("Model threshold must be finite.")
-        model = cls()
+        model = cls(feature_mode=mode)
         model.estimator = joblib.load(target / "estimator.joblib")
         model.scaler = StandardTelemetryScaler.load(target / "scaler.json")
-        if set(model.scaler.means) != set(MEASUREMENT_COLUMNS):
+        if list(model.scaler.means) != metadata["feature_columns"]:
             raise ValueError("Incompatible scaler schema.")
         model.threshold = threshold
         model.version = str(metadata["model_version"])
