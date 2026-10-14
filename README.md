@@ -133,6 +133,12 @@ The validation-only temporal feature and threshold comparison is documented in
 warm-up coverage loss; no replacement model was promoted. Install `.[analysis]` for the
 optional Matplotlib diagnostics and run `scripts/compare_validation_models.py` as documented.
 
+Observed development context can now be reconstructed from both source files with exact
+timestamp provenance and no synthetic filling. The frozen-model validation check restored
+92 pre-fault temporal score rows, but adequate temporal event coverage remained at two
+events and neither was detected. See `docs/continuous-context-evaluation.md` for the fixed
+experiment, limitations and reproduction command. No default model was changed.
+
 ## Project Layout
 
 ```text
