@@ -34,15 +34,21 @@ inference and retrospective event evaluation. See `docs/shp-readiness-audit.md` 
 events and is not ready for operational warning use. Physical metadata was withdrawn after
 the source-paper audit; exact channel semantics still need a source data dictionary.
 
-Pending: LSTM training and sequence construction, the Colab notebook,
-CWRU acquisition and XGBoost, sequential replay, event-level evaluation, authentication,
+Implemented LSTM engineering: gap-safe sequence construction, compact autoencoder,
+normal-only early stopping and calibration, resumable training, CPU model export/loading,
+portable input packaging, separate validation command and a thin Colab notebook.
+Full Colab GPU training and LSTM fault-based performance are still pending; local smoke
+tests are not scientific results. See `docs/lstm-colab-workflow.md` for the owner steps.
+
+Pending: full LSTM GPU execution and comparison, CWRU acquisition and XGBoost, sequential replay,
+application-integrated event evaluation, authentication,
 durable application records, dashboard, model registry, drift monitoring and deployment.
 Fault-alignment labels are retrospective analysis assumptions, not evaluated predictions.
 
 ## Planned Execution Environment
 
 - **Local development and inference**: Target laptop is an Intel Core i5-1235U with 16 GB RAM. Data preparation and the Isolation Forest baseline run locally. The initial baseline fit and calibration took about 0.36 seconds; this excludes setup and is not a general performance guarantee.
-- **LSTM training**: Planned for a Google Colab hosted GPU runtime. A thin notebook will call the same repository training code and export a complete bundle for local CPU inference. The notebook and training module are not implemented yet. No live laptop connection or synchronisation service is required.
+- **LSTM training**: Implemented for Google Colab hosted GPU execution through `notebooks/train_lstm_colab.ipynb`. The notebook uploads a committed source/data package, calls repository training code and exports a complete bundle for local CPU inference. Hosted GPU execution remains pending. No live laptop connection or synchronisation service is required.
 
 ## Quick start on Windows
 
