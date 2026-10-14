@@ -54,3 +54,27 @@ def test_derivative_uses_real_elapsed_seconds() -> None:
     data.loc[39, "t"] += pd.Timedelta(seconds=30)
     result = causal_feature_frame(data, "temporal")
     assert result.V1_roc.iloc[-1] == pytest.approx(1 / 330)
+
+
+@pytest.mark.parametrize("minutes", [15, 30])
+def test_short_context_prefix_invariance_and_warmup(minutes: int) -> None:
+    data = readings(100)
+    prefix = causal_feature_frame(data.iloc[:60], "temporal", minutes)
+    complete = causal_feature_frame(data, "temporal", minutes)
+    pd.testing.assert_frame_equal(prefix, complete.iloc[: len(prefix)].reset_index(drop=True))
+    assert prefix.t.iloc[0] == data.t.iloc[minutes // 5]
+    assert len(prefix.columns) == 37
+
+
+@pytest.mark.parametrize("minutes", [15, 30])
+def test_short_context_bundle_roundtrip(tmp_path: object, minutes: int) -> None:
+    from pathlib import Path
+
+    assert isinstance(tmp_path, Path)
+    data = readings()
+    model = SHPIsolationForest(n_estimators=20, feature_mode="temporal", context_minutes=minutes)
+    model.fit(data.iloc[:400], data.iloc[400:], version="short-context-test")
+    model.save(tmp_path / "bundle", {})
+    loaded = SHPIsolationForest.load(tmp_path / "bundle")
+    assert loaded.context_minutes == minutes
+    pd.testing.assert_frame_equal(model.score(data.iloc[400:]), loaded.score(data.iloc[400:]))

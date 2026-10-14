@@ -23,11 +23,19 @@ class SHPIsolationForest:
     """No labels, outcome metadata or engineered physical assumptions enter predictors."""
 
     def __init__(
-        self, *, n_estimators: int = 200, random_state: int = 42, feature_mode: str = "raw"
+        self,
+        *,
+        n_estimators: int = 200,
+        random_state: int = 42,
+        feature_mode: str = "raw",
+        context_minutes: int = 120,
     ) -> None:
         if feature_mode not in ("raw", "temporal"):
             raise ValueError("Feature mode must be raw or temporal.")
         self.feature_mode = feature_mode
+        if context_minutes not in (15, 30, 120):
+            raise ValueError("Context must be 15, 30 or 120 minutes.")
+        self.context_minutes = context_minutes
         self.estimator = IsolationForest(
             n_estimators=n_estimators,
             max_samples=256,
@@ -63,8 +71,10 @@ class SHPIsolationForest:
     ) -> SHPIsolationForest:
         self._validate(training)
         self._validate(calibration)
-        training_features = causal_feature_frame(training, self.feature_mode)
-        calibration_features = causal_feature_frame(calibration, self.feature_mode)
+        training_features = causal_feature_frame(training, self.feature_mode, self.context_minutes)
+        calibration_features = causal_feature_frame(
+            calibration, self.feature_mode, self.context_minutes
+        )
         if len(training_features) < 256 or len(calibration_features) < 100:
             raise ValueError(
                 "Baseline needs at least 256 fitting and 100 calibration observations."
@@ -88,7 +98,7 @@ class SHPIsolationForest:
         if self.threshold is None:
             raise RuntimeError("Model must be fitted or loaded before scoring.")
         self._validate(frame)
-        features = causal_feature_frame(frame, self.feature_mode)
+        features = causal_feature_frame(frame, self.feature_mode, self.context_minutes)
         if features.empty:
             raise ValueError("No observations remain after feature warm-up.")
         scores = -self.estimator.score_samples(self._matrix(features))
@@ -114,7 +124,8 @@ class SHPIsolationForest:
             "model_version": self.version,
             "feature_columns": list(self.scaler.means),
             "feature_mode": self.feature_mode,
-            "temporal_policy": "30/120min mean/std and roc; 450s reset; 2h warm-up",
+            "context_minutes": self.context_minutes,
+            "temporal_policy": "Two time-window mean/std sets and roc; 450s reset; context warmup",
             "threshold": self.threshold,
             "score_definition": "negative sklearn score_samples; higher is more anomalous",
             "alert_rule": "score > threshold; no persistence or cooldown",
@@ -146,7 +157,7 @@ class SHPIsolationForest:
         threshold = float(metadata["threshold"])
         if not math.isfinite(threshold):
             raise ValueError("Model threshold must be finite.")
-        model = cls(feature_mode=mode)
+        model = cls(feature_mode=mode, context_minutes=int(metadata.get("context_minutes", 120)))
         model.estimator = joblib.load(target / "estimator.joblib")
         model.scaler = StandardTelemetryScaler.load(target / "scaler.json")
         if list(model.scaler.means) != metadata["feature_columns"]:
