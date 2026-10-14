@@ -47,7 +47,7 @@ def reconstruct_context(
     provenance_rows = []
     for timestamp, group in combined.groupby("t", sort=True):
         records = [
-            {"source_id": str(row.source_id), "source_row": int(row.source_row)}
+            {"source_id": str(row.source_id), "source_row": int(str(row.source_row))}
             for row in group.itertuples()
         ]
         provenance_rows.append({"t": timestamp, "source_records": json.dumps(records)})

@@ -62,6 +62,14 @@ def main() -> None:
     (args.output / "protocol.json").write_text(json.dumps(protocol, indent=2), encoding="utf-8")
     timeline.to_csv(args.output / "validation_timeline.csv", index=False)
     provenance.to_csv(args.output / "source_provenance.csv", index=False)
+    intervals = timeline.t.diff().dt.total_seconds()
+    pd.DataFrame(
+        {
+            "previous_observation": timeline.t.shift(),
+            "next_observation": timeline.t,
+            "gap_seconds": intervals,
+        }
+    ).loc[intervals > 450].to_csv(args.output / "remaining_outages.csv", index=False)
     results = []
     for mode in ("raw", "temporal"):
         model = SHPIsolationForest.load(args.comparison_run / f"{mode}-q0.99")
