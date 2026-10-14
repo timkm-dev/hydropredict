@@ -13,8 +13,8 @@ def causal_feature_frame(
 ) -> pd.DataFrame:
     """Use only available readings; never interpolate or bridge gaps over 7.5 minutes.
 
-    Temporal output requires two hours of context after each reset. Caller retains
-    coverage exclusions. Each call starts fresh; streaming callers must supply history.
+    Temporal output requires the configured 15/30/120-minute context after each reset.
+    Caller retains coverage exclusions. Streaming callers must supply preceding history.
     """
     if mode not in ("raw", "temporal"):
         raise ValueError(f"Unsupported feature mode: {mode}")

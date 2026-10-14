@@ -139,6 +139,12 @@ timestamp provenance and no synthetic filling. The frozen-model validation check
 events and neither was detected. See `docs/continuous-context-evaluation.md` for the fixed
 experiment, limitations and reproduction command. No default model was changed.
 
+The declared 15/30/120-minute context comparison is complete; see
+`docs/short-context-comparison.md`. Both shorter designs detected one of three adequately
+covered validation faults, versus zero of two for the two-hour model. The 30-minute design
+is retained as a development comparator, with no operational performance claim or default
+replacement. Next planned milestone: compact LSTM Autoencoder and Colab notebook.
+
 ## Project Layout
 
 ```text

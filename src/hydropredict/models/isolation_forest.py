@@ -1,4 +1,4 @@
-"""Six-channel pointwise baseline with disjoint normal-reference calibration."""
+"""Raw or causal temporal baseline with disjoint normal-reference calibration."""
 
 from __future__ import annotations
 
