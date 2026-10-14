@@ -1,0 +1,14 @@
+{
+  "sequence_length": 7,
+  "minimum_step_seconds": 150,
+  "maximum_step_seconds": 450,
+  "hidden_size": 32,
+  "latent_size": 16,
+  "batch_size": 128,
+  "learning_rate": 0.001,
+  "maximum_epochs": 30,
+  "patience": 5,
+  "minimum_improvement": 0.00001,
+  "calibration_quantile": 0.99,
+  "random_seed": 42
+}

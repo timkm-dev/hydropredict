@@ -20,6 +20,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+lstm = ["torch>=2.6,<3"]
 analysis = ["matplotlib>=3.9,<4"]
 dev = [
   "mypy>=1.15",
