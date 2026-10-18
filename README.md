@@ -40,9 +40,14 @@ portable input packaging, separate validation command and a thin Colab notebook.
 Full Colab GPU training and LSTM fault-based performance are still pending; local smoke
 tests are not scientific results. See `docs/lstm-colab-workflow.md` for the owner steps.
 
+Implemented frontend: responsive local dashboard with synthetic preview data, telemetry
+CSV import/export, six-channel trend exploration, temporary illustrative alert review,
+and documented model readiness. See `frontend/README.md`. It is not connected to live
+telemetry, model inference, authentication, or durable application records.
+
 Pending: full LSTM GPU execution and comparison, CWRU acquisition and XGBoost, sequential replay,
 application-integrated event evaluation, authentication,
-durable application records, dashboard, model registry, drift monitoring and deployment.
+durable application records, dashboard backend integration, model registry, drift monitoring and deployment.
 Fault-alignment labels are retrospective analysis assumptions, not evaluated predictions.
 
 ## Planned Execution Environment
@@ -71,6 +76,18 @@ Run all development checks (Ruff format, Ruff lint, Mypy strict types, Pytest):
 ```powershell
 .\scripts\check.ps1
 ```
+
+## Frontend dashboard
+
+Start the dashboard from the repository root and open http://127.0.0.1:8765:
+
+```powershell
+python -m http.server 8765 --bind 127.0.0.1 --directory frontend
+```
+
+The initial screen uses clearly labeled synthetic data. Import a telemetry CSV
+containing `t,V1,V2,V3,V4,V5,V6` to explore your own observations locally.
+See [dashboard instructions](frontend/README.md) for controls and integration limits.
 
 ## CLI Workflows
 
@@ -158,6 +175,7 @@ hydropredict/
 |-- .github/workflows/       Continuous integration
 |-- data/                    Dataset manifest, samples, raw and processed data stages
 |-- docs/                    Architecture decisions and requirement traceability
+|-- frontend/                Responsive local research dashboard and data validation tests
 |-- models/                  Trained model bundles and scalers (ignored by Git)
 |-- notebooks/               Planned Colab notebook directory (not implemented)
 |-- scripts/                 Environment setup and verification scripts
