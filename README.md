@@ -37,23 +37,25 @@ the source-paper audit; exact channel semantics still need a source data diction
 Implemented LSTM engineering: gap-safe sequence construction, compact autoencoder,
 normal-only early stopping and calibration, resumable training, CPU model export/loading,
 portable input packaging, separate validation command and a thin Colab notebook.
-Full Colab GPU training and LSTM fault-based performance are still pending; local smoke
-tests are not scientific results. See `docs/lstm-colab-workflow.md` for the owner steps.
+The first Colab GPU run is complete and its frozen CPU scores have been reproduced.
+It detected 1 of 3 adequately covered development faults; operational usefulness
+remains unverified. See `docs/lstm-baseline-diagnostics.md` for results and limitations.
 
 Implemented frontend: responsive local dashboard with synthetic preview data, telemetry
 CSV import/export, six-channel trend exploration, temporary illustrative alert review,
-and documented model readiness. See `frontend/README.md`. It is not connected to live
-telemetry, model inference, authentication, or durable application records.
+and model readiness. Local LSTM CPU inference now provides score/threshold plots,
+per-channel reconstruction errors, and grouped review episodes for imported telemetry.
+See `frontend/README.md`. Live telemetry, authentication, and durable records remain pending.
 
-Pending: full LSTM GPU execution and comparison, CWRU acquisition and XGBoost, sequential replay,
+Pending: further justified model experiments, CWRU acquisition and XGBoost, sequential replay,
 application-integrated event evaluation, authentication,
-durable application records, dashboard backend integration, model registry, drift monitoring and deployment.
+durable application records, model registry, drift monitoring and deployment.
 Fault-alignment labels are retrospective analysis assumptions, not evaluated predictions.
 
 ## Planned Execution Environment
 
 - **Local development and inference**: Target laptop is an Intel Core i5-1235U with 16 GB RAM. Data preparation and the Isolation Forest baseline run locally. The initial baseline fit and calibration took about 0.36 seconds; this excludes setup and is not a general performance guarantee.
-- **LSTM training**: Implemented for Google Colab hosted GPU execution through `notebooks/train_lstm_colab.ipynb`. The notebook uploads a committed source/data package, calls repository training code and exports a complete bundle for local CPU inference. Hosted GPU execution remains pending. No live laptop connection or synchronisation service is required.
+- **LSTM training**: Implemented for Google Colab hosted GPU execution through `notebooks/train_lstm_colab.ipynb`. The notebook uploads a committed source/data package, calls repository training code and exports a complete bundle for local CPU inference. The first hosted run is complete; see the development diagnostics above. No live laptop connection or synchronisation service is required.
 
 ## Quick start on Windows
 
@@ -79,14 +81,16 @@ Run all development checks (Ruff format, Ruff lint, Mypy strict types, Pytest):
 
 ## Frontend dashboard
 
-Start the dashboard from the repository root and open http://127.0.0.1:8765:
+Start the dashboard from the repository root and open http://127.0.0.1:8766:
 
 ```powershell
-python -m http.server 8765 --bind 127.0.0.1 --directory frontend
+.venv/Scripts/python.exe -m hydropredict.dashboard --port 8766
 ```
 
 The initial screen uses clearly labeled synthetic data. Import a telemetry CSV
-containing `t,V1,V2,V3,V4,V5,V6` to explore your own observations locally.
+containing `t,V1,V2,V3,V4,V5,V6`, then select **Run LSTM assessment** for local
+CPU inference using the saved research bundle. The bundle and CPU PyTorch must
+be available; the dashboard shows model connection status and unscored observations.
 See [dashboard instructions](frontend/README.md) for controls and integration limits.
 
 ## CLI Workflows
@@ -166,7 +170,7 @@ The declared 15/30/120-minute context comparison is complete; see
 `docs/short-context-comparison.md`. Both shorter designs detected one of three adequately
 covered validation faults, versus zero of two for the two-hour model. The 30-minute design
 is retained as a development comparator, with no operational performance claim or default
-replacement. Next planned milestone: compact LSTM Autoencoder and Colab notebook.
+replacement. The compact LSTM and Colab notebook are complete; see the LSTM diagnostics for development results.
 
 ## Project Layout
 
