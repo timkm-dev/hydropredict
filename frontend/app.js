@@ -1,5 +1,6 @@
 import { CHANNELS, parseTelemetry, windowRows, toCSV } from './data.js';
 import { DEMO_UNITS, unitTelemetry, demoAlerts, unitStatus, eventsInWindow } from './units.js';
+import { getModel, scoreTelemetry, scoreEvents, scoresInWindow } from './inference.js';
 
 const $ = selector => document.querySelector(selector);
 let selectedUnit = 'unit-01';
@@ -9,6 +10,9 @@ let source = 'demo';
 let channel = 'V1';
 let toastTimer;
 let alerts = demoAlerts();
+let inference = null;
+let connectedModel = null;
+let running = false;
 const descriptions = {
   overview: ['Equipment overview', 'See which units need attention, then review the affected signals.'],
   telemetry: ['Signal readings', 'Readings for the selected equipment. Select a different unit on Equipment overview.'],
@@ -19,7 +23,12 @@ const time = value => new Date(value).toISOString().slice(11, 16);
 const date = value => new Date(value).toISOString().slice(0, 10);
 const number = value => new Intl.NumberFormat('en', { maximumFractionDigits: 3 }).format(value);
 const currentRows = () => windowRows(records, $('#time-range').value);
-const activeEvents = () => source === 'demo' ? eventsInWindow(alerts, currentRows()) : [];
+const activeEvents = () => {
+  if (source === 'demo') return eventsInWindow(alerts, currentRows());
+  if (!inference) return [];
+  const rows = currentRows();
+  return alerts.filter(event => Date.parse(event.endTime) >= Date.parse(rows[0].t) && Date.parse(event.time) <= Date.parse(rows.at(-1).t));
+};
 const unitName = id => units.find(unit => unit.id === id)?.name || 'Unassigned equipment';
 
 function selectUnit(id, signal) {
@@ -31,21 +40,26 @@ function selectUnit(id, signal) {
 
 function renderUnits() {
   const events = activeEvents();
-  const evaluated = source === 'demo';
-  $('#unit-source-label').textContent = evaluated ? 'DEMO EQUIPMENT' : 'EQUIPMENT NOT IDENTIFIED';
-  $('#assessment-source').textContent = evaluated ? 'Demo events' : 'Not assessed';
+  const evaluated = source === 'demo' || scoresInWindow(inference, currentRows()).length > 0;
+  const statusFor = id => {
+    const status = unitStatus(id, events, evaluated);
+    if (inference && status.kind === 'clear') status.summary = 'No threshold crossings among scored readings in this period. Unscored readings are not assessed; equipment health is not confirmed.';
+    return status;
+  };
+  $('#unit-source-label').textContent = source === 'demo' ? 'DEMO EQUIPMENT' : 'EQUIPMENT NOT IDENTIFIED';
+  $('#assessment-source').textContent = inference ? 'LSTM model' : source === 'demo' ? 'Demo events' : 'Not assessed';
   $('#unit-cards').innerHTML = units.map(unit => {
-    const status = unitStatus(unit.id, events, evaluated);
+    const status = statusFor(unit.id);
     const flagged = events.filter(event => event.unitId === unit.id);
     const unreviewed = flagged.filter(event => !event.acknowledged).length;
     return `<button class="unit-card ${status.kind}" data-unit="${unit.id}" aria-pressed="${unit.id === selectedUnit}"><span class="unit-card-top"><span class="equipment-icon" aria-hidden="true">▥</span><span class="unit-status ${status.kind}">${status.label}</span></span><strong>${unit.name}</strong><span class="unit-location">${unit.location}</span><span class="unit-card-description">${flagged.length ? `Flagged signal: ${[...new Set(flagged.map(event => event.channel))].join(', ')} · ${unreviewed} awaiting review` : evaluated ? 'No flagged signals in this period' : 'Import has no equipment ID or model results'}</span><span class="unit-card-action">${unit.id === selectedUnit ? 'Selected equipment' : 'View unit details →'}</span></button>`;
   }).join('');
-  const status = unitStatus(selectedUnit, events, evaluated);
+  const status = statusFor(selectedUnit);
   const unitEvents = events.filter(event => event.unitId === selectedUnit);
   $('#unit-detail-title').textContent = unitName(selectedUnit);
   $('#unit-detail-status').className = `unit-status ${status.kind}`;
   $('#unit-detail-status').textContent = status.label;
-  $('#unit-detail-body').innerHTML = unitEvents.length ? unitEvents.map(event => `<div class="event-explanation"><div><h3>${event.title}</h3><p>${event.explanation}</p><span class="event-meta">Flagged ${date(event.time)} at ${time(event.time)} UTC · ${event.channel} · Demo event</span></div><div class="event-actions"><button class="button secondary" data-inspect="${event.id}">View ${event.channel} readings</button><button class="button primary" data-ack="${event.id}" ${event.acknowledged ? 'disabled' : ''}>${event.acknowledged ? 'Reviewed' : 'Mark reviewed'}</button></div></div>`).join('') : `<div class="event-explanation"><div><h3>${evaluated ? 'No flagged events in the selected period' : 'Equipment and anomaly status are unknown'}</h3><p>${status.summary} ${evaluated ? 'Select another unit or expand the review period to explore other events.' : 'This CSV contains signals only. A verified equipment assignment and model inference are needed to identify affected units.'}</p></div></div>`;
+  $('#unit-detail-body').innerHTML = unitEvents.length ? unitEvents.slice(0, 20).map(event => `<div class="event-explanation"><div><h3>${event.title}</h3><p>${event.explanation}</p><span class="event-meta">Flagged ${date(event.time)} at ${time(event.time)} UTC · ${event.channel} · ${inference ? 'LSTM result' : 'Demo event'}</span>${event.errors ? `<div class="error-breakdown">${CHANNELS.map(c => `<span>${c} error <b>${number(event.errors[c])}</b></span>`).join('')}</div>` : ''}</div><div class="event-actions"><button class="button secondary" data-inspect="${event.id}">View ${event.channel} readings</button><button class="button primary" data-ack="${event.id}" ${event.acknowledged ? 'disabled' : ''}>${event.acknowledged ? 'Reviewed' : 'Mark reviewed'}</button></div></div>`).join('') + (unitEvents.length > 20 ? '<p class="inference-help">Showing the first 20 episodes. Narrow the review period to see more.</p>' : '') : `<div class="event-explanation"><div><h3>${evaluated ? 'No flagged events in the selected period' : 'Equipment and anomaly status are unknown'}</h3><p>${status.summary} ${evaluated ? 'Select another unit or expand the review period to explore other events.' : inference ? 'No eligible sequences in this period. Extend the review period or import a longer continuous series.' : 'This CSV contains signals only. A verified equipment assignment and model inference are needed to identify affected units.'}</p></div></div>`;
 }
 
 function toast(message) {
@@ -54,6 +68,54 @@ function toast(message) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { $('#toast').hidden = true; }, 5500);
 }
+
+function renderInference() {
+  const button = $('#run-lstm');
+  button.disabled = running || source === 'demo' || !connectedModel;
+  button.textContent = running ? 'Assessing telemetry…' : 'Run LSTM assessment';
+  $('#import-button').disabled = running;
+  $('#reset-demo').disabled = running;
+  $('#inference-results').hidden = !inference;
+  $('#inference-help').textContent = running ? 'Scoring all imported observations on the local CPU. Please keep this tab open.' : source === 'demo' ? 'Import source telemetry to run the saved LSTM. Demo equipment events remain separate from model output.' : 'Assess all imported readings using the saved scaler and threshold. Review-period filters do not restart model context. Equipment identity remains unassigned.';
+  if (!inference) return;
+  const rows = currentRows();
+  const scores = scoresInWindow(inference, rows);
+  const flagged = scores.filter(score => score.is_alert).length;
+  $('#inference-summary').textContent = `${inference.model.model_version}: ${scores.length.toLocaleString()} / ${rows.length.toLocaleString()} readings scored in this period · ${rows.length - scores.length} not scored · ${flagged} above threshold. Full import: ${inference.scored_observations} scored / ${inference.input_observations} observations.`;
+  $('#score-chart').innerHTML = chartMarkup(scores, 'anomaly_score', 'lstm-score');
+  const byTime = new Map(scores.map(score => [Date.parse(score.t), score]));
+  $('#score-table').innerHTML = `<table><thead><tr><th>LATEST 20 READINGS (UTC)</th><th>ANOMALY SCORE</th><th>THRESHOLD</th><th>RESULT</th></tr></thead><tbody>${rows.slice(-20).reverse().map(row => {
+    const score = byTime.get(Date.parse(row.t));
+    return `<tr><td>${date(row.t)} ${time(row.t)}</td><td>${score ? number(score.anomaly_score) : '—'}</td><td>${number(inference.model.threshold)}</td><td>${score ? score.is_alert ? 'Anomaly flagged' : 'Below threshold' : 'Not scored · sequence history unavailable'}</td></tr>`;
+  }).join('')}</tbody></table>`;
+}
+
+async function connectModel() {
+  try {
+    connectedModel = await getModel();
+    $('#model-connection').textContent = `${connectedModel.model_version} · CPU · threshold ${number(connectedModel.threshold)} · ${connectedModel.sequence_length} readings per sequence`;
+  } catch {
+    connectedModel = null;
+    $('#model-connection').textContent = 'Inference offline. Launch: .venv/Scripts/python.exe -m hydropredict.dashboard (port 8766).';
+  }
+  renderInference();
+}
+
+$('#run-lstm').addEventListener('click', async () => {
+  if (running || source === 'demo' || !connectedModel) return;
+  running = true; renderInference();
+  try {
+    const result = await scoreTelemetry(records);
+    const events = scoreEvents(result, selectedUnit);
+    inference = result; alerts = events;
+    $('#source-pill').textContent = 'Imported CSV · LSTM assessed';
+    $('#notice-text').textContent = 'Scored locally with the frozen research LSTM. A threshold crossing is not a confirmed fault. Equipment identity and physical signal meanings remain unverified.';
+    renderTelemetry(); renderAlerts();
+    toast(`LSTM assessment complete: ${result.scored_observations} scored, ${result.unscored_observations} not scored, ${events.length} flagged episodes.`);
+  } catch (error) { toast(`Assessment failed: ${error.message}`); }
+  finally { running = false; renderInference(); }
+});
+$('#reconnect-model').addEventListener('click', connectModel);
 
 function renderRoute() {
   const requested = location.hash.slice(1) || 'overview';
@@ -71,9 +133,11 @@ function renderRoute() {
 }
 
 function chartMarkup(rows, selected, id) {
+  if (!rows.length) return '<div class="empty-state">No eligible scores in this period. More continuous sequence history is needed.</div>';
   const width = 760, height = 245, left = 49, right = 16, top = 12, bottom = 31;
   let min = Infinity, max = -Infinity;
   for (const row of rows) { min = Math.min(min, row[selected]); max = Math.max(max, row[selected]); }
+  if (selected === 'anomaly_score' && inference) { min = 0; max = Math.max(max, inference.model.threshold); }
   const span = max - min || Math.abs(max) * 0.1 || 1;
   min -= span * 0.18; max += span * 0.18;
   // Reject pathological numeric ranges rather than emitting invalid SVG coordinates.
@@ -110,11 +174,15 @@ function chartMarkup(rows, selected, id) {
     const xx = left + tick / 5 * (width - left - right);
     grid += `<text x="${xx}" y="${height - 7}" text-anchor="middle">${time(start + tick / 5 * (end - start))}</text>`;
   }
-  const markers = activeEvents().filter(event => event.unitId === selectedUnit && event.channel === selected).map(event => {
+  if (selected === 'anomaly_score' && inference) {
+    const yy = y({ anomaly_score: inference.model.threshold });
+    grid += `<line x1="${left}" x2="${width - right}" y1="${yy}" y2="${yy}" stroke="#ba7041" stroke-width="1.5" stroke-dasharray="5 4"/><text x="${width - right}" y="${yy - 6}" text-anchor="end" class="event-chart-label">Threshold ${number(inference.model.threshold)}</text>`;
+  }
+  const markers = activeEvents().filter(event => event.unitId === selectedUnit && event.channel === selected && Date.parse(event.time) >= start).slice(0, 50).map(event => {
     const xx = x({ t: event.time });
     return `<line x1="${xx}" x2="${xx}" y1="${top}" y2="${height - bottom}" stroke="#ba7041" stroke-dasharray="4 4"/><text x="${Math.min(Math.max(xx, 110), width - 80)}" y="${top + 10}" text-anchor="middle" class="event-chart-label">Flagged ${time(event.time)}</text>`;
   }).join('');
-  return `<svg viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="${id}-title"><title id="${id}-title">${unitName(selectedUnit)}, ${selected} source measurements from ${rows[0].t} to ${rows.at(-1).t}. Values range from ${number(min)} to ${number(max)}. Measurement units unverified. Dashed orange lines mark demo events.</title>${grid}<path d="${path}" fill="none" stroke="#359779" stroke-width="2" stroke-linejoin="round"/>${markers}<circle cx="${x(rows.at(-1))}" cy="${y(rows.at(-1))}" r="3" fill="#359779"/></svg>`;
+  return `<svg viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="${id}-title"><title id="${id}-title">${unitName(selectedUnit)}, ${selected} from ${rows[0].t} to ${rows.at(-1).t}. Values range from ${number(min)} to ${number(max)}. Dashed orange lines mark ${selected === 'anomaly_score' ? 'the alert threshold' : inference ? 'model events' : 'demo events'}.</title>${grid}<path d="${path}" fill="none" stroke="#359779" stroke-width="2" stroke-linejoin="round"/>${markers}<circle cx="${x(rows.at(-1))}" cy="${y(rows.at(-1))}" r="3" fill="#359779"/></svg>`;
 }
 
 function renderTelemetry() {
@@ -136,16 +204,17 @@ function renderTelemetry() {
     return `<div class="channel-row"><div class="channel-name"><span></span>${c}</div>${sparkline}<div class="channel-number">${number(rows.at(-1)[c])}</div></div>`;
   }).join('');
   $('#telemetry-table').innerHTML = `<table><thead><tr><th>TIMESTAMP (UTC)</th>${CHANNELS.map(c => `<th>${c}</th>`).join('')}</tr></thead><tbody>${rows.slice(-20).reverse().map(row => `<tr><td>${date(row.t)} ${time(row.t)}</td>${CHANNELS.map(c => `<td>${number(row[c])}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+  renderInference();
 }
 
 function renderAlerts() {
   const visible = activeEvents();
   const selected = visible.filter(event => event.unitId === selectedUnit);
-  $('#open-alert-count').textContent = source === 'demo' ? selected.filter(event => !event.acknowledged).length : '—';
+  $('#open-alert-count').textContent = source === 'demo' || inference ? selected.filter(event => !event.acknowledged).length : '—';
   $('#nav-alert-count').textContent = visible.filter(event => !event.acknowledged).length;
   $('#recent-count').textContent = selected.length;
-  $('#alert-metric-description').textContent = source === 'demo' ? `${unitName(selectedUnit)} · demo events` : 'No model connected · status unknown';
-  const table = items => !items.length ? `<div class="empty-state">${source === 'demo' ? 'No flagged events match this equipment, period, and review status.' : 'Anomaly status unknown. No model has assessed this import.'}</div>` : `<div class="table-scroll"><table><thead><tr><th>EQUIPMENT / SIGNAL</th><th>WHAT CHANGED</th><th>FLAGGED AT (UTC)</th><th>REVIEW STATUS</th><th>ACTION</th></tr></thead><tbody>${items.map(event => `<tr><td><strong>${unitName(event.unitId)}</strong><br><small>Signal ${event.channel}</small></td><td><strong>${event.title}</strong><br><small>${event.id} · Demo event</small></td><td>${time(event.time)}<br><small>${date(event.time)}</small></td><td><span class="alert-status ${event.acknowledged ? 'done' : ''}">${event.acknowledged ? 'Reviewed · still flagged' : 'Awaiting review'}</span></td><td><button class="ack-button" data-inspect="${event.id}">View unit</button></td></tr>`).join('')}</tbody></table></div>`;
+  $('#alert-metric-description').textContent = inference ? 'LSTM episodes · equipment unassigned' : source === 'demo' ? `${unitName(selectedUnit)} · demo events` : 'No assessment run · status unknown';
+  const table = items => !items.length ? `<div class="empty-state">${source === 'demo' || inference ? 'No flagged events match this equipment, period, and review status. Check score coverage above.' : 'Anomaly status unknown. No model has assessed this import.'}</div>` : `<div class="table-scroll"><table><thead><tr><th>EQUIPMENT / SIGNAL</th><th>WHAT CHANGED</th><th>FLAGGED AT (UTC)</th><th>REVIEW STATUS</th><th>ACTION</th></tr></thead><tbody>${items.slice(0, 50).map(event => `<tr><td><strong>${unitName(event.unitId)}</strong><br><small>Signal ${event.channel}</small></td><td><strong>${event.title}</strong><br><small>${event.id} · ${inference ? 'LSTM result' : 'Demo event'}</small></td><td>${time(event.time)}<br><small>${date(event.time)}</small></td><td><span class="alert-status ${event.acknowledged ? 'done' : ''}">${event.acknowledged ? 'Reviewed · still flagged' : 'Awaiting review'}</span></td><td><button class="ack-button" data-inspect="${event.id}">View unit</button></td></tr>`).join('')}</tbody></table></div>`;
   $('#recent-alerts').innerHTML = table(selected);
   const filter = $('#alert-filter').value;
   $('#all-alerts').innerHTML = table(visible.filter(event => filter === 'all' || (filter === 'acknowledged' ? event.acknowledged : !event.acknowledged)));
@@ -167,7 +236,7 @@ document.addEventListener('click', event => {
     $('#unit-detail-title').scrollIntoView({ behavior: 'smooth', block: 'center' });
     const tab = document.querySelector(`#overview-channel-tabs [data-channel="${flagged.channel}"]`);
     tab.focus({ preventScroll: true });
-    toast(`Showing ${unitName(flagged.unitId)}, signal ${flagged.channel}. Orange dashed line marks the demo event.`);
+    toast(`Showing ${unitName(flagged.unitId)}, signal ${flagged.channel}. Orange dashed line marks the flagged event.`);
   }
   const selected = event.target.closest('[data-channel]');
   if (selected) { channel = selected.dataset.channel; renderTelemetry(); }
@@ -181,12 +250,14 @@ $('#time-range').addEventListener('change', () => { renderTelemetry(); renderAle
 $('#alert-filter').addEventListener('change', renderAlerts);
 $('#import-button').addEventListener('click', () => $('#csv-file').click());
 $('#csv-file').addEventListener('change', async event => {
+  if (running) return;
   const file = event.target.files[0];
   if (!file) return;
   try {
     if (file.size > 25 * 1024 * 1024) throw new Error('Choose a CSV smaller than 25 MB.');
     const imported = parseTelemetry(await file.text());
     records = imported; source = 'import';
+    inference = null; alerts = [];
     selectedUnit = 'unassigned';
     units = [{ id: 'unassigned', name: 'Unassigned equipment', location: 'Imported CSV · equipment identity unknown' }];
     channel = 'V1';
@@ -195,16 +266,18 @@ $('#csv-file').addEventListener('change', async event => {
     $('#notice-text').textContent = 'Imported source measurements. No inference is running. Naive timestamps are interpreted as UTC; physical units remain unverified.';
     $('#time-range').value = 'all';
     renderTelemetry(); renderAlerts();
-    toast(`Imported ${records.length.toLocaleString()} observations. Data stays in this tab.`);
+    toast(`Imported ${records.length.toLocaleString()} observations. Select Run LSTM assessment to score them locally.`);
   } catch (error) { toast(`Import failed: ${error.message}`); }
   finally { event.target.value = ''; }
 });
 $('#reset-demo').addEventListener('click', () => {
+  if (running) return;
+  inference = null;
   source = 'demo'; units = DEMO_UNITS; selectedUnit = 'unit-01';
   records = unitTelemetry(selectedUnit); alerts = demoAlerts(); channel = 'V1';
   $('#source-pill').textContent = 'Demo dataset';
   $('#dataset-label').textContent = 'SHP / Demo telemetry';
-  $('#notice-text').textContent = 'Three example units with synthetic readings and demo events. Equipment assignments are illustrative; no live model is connected.';
+  $('#notice-text').textContent = 'Three example units with synthetic readings and demo events. Import source telemetry to run the research LSTM.';
   $('#time-range').value = '24'; $('#alert-filter').value = 'all';
   renderTelemetry(); renderAlerts(); toast('Demo dataset restored.');
 });
@@ -218,3 +291,4 @@ $('#export-button').addEventListener('click', () => {
 $('.mini-bars').innerHTML = Array.from({ length: 26 }, (_, i) => `<i style="height:${9 + Math.round((Math.sin(i * 1.8) + 1) * 5)}px"></i>`).join('');
 window.addEventListener('hashchange', renderRoute);
 renderRoute(); renderTelemetry(); renderAlerts();
+connectModel();
