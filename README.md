@@ -81,6 +81,10 @@ Run all development checks (Ruff format, Ruff lint, Mypy strict types, Pytest):
 
 ## Frontend dashboard
 
+For a portable Colab investigation of preprocessing and missed faults, use
+[`notebooks/investigate_shp_colab.ipynb`](notebooks/investigate_shp_colab.ipynb)
+with its generated input ZIP. See [the Colab walkthrough](docs/colab-investigation.md).
+
 Latest model investigation: four additional normal-only novelty candidates did
 not improve development fault detection. A descriptive six-hour trend analysis
 identified a possible slow-change mechanism for one missed fault, without
