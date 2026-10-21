@@ -1,0 +1,8 @@
+model,detected,eligible,original_detected,original_eligible,nominal_alerts,nominal_rows,nominal_fraction,nominal_episodes,scored_rows,promising
+if_original_raw,0,3,0,6,97,5887,0.016476983183285204,70,6742,False
+if_30min,1,3,1,6,60,5887,0.010191948360794971,32,6452,False
+lstm,1,3,1,6,79,5887,0.013419398675046714,25,6469,False
+pca_residual,0,3,0,6,112,5887,0.019024970273483946,66,6742,False
+local_level,0,3,0,6,267,5887,0.04535417020553763,132,6742,False
+regime_covariance,0,3,0,6,381,5887,0.06471887209104807,113,6742,False
+local_temporal,0,3,0,6,98,5887,0.016646848989298454,38,6452,False

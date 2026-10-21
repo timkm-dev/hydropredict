@@ -81,6 +81,11 @@ Run all development checks (Ruff format, Ruff lint, Mypy strict types, Pytest):
 
 ## Frontend dashboard
 
+Latest model investigation: four additional normal-only novelty candidates did
+not improve development fault detection. A descriptive six-hour trend analysis
+identified a possible slow-change mechanism for one missed fault, without
+establishing a validated predictor. See [the investigation results](docs/signal-investigation-results.md).
+
 Start the dashboard from the repository root and open http://127.0.0.1:8766:
 
 ```powershell
