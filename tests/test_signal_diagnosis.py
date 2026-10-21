@@ -1,9 +1,19 @@
 """Verify trend calculations cannot turn unavailable telemetry into evidence."""
 
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 
-from scripts.diagnose_signal_overlap import six_hour_slope
+from scripts.diagnose_signal_overlap import read_scores, six_hour_slope
+
+
+def test_loads_score_times_with_mixed_fractional_precision(tmp_path: Path) -> None:
+    path = tmp_path / "scores.csv"
+    path.write_text("t\n2019-02-02 05:42:46.123000+00:00\n2019-02-02 05:47:46+00:00\n")
+    frame = read_scores(path)
+    assert len(frame) == 2
+    assert str(frame.t.dt.tz) == "UTC"
 
 
 def test_known_slope_and_coverage_exclusions() -> None:

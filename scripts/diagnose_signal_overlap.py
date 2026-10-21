@@ -15,6 +15,12 @@ from hydropredict.data.partitioning import compute_file_sha256
 from hydropredict.data.schema import MEASUREMENT_COLUMNS
 
 
+def read_scores(path: Path) -> pd.DataFrame:
+    frame = pd.read_csv(path)
+    frame["t"] = pd.to_datetime(frame.t, utc=True, format="mixed")
+    return frame
+
+
 def six_hour_slope(
     timeline: pd.DataFrame, cutoff: pd.Timestamp, scale: np.ndarray
 ) -> np.ndarray | None:
@@ -63,17 +69,14 @@ def main() -> None:
     timeline = frames["validation_context"]
     nominal_times = set(frames["validation_nominal"].t)
     events = pd.read_csv(args.study / "events.csv")
+    model_scores = {
+        name: read_scores(args.study / f"{name}-scores.csv") for name in events.model.unique()
+    }
+    matched = set.intersection(*(set(scores.t) for scores in model_scores.values()))
     ranking = []
     for name, group in events.groupby("model"):
-        scores = pd.read_csv(args.study / f"{name}-scores.csv")
-        scores["t"] = pd.to_datetime(scores.t, utc=True, format="mixed")
+        scores = model_scores[name]
         # Use exactly the matched normal reference for all candidates.
-        matched = set.intersection(
-            *(
-                set(pd.to_datetime(pd.read_csv(args.study / f"{n}-scores.csv").t, utc=True))
-                for n in events.model.unique()
-            )
-        )
         reference = scores[scores.t.isin(nominal_times & matched)].anomaly_score
         for event in group.to_dict("records"):
             ranking.append(
