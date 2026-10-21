@@ -127,6 +127,7 @@ def main() -> None:
         "--diagnostics", type=Path, default=ROOT / "models/lstm-diagnostics-2026-10-15-v1"
     )
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--source-commit", help="Committed snapshot ID when running without Git")
     args = parser.parse_args()
     if args.output.exists():
         parser.error("Choose a new directory; preserve prior evidence.")
@@ -172,7 +173,8 @@ def main() -> None:
     nominal_times = set(frames["validation_nominal"].t)
     args.output.mkdir(parents=True)
     protocol = {
-        "source_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
+        "source_commit": args.source_commit
+        or subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
         "protocol_sha256": compute_file_sha256(ROOT / "docs/signal-investigation-protocol.md"),
         "input_package_sha256": compute_file_sha256(args.inputs),
         "diagnostics_sha256": diagnostic_hashes["diagnostics.json"],
