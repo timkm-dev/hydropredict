@@ -16,6 +16,7 @@ import pytest
 
 pytest.importorskip("torch")
 
+from hydropredict.auth import AuthStore
 from hydropredict.dashboard import DashboardHandler, InferenceService
 from hydropredict.models.lstm import LSTMConfig, SHPLSTMAutoencoder
 
@@ -91,6 +92,64 @@ def test_http_boundary_and_model_status(service: InferenceService) -> None:
                 response = connection.getresponse()
                 assert response.status == status
                 response.read()
+        finally:
+            connection.close()
+            server.shutdown()
+            worker.join(timeout=5)
+
+
+def test_authenticated_http_flow(service: InferenceService, tmp_path: Path) -> None:
+    auth = AuthStore(tmp_path / "accounts.sqlite3")
+    handler = partial(DashboardHandler, service=service, auth=auth)
+    with HTTPServer(("127.0.0.1", 0), handler) as server:
+        worker = threading.Thread(target=server.serve_forever, daemon=True)
+        worker.start()
+        connection = http.client.HTTPConnection("127.0.0.1", server.server_port, timeout=10)
+        try:
+            connection.request("GET", "/api/model")
+            response = connection.getresponse()
+            assert response.status == 401
+            response.read()
+            connection.request("GET", "/")
+            response = connection.getresponse()
+            assert response.status == 302
+            assert response.getheader("Location") == "/auth.html"
+            response.read()
+            headers = {"Content-Type": "application/json"}
+            credentials = {"email": "test@example.com", "password": "a long test password"}
+            connection.request("POST", "/api/auth/register", json.dumps(credentials), headers)
+            response = connection.getresponse()
+            assert response.status == 200
+            cookie = response.getheader("Set-Cookie")
+            assert cookie and "HttpOnly" in cookie and "SameSite=Strict" in cookie
+            assert json.loads(response.read())["user"]["username"] is None
+            headers["Cookie"] = cookie.split(";", 1)[0]
+            connection.request("POST", "/api/score", json.dumps({"records": records()}), headers)
+            response = connection.getresponse()
+            assert response.status == 403
+            response.read()
+            profile = {
+                "name": "Test Person",
+                "company": "Hydro",
+                "username": "tester",
+                "job_position": "Engineer",
+            }
+            connection.request("POST", "/api/auth/profile", json.dumps(profile), headers)
+            response = connection.getresponse()
+            assert response.status == 200
+            assert json.loads(response.read())["user"]["name"] == "Test Person"
+            connection.request("POST", "/api/score", json.dumps({"records": records()}), headers)
+            response = connection.getresponse()
+            assert response.status == 200
+            response.read()
+            connection.request("POST", "/api/auth/logout", "{}", headers)
+            response = connection.getresponse()
+            assert response.status == 200
+            response.read()
+            connection.request("GET", "/api/model", headers=headers)
+            response = connection.getresponse()
+            assert response.status == 401
+            response.read()
         finally:
             connection.close()
             server.shutdown()
