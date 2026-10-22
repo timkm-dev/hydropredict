@@ -44,6 +44,8 @@ where = ["src"]
 hydropredict = ["py.typed"]
 
 [tool.pytest.ini_options]
+# Tests also import repository-level diagnostic scripts, outside the installed src package.
+pythonpath = ["."]
 addopts = "-ra --strict-markers --basetemp=.pytest_tmp -o cache_dir=.pytest_tmp/cache --cov=hydropredict --cov-report=term-missing"
 testpaths = ["tests"]
 
