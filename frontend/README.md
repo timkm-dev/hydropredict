@@ -1,5 +1,24 @@
 # HydroPredict dashboard
 
+## Anomalies and recorded faults
+
+Select **Anomalies & faults** in the navigation for the real-evidence proof of
+concept at `/evidence.html`. Generate its local evidence once from the original
+input package and saved LSTM diagnostics:
+
+```powershell
+.venv/Scripts/python.exe scripts/map_anomalies_to_faults.py
+```
+
+The page compares all nine development fault timestamps with frozen scores,
+explains preceding warnings and misses, and keeps insufficient data separate.
+It has an interactive event chart, the six-hour warning window, visible score
+gaps and an all-event table. It does not use the overview's synthetic equipment.
+The generated `frontend/evidence-data.json` stays outside Git. Another machine
+needs the authorized local source artifacts and must run the generator; without
+them the page displays setup instructions. See
+[experiment and interpretation](../docs/anomaly-fault-mapping.md).
+
 A responsive, dependency-free frontend for the research project. It provides an
 overview, SVG telemetry charts, a six-channel explorer, illustrative alert review,
 and a model readiness workspace. Python analysis modules remain unchanged.
