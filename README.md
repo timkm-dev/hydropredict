@@ -45,10 +45,11 @@ Implemented frontend: responsive local dashboard with synthetic preview data, te
 CSV import/export, six-channel trend exploration, temporary illustrative alert review,
 and model readiness. Local LSTM CPU inference now provides score/threshold plots,
 per-channel reconstruction errors, and grouped review episodes for imported telemetry.
-See `frontend/README.md`. Live telemetry, authentication, and durable records remain pending.
+See `frontend/README.md`. Local email/password accounts and profile onboarding are implemented.
+Live telemetry and durable analysis records remain pending.
 
 Pending: further justified model experiments, CWRU acquisition and XGBoost, sequential replay,
-application-integrated event evaluation, authentication,
+application-integrated event evaluation, production account recovery and role permissions,
 durable application records, model registry, drift monitoring and deployment.
 Fault-alignment labels are retrospective analysis assumptions, not evaluated predictions.
 
