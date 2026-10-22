@@ -52,3 +52,6 @@ models/*
 !models/.gitkeep
 artifacts/
 reports/generated/
+
+# Locally generated research score evidence; never commit source-derived records.
+frontend/evidence-data.json
