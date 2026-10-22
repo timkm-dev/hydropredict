@@ -6,6 +6,7 @@ build/
 dist/
 .pytest_cache/
 .pytest_tmp/
+.pytest_auth_check_*/
 .mypy_cache/
 .ruff_cache/
 .cache/
@@ -24,6 +25,7 @@ venv/
 *.key
 *.local.md
 *.local/
+.local/
 
 # IDE and operating-system files
 .idea/

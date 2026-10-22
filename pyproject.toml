@@ -12,12 +12,19 @@ authors = [
   { name = "Timothy Kimani", email = "timkm254@gmail.com" },
 ]
 dependencies = [
+  "google-auth[requests]>=2.40,<3",
+  "python-dotenv>=1.0,<2",
+  "psycopg[binary]>=3.2,<4",
   "numpy>=2.0",
   "pandas>=2.2",
   "scipy>=1.13",
+  "scikit-learn>=1.6,<2",
+  "joblib>=1.4,<2",
 ]
 
 [project.optional-dependencies]
+lstm = ["torch>=2.6,<3"]
+analysis = ["matplotlib>=3.9,<4"]
 dev = [
   "mypy>=1.15",
   "pandas-stubs>=2.2",
@@ -37,6 +44,8 @@ where = ["src"]
 hydropredict = ["py.typed"]
 
 [tool.pytest.ini_options]
+# Tests also import repository-level diagnostic scripts, outside the installed src package.
+pythonpath = ["."]
 addopts = "-ra --strict-markers --basetemp=.pytest_tmp -o cache_dir=.pytest_tmp/cache --cov=hydropredict --cov-report=term-missing"
 testpaths = ["tests"]
 

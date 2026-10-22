@@ -11,7 +11,10 @@ $python = Join-Path $projectRoot ".venv\Scripts\python.exe"
 $preCommit = Join-Path $projectRoot ".venv\Scripts\pre-commit.exe"
 
 & $python -m pip install --upgrade pip
-& $python -m pip install -e ".[dev]"
+& $python -m pip install "torch>=2.6,<3" --index-url https://download.pytorch.org/whl/cpu
+if ($LASTEXITCODE -ne 0) { throw "CPU PyTorch installation failed." }
+& $python -m pip install -e ".[dev,lstm]"
+if ($LASTEXITCODE -ne 0) { throw "Project installation failed." }
 & $preCommit install
 
 Write-Host "HydroPredict is ready. Activate it with: .\.venv\Scripts\Activate.ps1"

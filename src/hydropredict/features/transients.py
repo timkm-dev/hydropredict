@@ -17,36 +17,61 @@ def compute_transient_features(
     """Compute first and second discrete numerical time derivatives.
 
     These capture rapid mechanical load fluctuations and electrical shocks.
+    If 'segment_id' is present, transient derivatives reset at segment boundaries.
     Metrics computed per measurement:
       - rate_of_change: dV/dt (units per second)
       - abs_rate_of_change: |dV/dt|
       - acceleration: d^2V/dt^2 (rate of change of derivative)
     """
     features = pd.DataFrame(index=df.index)
+    has_segments = "segment_id" in df.columns
 
-    if time_column in df.columns:
-        dt_series = pd.to_datetime(df[time_column], utc=True).diff().dt.total_seconds()
-        # Replace zero or negative dt with nominal step to avoid division by zero
-        dt_series = dt_series.fillna(nominal_step_seconds)
-        dt = np.where(dt_series > 0, dt_series, nominal_step_seconds)
-    else:
-        dt = np.full(len(df), nominal_step_seconds)
+    if not has_segments:
+        if time_column in df.columns:
+            dt_series = pd.to_datetime(df[time_column], utc=True).diff().dt.total_seconds()
+            dt_series = dt_series.fillna(nominal_step_seconds)
+            dt = np.where(dt_series > 0, dt_series, nominal_step_seconds)
+        else:
+            dt = np.full(len(df), nominal_step_seconds)
 
+        for col in columns:
+            if col not in df.columns:
+                continue
+            vals = df[col].to_numpy(dtype=np.float64)
+            diff1 = np.diff(vals, prepend=vals[0])
+            roc = diff1 / dt
+            diff2 = np.diff(roc, prepend=roc[0])
+            acc = diff2 / dt
+            features[f"{col}_roc"] = roc
+            features[f"{col}_abs_roc"] = np.abs(roc)
+            features[f"{col}_acc"] = acc
+        return features
+
+    # Segment-aware calculation
     for col in columns:
-        if col not in df.columns:
-            continue
-        vals = df[col].to_numpy(dtype=np.float64)
+        if col in df.columns:
+            for suffix in ("roc", "abs_roc", "acc"):
+                features[f"{col}_{suffix}"] = np.zeros(len(df))
 
-        # First derivative: dV / dt
-        diff1 = np.diff(vals, prepend=vals[0])
-        roc = diff1 / dt
+    for positions in df.groupby("segment_id", sort=False).indices.values():
+        group = df.iloc[positions]
+        if time_column in group.columns:
+            g_dt = pd.to_datetime(group[time_column], utc=True).diff().dt.total_seconds()
+            g_dt = g_dt.fillna(nominal_step_seconds)
+            dt_arr = np.where(g_dt > 0, g_dt, nominal_step_seconds)
+        else:
+            dt_arr = np.full(len(group), nominal_step_seconds)
 
-        # Second derivative: d(roc) / dt
-        diff2 = np.diff(roc, prepend=roc[0])
-        acc = diff2 / dt
-
-        features[f"{col}_roc"] = roc
-        features[f"{col}_abs_roc"] = np.abs(roc)
-        features[f"{col}_acc"] = acc
+        for col in columns:
+            if col not in group.columns:
+                continue
+            vals = group[col].to_numpy(dtype=np.float64)
+            diff1 = np.diff(vals, prepend=vals[0])
+            roc = diff1 / dt_arr
+            diff2 = np.diff(roc, prepend=roc[0])
+            acc = diff2 / dt_arr
+            for suffix, values in (("roc", roc), ("abs_roc", np.abs(roc)), ("acc", acc)):
+                column_index = features.columns.get_indexer(pd.Index([f"{col}_{suffix}"]))[0]
+                features.iloc[positions, column_index] = values
 
     return features

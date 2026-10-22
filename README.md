@@ -2,7 +2,8 @@
 
 HydroPredict is an AI-driven predictive-maintenance prototype for hydroelectric power-plant equipment, supporting the academic investigation documented in `Munyiri_Timothy_Kimani_166095.docx`.
 
-The system comprises two distinct analytical workflows sharing common platform services:
+The target system comprises two distinct analytical workflows sharing common platform services.
+The following describes the planned system, not completed model or application functionality:
 
 1. **Primary Small Hydroelectric Plant (SHP) Workflow (Unsupervised Anomaly Detection)**:
    - Ingests operational telemetry ($t, V_1, \dots, V_6$) at nominal 5-minute sampling.
@@ -20,10 +21,42 @@ The system comprises two distinct analytical workflows sharing common platform s
    - Durable persistence for telemetry records, analysis runs, alerts, and operator responses.
    - Web-based operator dashboard.
 
-## Execution Environment & Hardware Profile
+## Current Implementation Status
 
-- **Local Development & Inference**: Tested for Intel Core i5-1235U CPU with 16 GB RAM. Ingestion, preprocessing, feature extraction, Isolation Forest, XGBoost, and CPU inference execute locally.
-- **Deep Learning Training**: The LSTM Autoencoder is trained in a Google Colab hosted GPU runtime using the repository implementation called via `notebooks/train_lstm_colab.ipynb`. The resulting bundle is exported for local CPU loading and inference.
+Implemented and tested: SHP validation, chronological partitioning, segmented offline
+preparation, training-scaler fitting and reuse, segment-aware features, fault alignment
+and EDA. Each preparation run records provenance, row accounting and artifact checksums.
+
+Also implemented: source-readiness and fault-coverage auditing, an exploratory six-channel
+Isolation Forest, disjoint normal-reference threshold calibration, saved-bundle CPU
+inference and retrospective event evaluation. See `docs/shp-readiness-audit.md` and
+`docs/isolation-forest-baseline.md`. The first baseline detected only 1 of 5 eligible test
+events and is not ready for operational warning use. Physical metadata was withdrawn after
+the source-paper audit; exact channel semantics still need a source data dictionary.
+
+Implemented LSTM engineering: gap-safe sequence construction, compact autoencoder,
+normal-only early stopping and calibration, resumable training, CPU model export/loading,
+portable input packaging, separate validation command and a thin Colab notebook.
+The first Colab GPU run is complete and its frozen CPU scores have been reproduced.
+It detected 1 of 3 adequately covered development faults; operational usefulness
+remains unverified. See `docs/lstm-baseline-diagnostics.md` for results and limitations.
+
+Implemented frontend: responsive local dashboard with synthetic preview data, telemetry
+CSV import/export, six-channel trend exploration, temporary illustrative alert review,
+and model readiness. Local LSTM CPU inference now provides score/threshold plots,
+per-channel reconstruction errors, and grouped review episodes for imported telemetry.
+See `frontend/README.md`. Local email/password accounts and profile onboarding are implemented.
+Live telemetry and durable analysis records remain pending.
+
+Pending: further justified model experiments, CWRU acquisition and XGBoost, sequential replay,
+application-integrated event evaluation, production account recovery and role permissions,
+durable application records, model registry, drift monitoring and deployment.
+Fault-alignment labels are retrospective analysis assumptions, not evaluated predictions.
+
+## Planned Execution Environment
+
+- **Local development and inference**: Target laptop is an Intel Core i5-1235U with 16 GB RAM. Data preparation and the Isolation Forest baseline run locally. The initial baseline fit and calibration took about 0.36 seconds; this excludes setup and is not a general performance guarantee.
+- **LSTM training**: Implemented for Google Colab hosted GPU execution through `notebooks/train_lstm_colab.ipynb`. The notebook uploads a committed source/data package, calls repository training code and exports a complete bundle for local CPU inference. The first hosted run is complete; see the development diagnostics above. No live laptop connection or synchronisation service is required.
 
 ## Quick start on Windows
 
@@ -47,6 +80,29 @@ Run all development checks (Ruff format, Ruff lint, Mypy strict types, Pytest):
 .\scripts\check.ps1
 ```
 
+## Frontend dashboard
+
+For a portable Colab investigation of preprocessing and missed faults, use
+[`notebooks/investigate_shp_colab.ipynb`](notebooks/investigate_shp_colab.ipynb)
+with its generated input ZIP. See [the Colab walkthrough](docs/colab-investigation.md).
+
+Latest model investigation: four additional normal-only novelty candidates did
+not improve development fault detection. A descriptive six-hour trend analysis
+identified a possible slow-change mechanism for one missed fault, without
+establishing a validated predictor. See [the investigation results](docs/signal-investigation-results.md).
+
+Start the dashboard from the repository root and open http://127.0.0.1:8766:
+
+```powershell
+.venv/Scripts/python.exe -m hydropredict.dashboard --port 8766
+```
+
+The initial screen uses clearly labeled synthetic data. Import a telemetry CSV
+containing `t,V1,V2,V3,V4,V5,V6`, then select **Run LSTM assessment** for local
+CPU inference using the saved research bundle. The bundle and CPU PyTorch must
+be available; the dashboard shows model connection status and unscored observations.
+See [dashboard instructions](frontend/README.md) for controls and integration limits.
+
 ## CLI Workflows
 
 ```powershell
@@ -54,10 +110,13 @@ Run all development checks (Ruff format, Ruff lint, Mypy strict types, Pytest):
 hydropredict validate data\raw\shp_train.csv --accepted-output data\processed\shp_train_accepted.csv --quarantine-output data\quarantine\shp_train_rejected.csv
 
 # 2. Partition telemetry chronologically
-hydropredict partition data\raw\shp_train.csv data\raw\shp_test.csv --output-dir data\processed\partitions
+hydropredict partition --train-source data\raw\shp_train.csv --test-source data\raw\shp_test.csv --output-dir data\processed\partitions
 
 # 3. Preprocess and fit scaler on training partition
-hydropredict preprocess data\processed\partitions\shp_train_part.csv --output data\processed\shp_train_preprocessed.csv --scaler-output data\processed\scaler.json
+hydropredict preprocess data\processed\partitions\shp_train.csv --output data\processed\shp_train_preprocessed.csv --fit-scaler data\processed\scaler.json --scaler-type standard
+
+# Export scaled model measurements separately from physical feature inputs
+hydropredict preprocess data\processed\partitions\shp_validation.csv --output data\processed\shp_validation_scaled.csv --scaler data\processed\scaler.json --scale
 
 # 4. Extract segment-aware features
 hydropredict extract-features data\processed\shp_train_preprocessed.csv --output data\processed\shp_train_features.csv
@@ -66,6 +125,63 @@ hydropredict extract-features data\processed\shp_train_preprocessed.csv --output
 hydropredict align-faults data\raw\shp_test.csv data\raw\shp_faults.csv --output data\processed\shp_test_labeled.csv
 ```
 
+For a complete repeatable preparation run, choose a new run directory:
+
+```powershell
+python scripts\prepare_shp.py --run-dir data\processed\runs\my-first-run
+```
+
+This command exports chronological partitions, unscaled prepared data, separately scaled
+measurements, physical features and manifests. It refuses to overwrite an existing run.
+Standard scaling fits only the prepared training measurements and is reused for validation
+and testing. Domain features use engineering-unit measurements, not scaled values.
+Do not pass timestamp or segment identifiers to a future estimator as numeric predictors.
+
+The default cutoffs are 1 February and 1 May 2019. They exclude later training-source
+rows and earlier test-source rows; manifests count these exclusions. Their suitability
+for event coverage still needs evaluation. The optional published split is a comparison
+only and does not satisfy the report's chronological evaluation requirement.
+
+Preparation is currently offline and excludes entire extended outages. A future streaming
+replay must define when bins close, when gaps become ineligible and how warm-up operates;
+passing an offline forward-fill test does not prove full streaming causality.
+Linear interpolation remains available for exploratory use and must not be used for
+causal early-warning training or replay. Timestamp-naive source times are consistently
+interpreted as UTC by the current contract; source timezone evidence remains to be confirmed.
+Sensor descriptions and typical ranges also require a recorded source reference before
+claiming validated physical semantics; range warnings are currently an explicit helper.
+
+See `docs/data-preparation-status.md` for verification and remaining scientific limitations.
+
+Audit and train the initial pointwise baseline using new artifact paths:
+
+```powershell
+python scripts\audit_shp.py --preparation-run data\processed\runs\2026-10-13-verified --output data\processed\runs\2026-10-13-verified\readiness_audit.json
+python scripts\train_isolation_forest.py --preparation-run data\processed\runs\2026-10-13-verified --output models\isolation-forest-my-new-run
+```
+
+The baseline selects only raw V1..V6 and calibrates on a later separate normal-reference
+subset; it does not consume the earlier prepared physical features. Source test excerpts
+are fault-selected, so general false-alert frequency remains unverified. Save the reported
+poor initial result rather than repeatedly tuning on the same final test period.
+
+The validation-only temporal feature and threshold comparison is documented in
+`docs/validation-model-comparison.md`. It found a limited temporal signal but substantial
+warm-up coverage loss; no replacement model was promoted. Install `.[analysis]` for the
+optional Matplotlib diagnostics and run `scripts/compare_validation_models.py` as documented.
+
+Observed development context can now be reconstructed from both source files with exact
+timestamp provenance and no synthetic filling. The frozen-model validation check restored
+92 pre-fault temporal score rows, but adequate temporal event coverage remained at two
+events and neither was detected. See `docs/continuous-context-evaluation.md` for the fixed
+experiment, limitations and reproduction command. No default model was changed.
+
+The declared 15/30/120-minute context comparison is complete; see
+`docs/short-context-comparison.md`. Both shorter designs detected one of three adequately
+covered validation faults, versus zero of two for the two-hour model. The 30-minute design
+is retained as a development comparator, with no operational performance claim or default
+replacement. The compact LSTM and Colab notebook are complete; see the LSTM diagnostics for development results.
+
 ## Project Layout
 
 ```text
@@ -73,10 +189,11 @@ hydropredict/
 |-- .github/workflows/       Continuous integration
 |-- data/                    Dataset manifest, samples, raw and processed data stages
 |-- docs/                    Architecture decisions and requirement traceability
+|-- frontend/                Responsive local research dashboard and data validation tests
 |-- models/                  Trained model bundles and scalers (ignored by Git)
-|-- notebooks/               Colab GPU training notebooks
+|-- notebooks/               Planned Colab notebook directory (not implemented)
 |-- scripts/                 Environment setup and verification scripts
-|-- src/hydropredict/        Application source code (data, features, models, app)
+|-- src/hydropredict/        Current data, feature and analysis modules
 |-- tests/                   Automated tests (unit, integration, regression)
 |-- pyproject.toml           Package and tool configuration
 `-- README.md                Project documentation

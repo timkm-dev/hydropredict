@@ -18,6 +18,9 @@ def compute_rolling_features(
       - window=6 corresponds to 30 minutes.
       - window=24 corresponds to 2 hours.
 
+    If 'segment_id' is present in df, rolling statistics reset at segment
+    boundaries, preventing statistical computation from bridging across outages.
+
     Computed metrics for each measurement and window:
       - rolling_mean: Central tendency
       - rolling_std: Local volatility / noise
@@ -26,6 +29,7 @@ def compute_rolling_features(
       - rolling_p2p: Local peak-to-peak amplitude (max - min)
     """
     features = pd.DataFrame(index=df.index)
+    has_segments = "segment_id" in df.columns
 
     for col in columns:
         if col not in df.columns:
@@ -33,11 +37,19 @@ def compute_rolling_features(
         series = df[col]
 
         for w in windows:
-            roll = series.rolling(window=w, min_periods=1)
-            mean_series = roll.mean()
-            std_series = roll.std().fillna(0.0)
-            min_series = roll.min()
-            max_series = roll.max()
+            if has_segments:
+                roll = df.groupby("segment_id", sort=False)[col].rolling(window=w, min_periods=1)
+                mean_series = roll.mean().reset_index(level=0, drop=True)
+                std_series = roll.std().fillna(0.0).reset_index(level=0, drop=True)
+                min_series = roll.min().reset_index(level=0, drop=True)
+                max_series = roll.max().reset_index(level=0, drop=True)
+            else:
+                series_roll = series.rolling(window=w, min_periods=1)
+                mean_series = series_roll.mean()
+                std_series = series_roll.std().fillna(0.0)
+                min_series = series_roll.min()
+                max_series = series_roll.max()
+
             p2p_series = max_series - min_series
 
             features[f"{col}_roll_mean_{w}"] = mean_series

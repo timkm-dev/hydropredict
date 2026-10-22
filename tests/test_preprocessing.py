@@ -9,7 +9,9 @@ import pytest
 
 from hydropredict.data.preprocessing import (
     RobustTelemetryScaler,
+    StandardTelemetryScaler,
     assess_sampling_cadence,
+    load_scaler,
     load_telemetry_dataframe,
     resample_regular_grid,
 )
@@ -270,3 +272,155 @@ def test_gap_longer_than_max_fill_steps_not_partially_filled() -> None:
     assert report.segment_count == 2
     assert report.imputed_step_count == 0
     assert len(prep) == 2
+
+
+def test_standard_telemetry_scaler_roundtrip(tmp_path: Path) -> None:
+    df = pd.DataFrame(
+        {
+            "t": pd.date_range("2026-01-01", periods=5, freq="5min", tz="UTC"),
+            "V1": [10.0, 20.0, 30.0, 40.0, 50.0],  # mean=30, std~15.811
+            "V2": [5.0, 5.0, 5.0, 5.0, 5.0],  # constant: std=0 -> fallback to 1.0
+            "V3": [1.0, 2.0, 3.0, 4.0, 5.0],
+            "V4": [0.1, 0.2, 0.3, 0.4, 0.5],
+            "V5": [20.0, 21.0, 22.0, 23.0, 24.0],
+            "V6": [1000.0, 2000.0, 3000.0, 4000.0, 5000.0],
+        }
+    )
+
+    scaler = StandardTelemetryScaler()
+    scaled = scaler.fit_transform(df)
+
+    # For V1: mean 30, std sqrt(250) = 15.811388...
+    assert pytest.approx(float(scaled["V1"].mean()), abs=1e-6) == 0.0
+    assert pytest.approx(float(scaled["V1"].std()), abs=1e-6) == 1.0
+
+    # Invert transform
+    unscaled = scaler.inverse_transform(scaled)
+    assert np.allclose(unscaled["V1"].to_numpy(), df["V1"].to_numpy())
+    assert np.allclose(unscaled["V6"].to_numpy(), df["V6"].to_numpy())
+
+    # Persistence roundtrip
+    save_path = tmp_path / "standard_scaler.json"
+    scaler.save(save_path)
+    loaded = StandardTelemetryScaler.load(save_path)
+    assert loaded.means == scaler.means
+    assert loaded.stds == scaler.stds
+
+    transformed_again = loaded.transform(df)
+    assert np.allclose(transformed_again["V1"].to_numpy(), scaled["V1"].to_numpy())
+
+
+def test_load_scaler_type_dispatch(tmp_path: Path) -> None:
+    df = pd.DataFrame(
+        {
+            "V1": [1.0, 2.0, 3.0],
+            "V2": [1.0, 2.0, 3.0],
+            "V3": [1.0, 2.0, 3.0],
+            "V4": [1.0, 2.0, 3.0],
+            "V5": [1.0, 2.0, 3.0],
+            "V6": [1.0, 2.0, 3.0],
+        }
+    )
+
+    std_scaler = StandardTelemetryScaler().fit(df)
+    std_path = tmp_path / "std.json"
+    std_scaler.save(std_path)
+
+    rob_scaler = RobustTelemetryScaler().fit(df)
+    rob_path = tmp_path / "rob.json"
+    rob_scaler.save(rob_path)
+
+    loaded_std = load_scaler(std_path)
+    assert isinstance(loaded_std, StandardTelemetryScaler)
+
+    loaded_rob = load_scaler(rob_path)
+    assert isinstance(loaded_rob, RobustTelemetryScaler)
+
+
+def test_scaler_train_test_split_no_refit() -> None:
+    df_train = pd.DataFrame(
+        {
+            "V1": [10.0, 20.0, 30.0],
+            "V2": [1.0, 1.0, 1.0],
+            "V3": [1.0, 1.0, 1.0],
+            "V4": [1.0, 1.0, 1.0],
+            "V5": [1.0, 1.0, 1.0],
+            "V6": [1.0, 1.0, 1.0],
+        }
+    )
+    df_test = pd.DataFrame(
+        {
+            "V1": [100.0, 200.0, 300.0],
+            "V2": [1.0, 1.0, 1.0],
+            "V3": [1.0, 1.0, 1.0],
+            "V4": [1.0, 1.0, 1.0],
+            "V5": [1.0, 1.0, 1.0],
+            "V6": [1.0, 1.0, 1.0],
+        }
+    )
+
+    scaler = StandardTelemetryScaler().fit(df_train)
+    # Transforming test must use train mean (20.0) and std (10.0), NOT test statistics
+    scaled_test = scaler.transform(df_test)
+    assert pytest.approx(float(scaled_test["V1"].iloc[0])) == (100.0 - 20.0) / 10.0
+    assert scaler.means["V1"] == 20.0
+
+
+def test_scaler_unfitted_raises_runtime_error() -> None:
+    scaler = StandardTelemetryScaler()
+    df = pd.DataFrame({"V1": [1.0, 2.0]})
+    with pytest.raises(RuntimeError, match="must be fitted"):
+        scaler.transform(df)
+    with pytest.raises(RuntimeError, match="must be fitted"):
+        scaler.inverse_transform(df)
+    with pytest.raises(RuntimeError, match="Cannot serialize unfitted"):
+        scaler.to_dict()
+
+
+@pytest.mark.parametrize("freq,minutes", [("1min", 10), ("10min", 50)])
+def test_gap_limit_tracks_configured_frequency(freq: str, minutes: int) -> None:
+    from hydropredict.data.preprocessing import prepare_telemetry_series
+
+    df = pd.DataFrame(
+        {
+            "t": pd.to_datetime(["2026-01-01T00:00:00Z", "2026-01-01T00:00:00Z"]),
+            **{f"V{i}": [1.0, 2.0] for i in range(1, 7)},
+        }
+    )
+    df.loc[1, "t"] += pd.Timedelta(minutes=minutes)
+    prepared, report = prepare_telemetry_series(df, freq=freq, max_fill_steps=3)
+    assert len(prepared) == 2
+    assert report.segment_count == 2
+    assert report.imputed_step_count == 0
+
+
+def test_rejects_inconsistent_grid_configuration() -> None:
+    from hydropredict.data.preprocessing import prepare_telemetry_series
+
+    with pytest.raises(ValueError, match="must match"):
+        prepare_telemetry_series(pd.DataFrame(), freq="1min", nominal_step_seconds=300)
+    with pytest.raises(ValueError, match="nonnegative"):
+        prepare_telemetry_series(pd.DataFrame(), max_fill_steps=-1)
+
+
+def test_standard_scaler_single_observation_has_finite_fallback() -> None:
+    df = pd.DataFrame({"V1": [2.0]})
+    scaler = StandardTelemetryScaler().fit(df, columns=("V1",))
+    assert scaler.stds == {"V1": 1.0}
+    assert scaler.transform(df)["V1"].tolist() == [0.0]
+
+
+@pytest.mark.parametrize("scale", [0.0, -1.0, float("nan"), float("inf")])
+def test_rejects_invalid_scaler_artifacts(scale: float) -> None:
+    with pytest.raises(ValueError, match="finite"):
+        StandardTelemetryScaler.from_dict({"means": {"V1": 1.0}, "stds": {"V1": scale}})
+    with pytest.raises(ValueError, match="finite"):
+        RobustTelemetryScaler.from_dict({"medians": {"V1": 1.0}, "iqrs": {"V1": scale}})
+
+
+def test_scaler_rejects_missing_fitted_columns() -> None:
+    scaler = StandardTelemetryScaler().fit(pd.DataFrame({"V1": [1.0, 2.0]}), columns=("V1",))
+    with pytest.raises(ValueError, match="Missing fitted"):
+        scaler.transform(pd.DataFrame({"V2": [1.0]}))
+    with pytest.raises(ValueError, match="matching"):
+        RobustTelemetryScaler.from_dict({"medians": {"V1": 1.0}, "iqrs": {"V2": 1.0}})

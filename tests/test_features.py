@@ -13,6 +13,28 @@ from hydropredict.features import (
 )
 
 
+def test_segment_derivatives_preserve_original_row_positions() -> None:
+    df = pd.DataFrame(
+        {
+            "t": pd.date_range("2026-01-01", periods=4, freq="5min", tz="UTC"),
+            "V1": [0.0, 10.0, 2.0, 14.0],
+            "segment_id": [0, 1, 0, 1],
+        }
+    )
+    from hydropredict.features.transients import compute_transient_features
+
+    result = compute_transient_features(df, columns=("V1",))
+    assert result.V1_roc.tolist() == pytest.approx([0.0, 0.0, 2.0 / 600, 4.0 / 600])
+
+
+def test_feature_pipeline_rejects_unsorted_timestamps() -> None:
+    from hydropredict.features.pipeline import extract_feature_matrix
+
+    df = pd.DataFrame({"t": ["2026-01-02", "2026-01-01"], "V1": [1.0, 2.0]})
+    with pytest.raises(ValueError, match="chronological"):
+        extract_feature_matrix(df)
+
+
 @pytest.fixture
 def sample_telemetry() -> pd.DataFrame:
     # 10 rows spaced 300 seconds apart
@@ -102,3 +124,98 @@ def test_extract_feature_matrix_pipeline(sample_telemetry: pd.DataFrame) -> None
     assert "V1_roll_mean_2" in matrix.columns
     assert "V1_roc" in matrix.columns
     assert "vib_total_rss" in matrix.columns
+
+
+def test_extract_feature_matrix_excludes_evaluation_columns() -> None:
+    df = pd.DataFrame(
+        {
+            "t": pd.date_range("2026-01-01", periods=3, freq="5min", tz="UTC"),
+            "V1": [1.0, 2.0, 3.0],
+            "V2": [1.0, 2.0, 3.0],
+            "V3": [1.0, 2.0, 3.0],
+            "V4": [1.0, 2.0, 3.0],
+            "V5": [1.0, 2.0, 3.0],
+            "V6": [100.0, 200.0, 300.0],
+            "fault_state": [0, 0, 1],
+            "time_to_next_fault_seconds": [3600.0, 1800.0, 0.0],
+            "nearest_fault_distance_seconds": [3600.0, 1800.0, 0.0],
+            "source_row": [10, 11, 12],
+        }
+    )
+
+    matrix = extract_feature_matrix(df)
+
+    # Evaluation columns must NEVER enter predictor feature matrix
+    assert "fault_state" not in matrix.columns
+    assert "time_to_next_fault_seconds" not in matrix.columns
+    assert "nearest_fault_distance_seconds" not in matrix.columns
+    assert "source_row" not in matrix.columns
+
+
+def test_segment_aware_rolling_features_resets_at_outage() -> None:
+    # 2 segments separated by an outage:
+    # Segment 0: values [10.0, 10.0, 10.0]
+    # Segment 1: values [100.0, 100.0, 100.0]
+    df = pd.DataFrame(
+        {
+            "segment_id": [0, 0, 0, 1, 1, 1],
+            "V1": [10.0, 10.0, 10.0, 100.0, 100.0, 100.0],
+        }
+    )
+
+    features = compute_rolling_features(df, windows=(3,), columns=("V1",))
+
+    # At row 3 (first row of segment 1), window=3 must NOT include segment 0's 10.0!
+    # Because segment resets, min_periods=1 on segment 1 gives mean = 100.0
+    # (If it leaked across the outage, mean would be (10 + 10 + 100)/3 = 40.0)
+    assert features["V1_roll_mean_3"].iloc[3] == pytest.approx(100.0)
+    assert features["V1_roll_p2p_3"].iloc[3] == pytest.approx(0.0)
+
+
+def test_segment_aware_transient_features_resets_at_outage() -> None:
+    # Segment 0 at 00:00, 00:05
+    # Segment 1 after 30-day outage at Day 30 00:00, 00:05
+    df = pd.DataFrame(
+        {
+            "segment_id": [0, 0, 1, 1],
+            "t": [
+                pd.Timestamp("2026-01-01 00:00:00+0000"),
+                pd.Timestamp("2026-01-01 00:05:00+0000"),
+                pd.Timestamp("2026-02-01 00:00:00+0000"),
+                pd.Timestamp("2026-02-01 00:05:00+0000"),
+            ],
+            "V1": [10.0, 20.0, 80.0, 90.0],
+        }
+    )
+
+    transients = compute_transient_features(df, columns=("V1",))
+
+    # First row of segment 1 (index 2) must reset derivative to 0.0 rather than
+    # calculating (80 - 20) / 30 days!
+    assert transients["V1_roc"].iloc[2] == pytest.approx(0.0)
+    assert transients["V1_acc"].iloc[2] == pytest.approx(0.0)
+
+    # Second row of segment 1 (index 3) is within segment: (90 - 80) / 300s
+    assert transients["V1_roc"].iloc[3] == pytest.approx(10.0 / 300.0)
+
+
+def test_domain_features_min_power_floor() -> None:
+    df = pd.DataFrame(
+        {
+            "V1": [1.0],
+            "V2": [1.0],
+            "V3": [1.0],
+            "V4": [1.0],
+            "V5": [20.0],
+            "V6": [5.0],  # Very low power (< min_power_floor 50.0)
+        }
+    )
+
+    domain_default = compute_domain_features(df, min_power_floor=50.0)
+    # total_rss = sqrt(4) = 2.0
+    # Clamped power = 50.0 -> vib_power_intensity = 2.0 / 50.0 = 0.04
+    assert domain_default["vib_power_intensity"].iloc[0] == pytest.approx(2.0 / 50.0)
+
+    # Custom power floor
+    domain_custom = compute_domain_features(df, min_power_floor=10.0)
+    assert domain_custom["vib_power_intensity"].iloc[0] == pytest.approx(2.0 / 10.0)

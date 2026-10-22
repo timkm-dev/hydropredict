@@ -4,6 +4,7 @@ import csv
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 from hydropredict.cli import main
 from hydropredict.data.partitioning import (
@@ -30,7 +31,7 @@ def test_create_shp_partitions_chronological(tmp_path: Path) -> None:
     create_sample_telemetry(
         train_src,
         [
-            ["2018-08-15T00:00:00Z", "1", "2", "3", "4", "5", "6"],
+            ["2018-08-15T00:00:00.567Z", "1", "2", "3", "4", "5", "6"],
             ["2019-01-15T00:00:00Z", "1", "2", "3", "4", "5", "6"],
             ["2019-07-15T00:00:00Z", "1", "2", "3", "4", "5", "6"],  # will be filtered out of train
         ],
@@ -87,6 +88,11 @@ def test_create_shp_partitions_chronological(tmp_path: Path) -> None:
     reloaded = PartitionManifest.load(manifest_file)
     assert reloaded.strategy == manifest.strategy
     assert reloaded.partitions["train"].sha256 == manifest.partitions["train"].sha256
+    exported = pd.read_csv(out_dir / "shp_train.csv")
+    assert pd.Timestamp(exported.t.iloc[0]).microsecond == 567000
+    assert manifest.partitions["train"].source_origins == (train_src.as_posix(),)
+    assert manifest.source_accounting["train_source"]["excluded_rows"] == 1
+    assert str(train_src.as_posix()) in manifest.source_checksums
 
 
 def test_create_shp_partitions_published(tmp_path: Path) -> None:
@@ -125,7 +131,13 @@ def test_cli_partition(tmp_path: Path, capsys: None) -> None:
     out_dir = tmp_path / "cli_partitions"
 
     create_sample_telemetry(train_src, [["2018-08-15T00:00:00Z", "1", "2", "3", "4", "5", "6"]])
-    create_sample_telemetry(test_src, [["2019-06-15T00:00:00Z", "1", "2", "3", "4", "5", "6"]])
+    create_sample_telemetry(
+        test_src,
+        [
+            ["2019-03-15T00:00:00Z", "1", "2", "3", "4", "5", "6"],
+            ["2019-06-15T00:00:00Z", "1", "2", "3", "4", "5", "6"],
+        ],
+    )
     with faults_src.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.writer(handle)
         writer.writerow(["t"])
@@ -148,3 +160,28 @@ def test_cli_partition(tmp_path: Path, capsys: None) -> None:
 
     assert exit_code == 0
     assert (out_dir / "partitions_manifest.json").exists()
+
+
+@pytest.mark.parametrize(
+    "train_end,val_end",
+    [
+        ("2019-06-01T00:00:00Z", "2019-01-01T00:00:00Z"),
+        ("2020-01-01T00:00:00Z", "2021-01-01T00:00:00Z"),
+    ],
+)
+def test_rejects_invalid_or_empty_partitions(tmp_path: Path, train_end: str, val_end: str) -> None:
+    source = create_sample_telemetry(
+        tmp_path / "source.csv", [["2019-03-15T00:00:00Z", "1", "2", "3", "4", "5", "6"]]
+    )
+    faults = tmp_path / "faults.csv"
+    faults.write_text("t\n", encoding="utf-8")
+    with pytest.raises(ValueError):
+        create_shp_partitions(
+            source,
+            source,
+            faults,
+            tmp_path / "out",
+            train_end_boundary=train_end,
+            val_end_boundary=val_end,
+        )
+    assert not (tmp_path / "out").exists()

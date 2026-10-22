@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 from dataclasses import dataclass
 from datetime import UTC
 from pathlib import Path
@@ -12,6 +13,21 @@ import pandas as pd
 
 from hydropredict.data.schema import MEASUREMENT_COLUMNS, TIMESTAMP_COLUMN
 from hydropredict.data.validation import validate_csv
+
+
+def _validate_scaler_parameters(centers: dict[str, float], scales: dict[str, float]) -> None:
+    if not centers or centers.keys() != scales.keys():
+        raise ValueError("Scaler must contain matching nonempty parameter columns.")
+    if any(not math.isfinite(v) for v in centers.values()) or any(
+        not math.isfinite(v) or v <= 0 for v in scales.values()
+    ):
+        raise ValueError("Scaler parameters must be finite with positive scales.")
+
+
+def _require_scaler_columns(df: pd.DataFrame, columns: dict[str, float]) -> None:
+    missing = set(columns) - set(df.columns)
+    if missing:
+        raise ValueError(f"Missing fitted scaler columns: {sorted(missing)}")
 
 
 @dataclass(frozen=True, slots=True)
@@ -170,7 +186,7 @@ def prepare_telemetry_series(
     freq: str = "5min",
     max_fill_steps: int = 3,
     method: Literal["linear", "forward"] = "forward",
-    nominal_step_seconds: float = 300.0,
+    nominal_step_seconds: float | None = None,
     binning: Literal["ceil", "round"] = "ceil",
     keep_collision: Literal["last", "first"] = "last",
 ) -> tuple[pd.DataFrame, PreparationAccountingReport]:
@@ -183,6 +199,11 @@ def prepare_telemetry_series(
     - Excludes extended outages from the grid to prevent grid inflation and synthetic hallucination.
     - Returns prepared DataFrame and a full PreparationAccountingReport.
     """
+    step_seconds = pd.Timedelta(freq).total_seconds()
+    if step_seconds <= 0 or max_fill_steps < 0:
+        raise ValueError("Frequency must be positive and max_fill_steps must be nonnegative.")
+    if nominal_step_seconds is not None and nominal_step_seconds != step_seconds:
+        raise ValueError("nominal_step_seconds must match freq.")
     if df.empty:
         empty_cols = [
             TIMESTAMP_COLUMN,
@@ -221,7 +242,7 @@ def prepare_telemetry_series(
 
     # Detect segment boundaries where gap exceeds max_fill_steps intervals
     deltas = deduped["t_bin"].diff().dt.total_seconds()
-    gap_threshold = (max_fill_steps + 1) * nominal_step_seconds
+    gap_threshold = (max_fill_steps + 1) * step_seconds
     is_new_segment = (deltas > gap_threshold) | deltas.isna()
     deduped["segment_id"] = (is_new_segment.cumsum() - 1).astype(int)
 
@@ -342,6 +363,7 @@ class RobustTelemetryScaler:
             self.medians[col] = median_val
             self.iqrs[col] = iqr_val
 
+        _validate_scaler_parameters(self.medians, self.iqrs)
         self.is_fitted = True
         return self
 
@@ -350,6 +372,8 @@ class RobustTelemetryScaler:
         if not self.is_fitted:
             raise RuntimeError("RobustTelemetryScaler must be fitted before transforming data.")
 
+        _validate_scaler_parameters(self.medians, self.iqrs)
+        _require_scaler_columns(df, self.medians)
         scaled = df.copy()
         for col, median_val in self.medians.items():
             if col in scaled.columns:
@@ -377,21 +401,23 @@ class RobustTelemetryScaler:
 
         return unscaled
 
-    def to_dict(self) -> dict[str, dict[str, float]]:
+    def to_dict(self) -> dict[str, Any]:
         """Serialize parameters for model artifact persistence."""
         if not self.is_fitted:
             raise RuntimeError("Cannot serialize unfitted scaler.")
         return {
+            "scaler_type": "robust",
             "medians": self.medians,
             "iqrs": self.iqrs,
         }
 
     @classmethod
-    def from_dict(cls, data: dict[str, dict[str, float]]) -> RobustTelemetryScaler:
+    def from_dict(cls, data: dict[str, Any]) -> RobustTelemetryScaler:
         """Instantiate scaler from serialized parameters."""
         scaler = cls()
         scaler.medians = {k: float(v) for k, v in data.get("medians", {}).items()}
         scaler.iqrs = {k: float(v) for k, v in data.get("iqrs", {}).items()}
+        _validate_scaler_parameters(scaler.medians, scaler.iqrs)
         scaler.is_fitted = bool(scaler.medians and scaler.iqrs)
         return scaler
 
@@ -409,3 +435,120 @@ class RobustTelemetryScaler:
         with target.open("r", encoding="utf-8") as handle:
             data = json.load(handle)
         return cls.from_dict(data)
+
+
+class StandardTelemetryScaler:
+    """Standard z-score scaler using mean and standard deviation.
+
+    Formula: z = (x - mean) / std
+    """
+
+    def __init__(self) -> None:
+        self.means: dict[str, float] = {}
+        self.stds: dict[str, float] = {}
+        self.is_fitted: bool = False
+
+    def fit(
+        self, df: pd.DataFrame, columns: tuple[str, ...] = MEASUREMENT_COLUMNS
+    ) -> StandardTelemetryScaler:
+        """Compute mean and standard deviation for target measurement columns."""
+        for col in columns:
+            if col not in df.columns:
+                raise ValueError(f"Column '{col}' not found in DataFrame for scaling.")
+            series = df[col].dropna()
+            if series.empty:
+                raise ValueError(f"Column '{col}' contains no valid data for scaling.")
+            mean_val = float(series.mean())
+            std_val = float(series.std()) if len(series) > 1 else 1.0
+            if std_val <= 1e-8:
+                std_val = 1.0
+
+            self.means[col] = mean_val
+            self.stds[col] = std_val
+
+        _validate_scaler_parameters(self.means, self.stds)
+        self.is_fitted = True
+        return self
+
+    def transform(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Apply standard z-score scaling transformation."""
+        if not self.is_fitted:
+            raise RuntimeError("StandardTelemetryScaler must be fitted before transforming data.")
+
+        _validate_scaler_parameters(self.means, self.stds)
+        _require_scaler_columns(df, self.means)
+        scaled = df.copy()
+        for col, mean_val in self.means.items():
+            if col in scaled.columns:
+                std_val = self.stds[col]
+                scaled[col] = (scaled[col] - mean_val) / std_val
+
+        return scaled
+
+    def fit_transform(
+        self, df: pd.DataFrame, columns: tuple[str, ...] = MEASUREMENT_COLUMNS
+    ) -> pd.DataFrame:
+        """Fit scaler and transform the DataFrame in one step."""
+        return self.fit(df, columns).transform(df)
+
+    def inverse_transform(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Revert scaled columns back to original engineering units."""
+        if not self.is_fitted:
+            raise RuntimeError("StandardTelemetryScaler must be fitted before inverse transform.")
+
+        unscaled = df.copy()
+        for col, mean_val in self.means.items():
+            if col in unscaled.columns:
+                std_val = self.stds[col]
+                unscaled[col] = (unscaled[col] * std_val) + mean_val
+
+        return unscaled
+
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize parameters for model artifact persistence."""
+        if not self.is_fitted:
+            raise RuntimeError("Cannot serialize unfitted scaler.")
+        return {
+            "scaler_type": "standard",
+            "means": self.means,
+            "stds": self.stds,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> StandardTelemetryScaler:
+        """Instantiate scaler from serialized parameters."""
+        scaler = cls()
+        scaler.means = {k: float(v) for k, v in data.get("means", {}).items()}
+        scaler.stds = {k: float(v) for k, v in data.get("stds", {}).items()}
+        _validate_scaler_parameters(scaler.means, scaler.stds)
+        scaler.is_fitted = bool(scaler.means and scaler.stds)
+        return scaler
+
+    def save(self, path: Path | str) -> None:
+        """Save scaler parameters as JSON."""
+        target = Path(path)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        with target.open("w", encoding="utf-8") as handle:
+            json.dump(self.to_dict(), handle, indent=2)
+
+    @classmethod
+    def load(cls, path: Path | str) -> StandardTelemetryScaler:
+        """Load scaler from JSON file."""
+        target = Path(path)
+        with target.open("r", encoding="utf-8") as handle:
+            data = json.load(handle)
+        return cls.from_dict(data)
+
+
+def load_scaler(path: Path | str) -> RobustTelemetryScaler | StandardTelemetryScaler:
+    """Load scaler artifact auto-detecting robust vs standard type."""
+    target = Path(path)
+    with target.open("r", encoding="utf-8") as handle:
+        data = json.load(handle)
+
+    scaler_type = data.get("scaler_type", "robust")
+    if scaler_type == "standard":
+        return StandardTelemetryScaler.from_dict(data)
+    if scaler_type == "robust":
+        return RobustTelemetryScaler.from_dict(data)
+    raise ValueError(f"Unsupported scaler_type: {scaler_type}")
