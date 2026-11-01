@@ -11,7 +11,7 @@ from contextlib import suppress
 from datetime import datetime
 from functools import partial
 from http.cookies import SimpleCookie
-from http.server import HTTPServer, SimpleHTTPRequestHandler
+from http.server import HTTPServer, SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, urlencode, urlsplit
@@ -443,7 +443,8 @@ def main() -> None:
         assessments=AssessmentStore(ROOT / "data/assessments.sqlite3"),
         bearing=bearing,
     )
-    with HTTPServer(("127.0.0.1", args.port), handler) as server:
+    # Threads stop one idle browser connection (e.g. a preconnect) blocking every request.
+    with ThreadingHTTPServer(("127.0.0.1", args.port), handler) as server:
         print(f"HydroPredict: http://127.0.0.1:{args.port} · {service.model.version}", flush=True)
         with suppress(KeyboardInterrupt):
             server.serve_forever()

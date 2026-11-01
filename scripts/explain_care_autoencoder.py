@@ -20,23 +20,26 @@ from scripts.select_care_autoencoder import evaluate, load, smooth
 from scripts.train_care_autoencoder import AutoEncoder, prepare
 
 
-def sensor_errors(path, folder, model_path):
-    """Squared standardised reconstruction error per sensor for scored rows."""
+def reconstruct(path, folder, model_path):
+    """Standardised inputs, reconstructions and original-unit values for scored rows."""
     data = prepare(path, folder)
     bundle = torch.load(model_path, weights_only=False)
     x = data["x"]
     assert len(bundle["mean"]) == x.shape[1], model_path
-    z = np.nan_to_num(((x.to_numpy() - bundle["mean"]) / bundle["std"]).astype(np.float32))
+    raw = x.to_numpy(dtype=float)
+    z = np.nan_to_num(((raw - bundle["mean"]) / bundle["std"]).astype(np.float32))
     model = AutoEncoder(x.shape[1])
     model.load_state_dict(bundle["state"])
     model.eval()
     span = np.concatenate([data["tail"], data["pred"]])
     with torch.no_grad():
         chunk = torch.as_tensor(z[span])
-        errors = (model(chunk) - chunk).pow(2).numpy().astype(float)
+        output = model(chunk).numpy().astype(float)
+    errors = (output - z[span]) ** 2
     errors[~data["valid"][span]] = np.nan
+    expected = output * bundle["std"] + bundle["mean"]
     times = pd.DatetimeIndex(data["times"].iloc[span])
-    return times, errors, list(x.columns)
+    return times, errors, raw[span], expected, list(x.columns)
 
 
 def main():
@@ -57,7 +60,7 @@ def main():
             continue
         folder = args.root / farm
         name = f"{farm.replace(' ', '_')}_{event.event_id}"
-        times, errors, features = sensor_errors(
+        times, errors, _, _, features = reconstruct(
             folder / "datasets" / f"{event.event_id}.csv", folder, args.scores / f"{name}.pt"
         )
         # The per-sensor errors must reproduce the saved alert scores.

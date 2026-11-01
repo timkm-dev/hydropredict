@@ -12,63 +12,17 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-import torch
 
-from hydropredict.analysis.care_explain import contribution_shares
+from hydropredict.analysis.care_explain import contribution_shares, display_component
 from hydropredict.analysis.care_score import criticality
+from scripts.explain_care_autoencoder import reconstruct
 from scripts.select_care_autoencoder import decide, load
-from scripts.train_care_autoencoder import AutoEncoder, prepare
 
 ALARM = 72
-# Display grouping only: helps a technician scan sensors; never used in scoring.
-COMPONENTS = (
-    ("Transformer", ("transformer", "transformator")),
-    ("Hydraulic system", ("hydraulic",)),
-    ("Gearbox", ("gearbox", "gear oil")),
-    ("Rotor bearing", ("rotor bearing", "main bearing")),
-    ("Operating conditions", ("wind", "ambient", "outside temperature", "anemometer")),
-    ("Electrical", ("power", "reactive")),
-    ("Generator", ("generator", "slip ring", "stator")),
-    ("Pitch and hub", ("pitch", "blade", "axis", "battery", "hub")),
-    ("Converter", ("converter", "inverter", "igbt", "vcs", "vcp", "choke")),
-    ("Cooling", ("cooling", "cooler", "water")),
-    ("Tower and vibration", ("tower", "vibration")),
-    ("Electrical", ("voltage", "current", "grid", "frequency", "consumption")),
-)
-
-
-def display_component(description):
-    text = description.lower()
-    for name, keywords in COMPONENTS:
-        if any(k in text for k in keywords):
-            return name
-    return "Other"
 
 
 def rounded(values, digits=4):
     return [None if not np.isfinite(v) else float(f"{v:.{digits}g}") for v in values]
-
-
-def reconstruct(path, folder, model_path):
-    """Standardised inputs, reconstructions and original-unit values for scored rows."""
-    data = prepare(path, folder)
-    bundle = torch.load(model_path, weights_only=False)
-    x = data["x"]
-    assert len(bundle["mean"]) == x.shape[1], model_path
-    raw = x.to_numpy(dtype=float)
-    z = np.nan_to_num(((raw - bundle["mean"]) / bundle["std"]).astype(np.float32))
-    model = AutoEncoder(x.shape[1])
-    model.load_state_dict(bundle["state"])
-    model.eval()
-    span = np.concatenate([data["tail"], data["pred"]])
-    with torch.no_grad():
-        chunk = torch.as_tensor(z[span])
-        output = model(chunk).numpy().astype(float)
-    errors = (output - z[span]) ** 2
-    errors[~data["valid"][span]] = np.nan
-    expected = output * bundle["std"] + bundle["mean"]
-    times = pd.DatetimeIndex(data["times"].iloc[span])
-    return times, errors, raw[span], expected, list(x.columns)
 
 
 def alert_episodes(times, crit):

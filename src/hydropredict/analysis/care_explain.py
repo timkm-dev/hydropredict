@@ -42,6 +42,32 @@ def sensor_component(description: str) -> str | None:
     return None
 
 
+# Display grouping only: helps a technician scan sensors; never used in scoring.
+DISPLAY_COMPONENTS: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ("Transformer", ("transformer", "transformator")),
+    ("Hydraulic system", ("hydraulic",)),
+    ("Gearbox", ("gearbox", "gear oil")),
+    ("Rotor bearing", ("rotor bearing", "main bearing")),
+    ("Operating conditions", ("wind", "ambient", "outside temperature", "anemometer")),
+    ("Electrical", ("power", "reactive")),
+    ("Generator", ("generator", "slip ring", "stator")),
+    ("Pitch and hub", ("pitch", "blade", "axis", "battery", "hub")),
+    ("Converter", ("converter", "inverter", "igbt", "vcs", "vcp", "choke")),
+    ("Cooling", ("cooling", "cooler", "water")),
+    ("Tower and vibration", ("tower", "vibration")),
+    ("Electrical", ("voltage", "current", "grid", "frequency", "consumption")),
+)
+
+
+def display_component(description: str) -> str:
+    """Broad system a sensor belongs to, for display; first matching group wins."""
+    text = description.lower()
+    for name, keywords in DISPLAY_COMPONENTS:
+        if any(k in text for k in keywords):
+            return name
+    return "Other"
+
+
 def contribution_shares(
     times: pd.DatetimeIndex, errors: np.ndarray[Any, Any], names: list[str], window: int
 ) -> pd.DataFrame:

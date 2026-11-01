@@ -58,11 +58,8 @@ target-version = "py311"
 select = ["B", "E", "F", "I", "SIM", "UP"]
 
 [tool.ruff.lint.per-file-ignores]
-# Colab cells import repository modules after unpacking the uploaded source.
-"notebooks/investigate_shp_forward_evaluation*_colab.ipynb" = ["E402", "E501"]
 # Report builders embed long prose and table text verbatim.
 "scripts/build_*_mentor_report.py" = ["E501"]
-"scripts/report_sequence_patterns.py" = ["E501"]
 
 [tool.mypy]
 python_version = "3.12"
