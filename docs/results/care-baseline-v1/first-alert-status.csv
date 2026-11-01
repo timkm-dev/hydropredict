@@ -1,0 +1,9 @@
+farm,event_id,first_alert_status
+Wind Farm A,0,4
+Wind Farm A,40,4
+Wind Farm A,45,4
+Wind Farm A,73,4
+Wind Farm B,19,0
+Wind Farm B,27,0
+Wind Farm B,53,1
+Wind Farm B,77,1

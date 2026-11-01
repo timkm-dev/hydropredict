@@ -1,0 +1,59 @@
+[
+  {
+    "farm": "Wind Farm A",
+    "files": 22,
+    "assets": 5,
+    "anomaly": 12,
+    "normal": 10,
+    "gib": 0.7477256683632731,
+    "rows": 1196747,
+    "columns": [
+      86
+    ],
+    "average_channels": [
+      46
+    ],
+    "irregular_steps": 460,
+    "duplicate_times": 0,
+    "missing_percent": 7.266073926997973e-05,
+    "files_with_constant_channels": 0
+  },
+  {
+    "farm": "Wind Farm B",
+    "files": 15,
+    "assets": 9,
+    "anomaly": 6,
+    "normal": 9,
+    "gib": 1.2720203008502722,
+    "rows": 859065,
+    "columns": [
+      257
+    ],
+    "average_channels": [
+      63
+    ],
+    "irregular_steps": 87,
+    "duplicate_times": 0,
+    "missing_percent": 0.0,
+    "files_with_constant_channels": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "files": 58,
+    "assets": 22,
+    "anomaly": 27,
+    "normal": 31,
+    "gib": 16.5950038600713,
+    "rows": 3187136,
+    "columns": [
+      957
+    ],
+    "average_channels": [
+      238
+    ],
+    "irregular_steps": 40,
+    "duplicate_times": 0,
+    "missing_percent": 0.005790214688256877,
+    "files_with_constant_channels": 42
+  }
+]

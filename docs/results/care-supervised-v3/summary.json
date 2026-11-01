@@ -1,0 +1,44 @@
+[
+  {
+    "farm": "Wind Farm A",
+    "anomaly_files": 12,
+    "detected": 0,
+    "detected_24h": 0,
+    "normal_episodes": 0,
+    "normal_episodes_per_30_days": 0.0,
+    "normal_alert_fraction": 0.0,
+    "minimum_valid_fraction": 0.8886569241475296,
+    "detection_cluster_interval": [
+      0.0,
+      0.0
+    ],
+    "alarm_cluster_interval": [
+      0.0,
+      0.0
+    ],
+    "undefined_detection_resamples": 0,
+    "undefined_alarm_resamples": 0,
+    "gate_pass": false
+  },
+  {
+    "farm": "Wind Farm B",
+    "anomaly_files": 6,
+    "detected": 0,
+    "detected_24h": 0,
+    "normal_episodes": 4,
+    "normal_episodes_per_30_days": 0.5109553801117714,
+    "normal_alert_fraction": 0.0010053520210532541,
+    "minimum_valid_fraction": 0.9730146491904395,
+    "detection_cluster_interval": [
+      0.0,
+      0.0
+    ],
+    "alarm_cluster_interval": [
+      0.0,
+      1.6419172471925325
+    ],
+    "undefined_detection_resamples": 0,
+    "undefined_alarm_resamples": 0,
+    "gate_pass": false
+  }
+]

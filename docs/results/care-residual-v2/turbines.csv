@@ -1,0 +1,26 @@
+farm,asset,label,files,detected_24h,episodes,rows,alert_rows
+Wind Farm A,0,anomaly,3,1,14,6008,430
+Wind Farm A,0,normal,2,0,2,5163,6
+Wind Farm A,10,anomaly,3,3,13,7791,900
+Wind Farm A,10,normal,2,0,23,6083,236
+Wind Farm A,11,anomaly,1,1,2,2295,11
+Wind Farm A,11,normal,3,0,1,6790,2
+Wind Farm A,13,anomaly,2,1,2,2877,3
+Wind Farm A,13,normal,2,0,3,4445,9
+Wind Farm A,21,anomaly,3,0,4,5558,43
+Wind Farm A,21,normal,1,0,2,3583,33
+Wind Farm B,0,normal,1,0,4,1297,44
+Wind Farm B,2,normal,1,0,1,14113,14
+Wind Farm B,5,normal,1,0,1,2449,13
+Wind Farm B,6,anomaly,1,1,5,6048,51
+Wind Farm B,6,normal,1,0,2,1983,34
+Wind Farm B,7,anomaly,1,1,4,9937,1001
+Wind Farm B,7,normal,1,0,2,3025,15
+Wind Farm B,11,anomaly,1,1,4,3745,27
+Wind Farm B,11,normal,1,0,1,3073,5
+Wind Farm B,12,anomaly,1,1,18,9217,548
+Wind Farm B,12,normal,1,0,0,2927,0
+Wind Farm B,13,anomaly,1,0,0,5329,0
+Wind Farm B,13,normal,1,0,4,2215,204
+Wind Farm B,14,anomaly,1,0,1,4033,2
+Wind Farm B,14,normal,1,0,2,2737,42

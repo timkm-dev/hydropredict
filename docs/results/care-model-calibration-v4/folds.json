@@ -1,0 +1,3352 @@
+[
+  {
+    "family": "logistic",
+    "farm": "Wind Farm A",
+    "held_asset": 0,
+    "threshold": 5.4961968994140875,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 2.5658531188964844,
+        "episodes_per_30_days": 9.921056408784269,
+        "alert_fraction": 0.07923065882015215
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 3.467299222946167,
+        "episodes_per_30_days": 5.580594229941151,
+        "alert_fraction": 0.03937610640639204
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 4.107707500457764,
+        "episodes_per_30_days": 4.547150854026123,
+        "alert_fraction": 0.01703267786230324
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 4.685642337799072,
+        "episodes_per_30_days": 2.0668867518300558,
+        "alert_fraction": 0.005119372278838333
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 4.99406604766846,
+        "episodes_per_30_days": 1.0334433759150279,
+        "alert_fraction": 0.0023922300368403424
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 5.4961968994140875,
+        "episodes_per_30_days": 0.20668867518300557,
+        "alert_fraction": 0.00023922300368403425
+      }
+    ],
+    "model_sha256": "81d07cf197d8e7f4439e30320159194c21549c3cb03c9799df82b5586a3a25b0",
+    "training_assets": [
+      10,
+      11,
+      13,
+      21
+    ],
+    "calibration_assets": [
+      10,
+      11,
+      13,
+      21
+    ]
+  },
+  {
+    "family": "logistic",
+    "farm": "Wind Farm A",
+    "held_asset": 10,
+    "threshold": 4.46673540115352,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 1.8328626155853271,
+        "episodes_per_30_days": 14.485761473399728,
+        "alert_fraction": 0.07041689605124869
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 2.414165735244751,
+        "episodes_per_30_days": 7.783394224513287,
+        "alert_fraction": 0.03398228316901056
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 2.944108486175537,
+        "episodes_per_30_days": 4.540313297632751,
+        "alert_fraction": 0.014864120914869126
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 3.4683419704437255,
+        "episodes_per_30_days": 2.1620539512536907,
+        "alert_fraction": 0.0047044692457834944
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 3.780922889709467,
+        "episodes_per_30_days": 1.5134377658775835,
+        "alert_fraction": 0.002402282168059657
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 4.46673540115352,
+        "episodes_per_30_days": 0.2162053951253691,
+        "alert_fraction": 0.0003002852710074571
+      }
+    ],
+    "model_sha256": "e7349c0481d78dc53f4aa92bf082b252fd58d876ea920c93f35c6b83b32660fb",
+    "training_assets": [
+      0,
+      11,
+      13,
+      21
+    ],
+    "calibration_assets": [
+      0,
+      11,
+      13,
+      21
+    ]
+  },
+  {
+    "family": "logistic",
+    "farm": "Wind Farm A",
+    "held_asset": 11,
+    "threshold": 4.705518478393552,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 2.202274322509766,
+        "episodes_per_30_days": 12.999896233267613,
+        "alert_fraction": 0.07299989623326761
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 2.895287084579465,
+        "episodes_per_30_days": 9.189581820068486,
+        "alert_fraction": 0.03279028743384871
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 3.3880166292190546,
+        "episodes_per_30_days": 5.155131264916467,
+        "alert_fraction": 0.014786759364947598
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 3.891978111267091,
+        "episodes_per_30_days": 2.6896337034346787,
+        "alert_fraction": 0.0038393690982670954
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 4.1347616291046165,
+        "episodes_per_30_days": 1.5689529936702293,
+        "alert_fraction": 0.0019196845491335477
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 4.705518478393552,
+        "episodes_per_30_days": 0.0,
+        "alert_fraction": 0.0
+      }
+    ],
+    "model_sha256": "0f653c26998ea88335fb21ca38d317f1439ea7db05e117819824405388b159c1",
+    "training_assets": [
+      0,
+      10,
+      13,
+      21
+    ],
+    "calibration_assets": [
+      0,
+      10,
+      13,
+      21
+    ]
+  },
+  {
+    "family": "logistic",
+    "farm": "Wind Farm A",
+    "held_asset": 13,
+    "threshold": 4.250243482589721,
+    "quantile": 0.995,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 1.9332648277282716,
+        "episodes_per_30_days": 14.7869929228919,
+        "alert_fraction": 0.07040103612563023
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 2.5422618150711047,
+        "episodes_per_30_days": 8.192793376196864,
+        "alert_fraction": 0.03177760303436792
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 3.1332777976989727,
+        "episodes_per_30_days": 3.397011887691382,
+        "alert_fraction": 0.017762153661131413
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 3.8482244873046874,
+        "episodes_per_30_days": 1.7984180581895555,
+        "alert_fraction": 0.00490309450020815
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 4.250243482589721,
+        "episodes_per_30_days": 0.9991211434386419,
+        "alert_fraction": 0.0029141033350293722
+      }
+    ],
+    "model_sha256": "fa2ee8350c75c5baf1c574859bdc21055a8ca45bac4f816e5b3de40340f8bc0e",
+    "training_assets": [
+      0,
+      10,
+      11,
+      21
+    ],
+    "calibration_assets": [
+      0,
+      10,
+      11,
+      21
+    ]
+  },
+  {
+    "family": "logistic",
+    "farm": "Wind Farm A",
+    "held_asset": 21,
+    "threshold": 5.10742648601532,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 1.9926608204841614,
+        "episodes_per_30_days": 11.529736221698325,
+        "alert_fraction": 0.07779903029224679
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 2.7435578107833862,
+        "episodes_per_30_days": 5.764868110849163,
+        "alert_fraction": 0.03861038210044037
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 3.5056115686893463,
+        "episodes_per_30_days": 4.611894488679329,
+        "alert_fraction": 0.01801521284640363
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 4.035774302482599,
+        "episodes_per_30_days": 2.690271785062942,
+        "alert_fraction": 0.004092344646590454
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 4.287177920341489,
+        "episodes_per_30_days": 1.345135892531471,
+        "alert_fraction": 0.002046172323295227
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 5.10742648601532,
+        "episodes_per_30_days": 0.3843245407232775,
+        "alert_fraction": 0.0004448200702815711
+      }
+    ],
+    "model_sha256": "8c108ce51970b78e9cc103b5e513638e83976cbde20c59b560291b697a7b3ba0",
+    "training_assets": [
+      0,
+      10,
+      11,
+      13
+    ],
+    "calibration_assets": [
+      0,
+      10,
+      11,
+      13
+    ]
+  },
+  {
+    "family": "logistic",
+    "farm": "Wind Farm B",
+    "held_asset": 0,
+    "threshold": 7.462813130855543,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 1.2809515953063966,
+        "episodes_per_30_days": 10.22815325010762,
+        "alert_fraction": 0.08139105836049443
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 1.890146255493161,
+        "episodes_per_30_days": 4.516327409138429,
+        "alert_fraction": 0.041202878051780335
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 3.0908710718154895,
+        "episodes_per_30_days": 2.125330545476908,
+        "alert_fraction": 0.02164688518541295
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 4.629725165367127,
+        "episodes_per_30_days": 1.8596642272922945,
+        "alert_fraction": 0.006610909538158785
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 5.648141911029816,
+        "episodes_per_30_days": 1.3283315909230675,
+        "alert_fraction": 0.0029518479798290387
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 7.462813130855543,
+        "episodes_per_30_days": 0.3984994772769202,
+        "alert_fraction": 0.00043047783039173483
+      }
+    ],
+    "model_sha256": "4bfb892b833754bce9ee1a31d481ff71e58dece9f7d256b4115d5ba35e387199",
+    "training_assets": [
+      2,
+      5,
+      6,
+      7,
+      11,
+      12,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      2,
+      5,
+      6,
+      7,
+      11,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "logistic",
+    "farm": "Wind Farm B",
+    "held_asset": 2,
+    "threshold": 7.506554996967367,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 1.4417229294776917,
+        "episodes_per_30_days": 9.865015731249366,
+        "alert_fraction": 0.08210697249568659
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 2.386568784713745,
+        "episodes_per_30_days": 4.3844514361108295,
+        "alert_fraction": 0.04166243783619202
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 3.5167357325553894,
+        "episodes_per_30_days": 3.0691160052775803,
+        "alert_fraction": 0.019435704861463513
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 4.934497594833374,
+        "episodes_per_30_days": 1.9730031462498732,
+        "alert_fraction": 0.0063939916776616255
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 5.640983402729034,
+        "episodes_per_30_days": 1.0961128590277074,
+        "alert_fraction": 0.002689536181873541
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 7.506554996967367,
+        "episodes_per_30_days": 0.4384451436110829,
+        "alert_fraction": 0.00025372982847863596
+      }
+    ],
+    "model_sha256": "0afec333ed44e585aec3bf2db1bb4e9ef0a5708753371148020cd64704d0416c",
+    "training_assets": [
+      0,
+      5,
+      6,
+      7,
+      11,
+      12,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      5,
+      6,
+      7,
+      11,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "logistic",
+    "farm": "Wind Farm B",
+    "held_asset": 5,
+    "threshold": 3.356192582845688,
+    "quantile": 0.995,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 1.2696177959442145,
+        "episodes_per_30_days": 12.118584635001593,
+        "alert_fraction": 0.07727127829136117
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 1.7718999445438384,
+        "episodes_per_30_days": 6.747848262671342,
+        "alert_fraction": 0.038316863245138666
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 2.252411931753157,
+        "episodes_per_30_days": 4.406758049091488,
+        "alert_fraction": 0.017787695250239082
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 2.7966733431816153,
+        "episodes_per_30_days": 1.6525342684093083,
+        "alert_fraction": 0.007268090532355754
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 3.356192582845688,
+        "episodes_per_30_days": 0.6885559451705451,
+        "alert_fraction": 0.0038571883965572203
+      }
+    ],
+    "model_sha256": "f7cfbf74562df580cb7cc4ba534374f9cbe99b4901c4404f638b2834b076210e",
+    "training_assets": [
+      0,
+      2,
+      6,
+      7,
+      11,
+      12,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      6,
+      7,
+      11,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "logistic",
+    "farm": "Wind Farm B",
+    "held_asset": 6,
+    "threshold": 6.793773434162108,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 1.6983271837234497,
+        "episodes_per_30_days": 10.17715793441387,
+        "alert_fraction": 0.08148008543786908
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 2.416453242301941,
+        "episodes_per_30_days": 3.6637768563889934,
+        "alert_fraction": 0.043127277296142734
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 3.5756686627864838,
+        "episodes_per_30_days": 2.8496042216358837,
+        "alert_fraction": 0.01960045231813042
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 4.838348698616029,
+        "episodes_per_30_days": 1.8997361477572556,
+        "alert_fraction": 0.007193114712903631
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 5.402851700782752,
+        "episodes_per_30_days": 1.3569543912551827,
+        "alert_fraction": 0.0029212212589521296
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 6.793773434162108,
+        "episodes_per_30_days": 0.542781756502073,
+        "alert_fraction": 0.00028269883151149644
+      }
+    ],
+    "model_sha256": "8ed1e1d54ea9f063d34d9be912f57b29fe9f4bb25780bd28b54065f40e6f69ba",
+    "training_assets": [
+      0,
+      2,
+      5,
+      7,
+      11,
+      12,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      5,
+      7,
+      11,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "logistic",
+    "farm": "Wind Farm B",
+    "held_asset": 7,
+    "threshold": 6.415443211555507,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 1.576302945613861,
+        "episodes_per_30_days": 9.67980775475742,
+        "alert_fraction": 0.08176917581347015
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 2.1951621770858765,
+        "episodes_per_30_days": 4.769760342923946,
+        "alert_fraction": 0.04114437877508605
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 3.086581772565839,
+        "episodes_per_30_days": 2.2445931025524453,
+        "alert_fraction": 0.021335325063324025
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 4.440793356895444,
+        "episodes_per_30_days": 1.8237318958238617,
+        "alert_fraction": 0.0075339351821783465
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 5.05487478494645,
+        "episodes_per_30_days": 1.2625836201857505,
+        "alert_fraction": 0.0029551211274923684
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 6.415443211555507,
+        "episodes_per_30_days": 0.28057413781905566,
+        "alert_fraction": 0.0006494771708774437
+      }
+    ],
+    "model_sha256": "355cd63ac788390d6294a988cee16c8c955beda14908f08dded4965d033ae8ae",
+    "training_assets": [
+      0,
+      2,
+      5,
+      6,
+      11,
+      12,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      5,
+      6,
+      11,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "logistic",
+    "farm": "Wind Farm B",
+    "held_asset": 11,
+    "threshold": 11.848317708969116,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 1.2545363903045654,
+        "episodes_per_30_days": 10.53795615689846,
+        "alert_fraction": 0.0818643075522019
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 2.1546310782432556,
+        "episodes_per_30_days": 2.9506277239315684,
+        "alert_fraction": 0.04436349443830092
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 4.339358448982239,
+        "episodes_per_30_days": 2.248097313471671,
+        "alert_fraction": 0.022019124438951408
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 7.132714462280269,
+        "episodes_per_30_days": 1.545566903011774,
+        "alert_fraction": 0.007415598777076693
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 8.996738767623897,
+        "episodes_per_30_days": 1.264554738827815,
+        "alert_fraction": 0.003252455603981006
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 11.848317708969116,
+        "episodes_per_30_days": 0.28101216418395886,
+        "alert_fraction": 0.0004553437845573408
+      }
+    ],
+    "model_sha256": "30fe85c6bc7e94bb6b7622ac5b754f512dca782178054d478a015cc90f0355c9",
+    "training_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      12,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "logistic",
+    "farm": "Wind Farm B",
+    "held_asset": 12,
+    "threshold": 7.025992334842647,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 1.0756906270980835,
+        "episodes_per_30_days": 9.928784151236567,
+        "alert_fraction": 0.08254564288488929
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 1.815304404497146,
+        "episodes_per_30_days": 4.4749449695714105,
+        "alert_fraction": 0.043117959342224524
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 3.2103650212287884,
+        "episodes_per_30_days": 3.0765246665803447,
+        "alert_fraction": 0.020458371099313737
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 4.588235425949095,
+        "episodes_per_30_days": 1.8179463938883853,
+        "alert_fraction": 0.0070244723553023435
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 5.131512529850004,
+        "episodes_per_30_days": 1.2585782726919592,
+        "alert_fraction": 0.0030428589926194483
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 7.025992334842647,
+        "episodes_per_30_days": 0.27968406059821316,
+        "alert_fraction": 0.00032370840347015407
+      }
+    ],
+    "model_sha256": "faf5004c4e05f7137f031c1e10b48053d9c7a0b70287dcec3a5480e62dd87c58",
+    "training_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      11,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      11,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "logistic",
+    "farm": "Wind Farm B",
+    "held_asset": 13,
+    "threshold": 5.948943965435025,
+    "quantile": 0.995,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 1.2709888696670533,
+        "episodes_per_30_days": 9.431717504113404,
+        "alert_fraction": 0.08277433236299203
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 1.972821944952007,
+        "episodes_per_30_days": 3.827363624857613,
+        "alert_fraction": 0.043064169092519936
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 3.5799248695373467,
+        "episodes_per_30_days": 2.1870649284900647,
+        "alert_fraction": 0.021706113150234147
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 5.294690117836002,
+        "episodes_per_30_days": 1.3669155803062902,
+        "alert_fraction": 0.008005315782812302
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 5.948943965435025,
+        "episodes_per_30_days": 0.9568409062144032,
+        "alert_fraction": 0.0035754967725604354
+      }
+    ],
+    "model_sha256": "804266db8d33406b4bc3fc2019dc71e7df979d83f938b2bfc1b59ddf36e136d4",
+    "training_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      11,
+      12,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      11,
+      12,
+      14
+    ]
+  },
+  {
+    "family": "logistic",
+    "farm": "Wind Farm B",
+    "held_asset": 14,
+    "threshold": 6.601283625602735,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 1.6810576200485234,
+        "episodes_per_30_days": 9.729103661283057,
+        "alert_fraction": 0.08416446818094074
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 2.2072333693504325,
+        "episodes_per_30_days": 5.1425262209639016,
+        "alert_fraction": 0.041438774853613025
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 2.991119402647018,
+        "episodes_per_30_days": 3.335692683868477,
+        "alert_fraction": 0.019979409304420565
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 3.9562033200263906,
+        "episodes_per_30_days": 2.084807927417798,
+        "alert_fraction": 0.006756321987002123
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 4.827331924438463,
+        "episodes_per_30_days": 1.3898719516118654,
+        "alert_fraction": 0.0032172961842867253
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 6.601283625602735,
+        "episodes_per_30_days": 0.27797439032237303,
+        "alert_fraction": 0.0004182485039572743
+      }
+    ],
+    "model_sha256": "64f24b1d43c7fd975a91a3ee389f6f7d6cbd360720c682b7137c951d546a0ebe",
+    "training_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      11,
+      12,
+      13
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      11,
+      12,
+      13
+    ]
+  },
+  {
+    "family": "gaussian_nb",
+    "farm": "Wind Farm A",
+    "held_asset": 0,
+    "threshold": 83.45983367919939,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 5.6553955078125,
+        "episodes_per_30_days": 18.188603416104492,
+        "alert_fraction": 0.06143246734606
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 12.971435546875,
+        "episodes_per_30_days": 8.267547007320223,
+        "alert_fraction": 0.028945983445768146
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 22.582977294921875,
+        "episodes_per_30_days": 4.547150854026123,
+        "alert_fraction": 0.015166738433567771
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 41.443740844726655,
+        "episodes_per_30_days": 2.2735754270130615,
+        "alert_fraction": 0.005454284483995981
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 58.585261535644555,
+        "episodes_per_30_days": 1.2401320510980336,
+        "alert_fraction": 0.0025357638390507632
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 83.45983367919939,
+        "episodes_per_30_days": 0.20668867518300557,
+        "alert_fraction": 4.784460073680685e-05
+      }
+    ],
+    "model_sha256": "1e98392dd458817b59f03edc10f9cf8433c969031595c047ad45afea2cfb9fac",
+    "training_assets": [
+      10,
+      11,
+      13,
+      21
+    ],
+    "calibration_assets": [
+      10,
+      11,
+      13,
+      21
+    ]
+  },
+  {
+    "family": "gaussian_nb",
+    "farm": "Wind Farm A",
+    "held_asset": 10,
+    "threshold": 60.2735952758783,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 9.632614135742188,
+        "episodes_per_30_days": 16.431610029528052,
+        "alert_fraction": 0.06326009709223762
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 16.053497314453125,
+        "episodes_per_30_days": 8.432010409889394,
+        "alert_fraction": 0.02762624493268605
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 22.411888122558594,
+        "episodes_per_30_days": 5.405134878134227,
+        "alert_fraction": 0.012812171562984835
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 29.67012634277344,
+        "episodes_per_30_days": 2.1620539512536907,
+        "alert_fraction": 0.004254041339272309
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 38.89851837158186,
+        "episodes_per_30_days": 1.0810269756268454,
+        "alert_fraction": 0.00205194935188429
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 60.2735952758783,
+        "episodes_per_30_days": 0.2162053951253691,
+        "alert_fraction": 0.00015014263550372855
+      }
+    ],
+    "model_sha256": "67b4715ad44dfcaa76e8b0dd9e67a05f71aaf925349e6c962387d5f199202c7a",
+    "training_assets": [
+      0,
+      11,
+      13,
+      21
+    ],
+    "calibration_assets": [
+      0,
+      11,
+      13,
+      21
+    ]
+  },
+  {
+    "family": "gaussian_nb",
+    "farm": "Wind Farm A",
+    "held_asset": 11,
+    "threshold": 75.08077612304642,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 7.974017333984376,
+        "episodes_per_30_days": 16.361938362560963,
+        "alert_fraction": 0.06838227664210854
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 17.541748046875,
+        "episodes_per_30_days": 9.413717962021376,
+        "alert_fraction": 0.030351769222787175
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 26.821887207031217,
+        "episodes_per_30_days": 4.706858981010688,
+        "alert_fraction": 0.01359344194251323
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 39.766263427734515,
+        "episodes_per_30_days": 2.6896337034346787,
+        "alert_fraction": 0.004565736224966276
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 47.73858581542971,
+        "episodes_per_30_days": 1.1206807097644496,
+        "alert_fraction": 0.002179101380097541
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 75.08077612304642,
+        "episodes_per_30_days": 0.2241361419528899,
+        "alert_fraction": 0.0003113001971567915
+      }
+    ],
+    "model_sha256": "40880b60e6af09393caccca5cfb8bfd91998de526ad1efaef32df57cdf71f05f",
+    "training_assets": [
+      0,
+      10,
+      13,
+      21
+    ],
+    "calibration_assets": [
+      0,
+      10,
+      13,
+      21
+    ]
+  },
+  {
+    "family": "gaussian_nb",
+    "farm": "Wind Farm A",
+    "held_asset": 13,
+    "threshold": 71.57079421997065,
+    "quantile": 0.995,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 8.891436767578126,
+        "episodes_per_30_days": 19.183125954021925,
+        "alert_fraction": 0.06017854664878117
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 18.83618164062495,
+        "episodes_per_30_days": 9.79138720569869,
+        "alert_fraction": 0.028215921180443127
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 29.842679595947256,
+        "episodes_per_30_days": 3.596836116379111,
+        "alert_fraction": 0.013876682547758916
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 51.88140747070303,
+        "episodes_per_30_days": 1.3987696008140986,
+        "alert_fraction": 0.007308386141819696
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 71.57079421997065,
+        "episodes_per_30_days": 0.9991211434386419,
+        "alert_fraction": 0.003006614552014432
+      }
+    ],
+    "model_sha256": "66d1d875145a704b3c9579462969c9d04a9541e79c280e4243ca48ec75436b8b",
+    "training_assets": [
+      0,
+      10,
+      11,
+      21
+    ],
+    "calibration_assets": [
+      0,
+      10,
+      11,
+      21
+    ]
+  },
+  {
+    "family": "gaussian_nb",
+    "farm": "Wind Farm A",
+    "held_asset": 21,
+    "threshold": 77.5583679199218,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 8.884292602539062,
+        "episodes_per_30_days": 16.52595525110093,
+        "alert_fraction": 0.06521062230327833
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 18.257091522216797,
+        "episodes_per_30_days": 10.376762599528492,
+        "alert_fraction": 0.031003958898625505
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 29.281715393066406,
+        "episodes_per_30_days": 5.380543570125884,
+        "alert_fraction": 0.014679062319291846
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 44.6947959899902,
+        "episodes_per_30_days": 2.4981095147013033,
+        "alert_fraction": 0.0047595747520128105
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 58.242663574218724,
+        "episodes_per_30_days": 1.1529736221698323,
+        "alert_fraction": 0.002046172323295227
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 77.5583679199218,
+        "episodes_per_30_days": 0.19216227036163874,
+        "alert_fraction": 0.0003113740491970998
+      }
+    ],
+    "model_sha256": "1ebdf43c18a31431a21dfa279a06a5fdb41a43521b0cd876116ffb30f9c2a115",
+    "training_assets": [
+      0,
+      10,
+      11,
+      13
+    ],
+    "calibration_assets": [
+      0,
+      10,
+      11,
+      13
+    ]
+  },
+  {
+    "family": "gaussian_nb",
+    "farm": "Wind Farm B",
+    "held_asset": 0,
+    "threshold": 50.444404296875014,
+    "quantile": 0.99,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 9.532387542724612,
+        "episodes_per_30_days": 13.947481704692207,
+        "alert_fraction": 0.0753951171514667
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 15.808466339111304,
+        "episodes_per_30_days": 6.375991636430723,
+        "alert_fraction": 0.03662136399975401
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 27.025690841674713,
+        "episodes_per_30_days": 2.125330545476908,
+        "alert_fraction": 0.01977123178156325
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 50.444404296875014,
+        "episodes_per_30_days": 0.7969989545538404,
+        "alert_fraction": 0.008578808191378145
+      }
+    ],
+    "model_sha256": "5ae2bbf47e44a6bc0854b5183419e6fd10d6e20182d731c8bd9b8c9f9e2fd025",
+    "training_assets": [
+      2,
+      5,
+      6,
+      7,
+      11,
+      12,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      2,
+      5,
+      6,
+      7,
+      11,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "gaussian_nb",
+    "farm": "Wind Farm B",
+    "held_asset": 2,
+    "threshold": 42.797752380371094,
+    "quantile": 0.995,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 13.949012756347656,
+        "episodes_per_30_days": 12.714909164721405,
+        "alert_fraction": 0.07774281944585405
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 17.86635971069336,
+        "episodes_per_30_days": 5.699786866944078,
+        "alert_fraction": 0.034811732467268854
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 22.500118255615234,
+        "episodes_per_30_days": 1.5345580026387902,
+        "alert_fraction": 0.020196894346899422
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 31.082351684570312,
+        "episodes_per_30_days": 1.0961128590277074,
+        "alert_fraction": 0.007053689231706079
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 42.797752380371094,
+        "episodes_per_30_days": 0.6576677154166244,
+        "alert_fraction": 0.004211915152745356
+      }
+    ],
+    "model_sha256": "52f64c9d0504f3f8c5898d919f41be02d148c9d848e8af146d4f508562a87fdc",
+    "training_assets": [
+      0,
+      5,
+      6,
+      7,
+      11,
+      12,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      5,
+      6,
+      7,
+      11,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "gaussian_nb",
+    "farm": "Wind Farm B",
+    "held_asset": 5,
+    "threshold": 49.32523811340332,
+    "quantile": 0.995,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 11.414019012451178,
+        "episodes_per_30_days": 11.15460631176283,
+        "alert_fraction": 0.08205291679948996
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 17.43360595703125,
+        "episodes_per_30_days": 6.885559451705451,
+        "alert_fraction": 0.03726490277335034
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 22.518214225769018,
+        "episodes_per_30_days": 3.1673573477845074,
+        "alert_fraction": 0.01864839018170226
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 43.27091720581059,
+        "episodes_per_30_days": 1.2394007013069812,
+        "alert_fraction": 0.007746254383168632
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 49.32523811340332,
+        "episodes_per_30_days": 0.9639783232387632,
+        "alert_fraction": 0.002932738284985655
+      }
+    ],
+    "model_sha256": "ea43f8b15960a974b3cb91156e0f757c4d3bbc50e8f1a60df3cd77b9706f074e",
+    "training_assets": [
+      0,
+      2,
+      6,
+      7,
+      11,
+      12,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      6,
+      7,
+      11,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "gaussian_nb",
+    "farm": "Wind Farm B",
+    "held_asset": 6,
+    "threshold": 23.41693267822263,
+    "quantile": 0.995,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 8.462112426757812,
+        "episodes_per_30_days": 12.6196758386732,
+        "alert_fraction": 0.0764857394144993
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 11.253423690795898,
+        "episodes_per_30_days": 6.784771956275914,
+        "alert_fraction": 0.03772458851614524
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 14.787304878234863,
+        "episodes_per_30_days": 3.9351677346400296,
+        "alert_fraction": 0.017684382460108054
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 19.513456726074235,
+        "episodes_per_30_days": 1.2212589521296644,
+        "alert_fraction": 0.006816182937554969
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 23.41693267822263,
+        "episodes_per_30_days": 0.13569543912551826,
+        "alert_fraction": 0.0037379067722075636
+      }
+    ],
+    "model_sha256": "8ade460dd589ff6d4e2ff69a66078ad7c058b926b9cb7be8c04fe3f4b12f6065",
+    "training_assets": [
+      0,
+      2,
+      5,
+      7,
+      11,
+      12,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      5,
+      7,
+      11,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "gaussian_nb",
+    "farm": "Wind Farm B",
+    "held_asset": 7,
+    "threshold": 46.69921371459963,
+    "quantile": 0.995,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 10.540534973144535,
+        "episodes_per_30_days": 13.046697408586088,
+        "alert_fraction": 0.07699551860752095
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 16.600846099853502,
+        "episodes_per_30_days": 5.611482756381113,
+        "alert_fraction": 0.03870883938429564
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 22.6144229888916,
+        "episodes_per_30_days": 3.22660258491914,
+        "alert_fraction": 0.01831525621874391
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 39.28492065429686,
+        "episodes_per_30_days": 1.5431577580048061,
+        "alert_fraction": 0.006722088718581542
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 46.69921371459963,
+        "episodes_per_30_days": 0.5611482756381113,
+        "alert_fraction": 0.003409755147106579
+      }
+    ],
+    "model_sha256": "63c22addae85294030a4af83356add7e9c4dcad4b77f5e72d94e201402440a7e",
+    "training_assets": [
+      0,
+      2,
+      5,
+      6,
+      11,
+      12,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      5,
+      6,
+      11,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "gaussian_nb",
+    "farm": "Wind Farm B",
+    "held_asset": 11,
+    "threshold": 38.66806259155269,
+    "quantile": 0.995,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 9.970172882080078,
+        "episodes_per_30_days": 11.380992649450334,
+        "alert_fraction": 0.08069342353476876
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 16.999927520751953,
+        "episodes_per_30_days": 7.72783451505887,
+        "alert_fraction": 0.037533337669940804
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 22.47075843811035,
+        "episodes_per_30_days": 3.512652052299486,
+        "alert_fraction": 0.018571521498731543
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 30.91344528198241,
+        "episodes_per_30_days": 1.1240486567358354,
+        "alert_fraction": 0.007805893449554413
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 38.66806259155269,
+        "episodes_per_30_days": 0.4215182462759383,
+        "alert_fraction": 0.004195667729135497
+      }
+    ],
+    "model_sha256": "584238ba7da7d4a8bbb4f97cf8491e2b050a422ee8979c1c3c5ad1b1f3781709",
+    "training_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      12,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "gaussian_nb",
+    "farm": "Wind Farm B",
+    "held_asset": 12,
+    "threshold": 40.41515007019043,
+    "quantile": 0.995,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 10.73272705078125,
+        "episodes_per_30_days": 13.704518969312444,
+        "alert_fraction": 0.07671889162242652
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 15.3017250061035,
+        "episodes_per_30_days": 6.712417454357115,
+        "alert_fraction": 0.0369674996762916
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 20.361910629272447,
+        "episodes_per_30_days": 2.9366826362812377,
+        "alert_fraction": 0.018160041434675644
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 33.919445343017564,
+        "episodes_per_30_days": 1.1187362423928526,
+        "alert_fraction": 0.00796322672536579
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 40.41515007019043,
+        "episodes_per_30_days": 0.8390521817946394,
+        "alert_fraction": 0.0034636799171306487
+      }
+    ],
+    "model_sha256": "07fa5342844ee16d67899593f9ffc00721a0129f6c1fc846f504a862312df793",
+    "training_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      11,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      11,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "gaussian_nb",
+    "farm": "Wind Farm B",
+    "held_asset": 13,
+    "threshold": 31.413237991332995,
+    "quantile": 0.995,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 8.17510375976563,
+        "episodes_per_30_days": 10.798633084419693,
+        "alert_fraction": 0.07264903176813062
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 13.19394912719726,
+        "episodes_per_30_days": 5.1942792051639035,
+        "alert_fraction": 0.03891912416149854
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 19.83765716552734,
+        "episodes_per_30_days": 3.143905834704468,
+        "alert_fraction": 0.018447032021263132
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 26.642035980224627,
+        "episodes_per_30_days": 1.0935324642450324,
+        "alert_fraction": 0.0061068219212757876
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 31.413237991332995,
+        "episodes_per_30_days": 0.2733831160612581,
+        "alert_fraction": 0.003448930515124668
+      }
+    ],
+    "model_sha256": "a167e657d1064882432e0a90f27e9c0ec123bf9812c1dc1e41063441dc1bca21",
+    "training_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      11,
+      12,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      11,
+      12,
+      14
+    ]
+  },
+  {
+    "family": "gaussian_nb",
+    "farm": "Wind Farm B",
+    "held_asset": 14,
+    "threshold": 38.302956542968715,
+    "quantile": 0.995,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 9.289088439941409,
+        "episodes_per_30_days": 12.230873174184415,
+        "alert_fraction": 0.07885592947686763
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 14.183846282958969,
+        "episodes_per_30_days": 5.5594878064474615,
+        "alert_fraction": 0.03957274306672672
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 20.583642959594723,
+        "episodes_per_30_days": 3.752654269352037,
+        "alert_fraction": 0.018853355639920213
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 31.716508636474558,
+        "episodes_per_30_days": 1.1118975612894921,
+        "alert_fraction": 0.007624991956759539
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 38.302956542968715,
+        "episodes_per_30_days": 0.6949359758059327,
+        "alert_fraction": 0.0031529502606009907
+      }
+    ],
+    "model_sha256": "ece85fbfafee45de45bdb79a4e5faad8e511df50dfceb478da02bda987c91f98",
+    "training_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      11,
+      12,
+      13
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      11,
+      12,
+      13
+    ]
+  },
+  {
+    "family": "random_forest",
+    "farm": "Wind Farm A",
+    "held_asset": 0,
+    "threshold": 0.9175330587280377,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.7089853890911499,
+        "episodes_per_30_days": 20.875556193483565,
+        "alert_fraction": 0.06057126453279747
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.7688648712079782,
+        "episodes_per_30_days": 10.33443375915028,
+        "alert_fraction": 0.025549016793454858
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.8079956569892689,
+        "episodes_per_30_days": 5.787282905124156,
+        "alert_fraction": 0.011387014975360031
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.8522140014710992,
+        "episodes_per_30_days": 2.686952777379073,
+        "alert_fraction": 0.004353858667049424
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 0.8781195953243791,
+        "episodes_per_30_days": 1.2401320510980336,
+        "alert_fraction": 0.0015310272235778191
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 0.9175330587280377,
+        "episodes_per_30_days": 0.0,
+        "alert_fraction": 0.0
+      }
+    ],
+    "model_sha256": "e955b725f50d12e075128b40bb4016466c438f47c313d779fe799d9932c84d89",
+    "training_assets": [
+      10,
+      11,
+      13,
+      21
+    ],
+    "calibration_assets": [
+      10,
+      11,
+      13,
+      21
+    ]
+  },
+  {
+    "family": "random_forest",
+    "farm": "Wind Farm A",
+    "held_asset": 10,
+    "threshold": 0.839114704542992,
+    "quantile": 0.995,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.6704791104520286,
+        "episodes_per_30_days": 17.080226214904155,
+        "alert_fraction": 0.064711475902107
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.7429532309872333,
+        "episodes_per_30_days": 10.377858966017715,
+        "alert_fraction": 0.02867724338121215
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.7830310383715318,
+        "episodes_per_30_days": 5.405134878134227,
+        "alert_fraction": 0.009809318852910264
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.8223434129382838,
+        "episodes_per_30_days": 2.594464741504429,
+        "alert_fraction": 0.002152044442220109
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 0.839114704542992,
+        "episodes_per_30_days": 0.6486161853761072,
+        "alert_fraction": 0.0007006656323507332
+      }
+    ],
+    "model_sha256": "12dd3c07f2f45ccb0b9e10e4f39e546f9c5e1d5c5915303be1b7e11c04160765",
+    "training_assets": [
+      0,
+      11,
+      13,
+      21
+    ],
+    "calibration_assets": [
+      0,
+      11,
+      13,
+      21
+    ]
+  },
+  {
+    "family": "random_forest",
+    "farm": "Wind Farm A",
+    "held_asset": 11,
+    "threshold": 0.8362383605724946,
+    "quantile": 0.995,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.6825877396514982,
+        "episodes_per_30_days": 16.810210646466743,
+        "alert_fraction": 0.06215627269897271
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.7401478448055261,
+        "episodes_per_30_days": 11.206807097644495,
+        "alert_fraction": 0.024229532012036942
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.7764545673614295,
+        "episodes_per_30_days": 5.603403548822247,
+        "alert_fraction": 0.010221023139981323
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.816399285051978,
+        "episodes_per_30_days": 1.7930891356231191,
+        "alert_fraction": 0.003268652070146311
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 0.8362383605724946,
+        "episodes_per_30_days": 0.8965445678115596,
+        "alert_fraction": 0.000882017225277576
+      }
+    ],
+    "model_sha256": "eb4178b15c42f7ebcae85f72b7b9e50a7d98857c39bf307dad47db373c615c64",
+    "training_assets": [
+      0,
+      10,
+      13,
+      21
+    ],
+    "calibration_assets": [
+      0,
+      10,
+      13,
+      21
+    ]
+  },
+  {
+    "family": "random_forest",
+    "farm": "Wind Farm A",
+    "held_asset": 13,
+    "threshold": 0.9033276903039448,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.676576428341558,
+        "episodes_per_30_days": 17.584532124520095,
+        "alert_fraction": 0.06401776215366113
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.7436896425202933,
+        "episodes_per_30_days": 9.79138720569869,
+        "alert_fraction": 0.02798464313798048
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.7903031404728487,
+        "episodes_per_30_days": 4.5959572598177525,
+        "alert_fraction": 0.01008372265137148
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.8391382404056185,
+        "episodes_per_30_days": 1.9982422868772838,
+        "alert_fraction": 0.0035154262454322586
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 0.8645895349674001,
+        "episodes_per_30_days": 1.1989453721263703,
+        "alert_fraction": 0.0012951570377908322
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 0.9033276903039448,
+        "episodes_per_30_days": 0.19982422868772837,
+        "alert_fraction": 4.6255608492529716e-05
+      }
+    ],
+    "model_sha256": "1fcd102548b31d17aab69f8b657f63c9d9dbb7b0081907e2b40ff938813ed502",
+    "training_assets": [
+      0,
+      10,
+      11,
+      21
+    ],
+    "calibration_assets": [
+      0,
+      10,
+      11,
+      21
+    ]
+  },
+  {
+    "family": "random_forest",
+    "farm": "Wind Farm A",
+    "held_asset": 21,
+    "threshold": 0.8658571022272604,
+    "quantile": 0.995,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.6719057324222019,
+        "episodes_per_30_days": 17.294604332547486,
+        "alert_fraction": 0.06245273786753258
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.7300054083469261,
+        "episodes_per_30_days": 8.070815355188826,
+        "alert_fraction": 0.030425692807259465
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.7812186324581111,
+        "episodes_per_30_days": 5.380543570125884,
+        "alert_fraction": 0.013611494150616075
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.8286404543012272,
+        "episodes_per_30_days": 1.53729816289311,
+        "alert_fraction": 0.004359236688759397
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 0.8658571022272604,
+        "episodes_per_30_days": 0.768649081446555,
+        "alert_fraction": 0.0024909923935767984
+      }
+    ],
+    "model_sha256": "d76f8e523b45296a030d122dd8179dbdeca22ac307b2625c2f4a17b2e4b8d54a",
+    "training_assets": [
+      0,
+      10,
+      11,
+      13
+    ],
+    "calibration_assets": [
+      0,
+      10,
+      11,
+      13
+    ]
+  },
+  {
+    "family": "random_forest",
+    "farm": "Wind Farm B",
+    "held_asset": 0,
+    "threshold": 0.84266206277556,
+    "quantile": 0.99,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.7547258870159278,
+        "episodes_per_30_days": 18.86230859110756,
+        "alert_fraction": 0.05476292970911998
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.7894367033263505,
+        "episodes_per_30_days": 9.165487977369166,
+        "alert_fraction": 0.020816677941086034
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.8162628212530568,
+        "episodes_per_30_days": 5.977492159153803,
+        "alert_fraction": 0.008548059774921592
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.84266206277556,
+        "episodes_per_30_days": 0.9298321136461473,
+        "alert_fraction": 0.0024906217329807513
+      }
+    ],
+    "model_sha256": "37758dce7787c377dc0209ed4b536bd8198f00a5168ee0c374706b1b90ce13c7",
+    "training_assets": [
+      2,
+      5,
+      6,
+      7,
+      11,
+      12,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      2,
+      5,
+      6,
+      7,
+      11,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "random_forest",
+    "farm": "Wind Farm B",
+    "held_asset": 2,
+    "threshold": 0.8685869759197694,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.7106584985301636,
+        "episodes_per_30_days": 17.318583172637776,
+        "alert_fraction": 0.06525931188470517
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.7488411707927283,
+        "episodes_per_30_days": 9.645793159443825,
+        "alert_fraction": 0.026387902161778137
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.7800013522810867,
+        "episodes_per_30_days": 5.699786866944078,
+        "alert_fraction": 0.012686491423931797
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.8238095087946098,
+        "episodes_per_30_days": 2.849893433472039,
+        "alert_fraction": 0.003704455495788085
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 0.8405546500892531,
+        "episodes_per_30_days": 1.0961128590277074,
+        "alert_fraction": 0.0017761087993504517
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 0.8685869759197694,
+        "episodes_per_30_days": 0.0,
+        "alert_fraction": 0.0
+      }
+    ],
+    "model_sha256": "20e6803e6655366fe48cc38cadaf4f1be92385b749e63e0ba67d375c3a7ba0fc",
+    "training_assets": [
+      0,
+      5,
+      6,
+      7,
+      11,
+      12,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      5,
+      6,
+      7,
+      11,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "random_forest",
+    "farm": "Wind Farm B",
+    "held_asset": 5,
+    "threshold": 0.8527784675224367,
+    "quantile": 0.995,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.7478247237294313,
+        "episodes_per_30_days": 16.112209116990755,
+        "alert_fraction": 0.061268728084156836
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.785679328820199,
+        "episodes_per_30_days": 9.364360854319413,
+        "alert_fraction": 0.022824354478801403
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.8125016627753432,
+        "episodes_per_30_days": 5.508447561364361,
+        "alert_fraction": 0.008606949314631815
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.8385755367560458,
+        "episodes_per_30_days": 1.7902454574434172,
+        "alert_fraction": 0.0016257570927637871
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 0.8527784675224367,
+        "episodes_per_30_days": 0.8262671342046541,
+        "alert_fraction": 0.0005737966209754542
+      }
+    ],
+    "model_sha256": "a38d8460c837093c88651397dc2a5e59a5b84fe679b8c378e9d77213d97f3f15",
+    "training_assets": [
+      0,
+      2,
+      6,
+      7,
+      11,
+      12,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      6,
+      7,
+      11,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "random_forest",
+    "farm": "Wind Farm B",
+    "held_asset": 6,
+    "threshold": 0.8632054008819166,
+    "quantile": 0.995,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.7517187735225881,
+        "episodes_per_30_days": 15.333584621183563,
+        "alert_fraction": 0.06049754994346023
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.7942824569658655,
+        "episodes_per_30_days": 9.227289860535242,
+        "alert_fraction": 0.027076265862545548
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.8238235619753368,
+        "episodes_per_30_days": 4.749340369393139,
+        "alert_fraction": 0.01115089835406458
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.8501704460384597,
+        "episodes_per_30_days": 1.3569543912551827,
+        "alert_fraction": 0.002418645558487247
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 0.8632054008819166,
+        "episodes_per_30_days": 0.8141726347531096,
+        "alert_fraction": 0.0006282196255811032
+      }
+    ],
+    "model_sha256": "9642672cba020d9eef7e8183786c6589b9951f1d4ab8bdbedbaa5965e2be144a",
+    "training_assets": [
+      0,
+      2,
+      5,
+      7,
+      11,
+      12,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      5,
+      7,
+      11,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "random_forest",
+    "farm": "Wind Farm B",
+    "held_asset": 7,
+    "threshold": 0.8671055548053102,
+    "quantile": 0.995,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.729671932664457,
+        "episodes_per_30_days": 17.115022406962396,
+        "alert_fraction": 0.0567318308761447
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.7760404172486173,
+        "episodes_per_30_days": 9.820094823666947,
+        "alert_fraction": 0.02558940053257128
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.8120578829882901,
+        "episodes_per_30_days": 3.787750860557251,
+        "alert_fraction": 0.010326687016951355
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.8477236790958299,
+        "episodes_per_30_days": 1.6834448269143338,
+        "alert_fraction": 0.003377281288562707
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 0.8671055548053102,
+        "episodes_per_30_days": 0.7014353445476391,
+        "alert_fraction": 0.0016886406442813535
+      }
+    ],
+    "model_sha256": "229f2891396655a2fd431834469657cab90c5da3515e320c6d24aa874a25ad5a",
+    "training_assets": [
+      0,
+      2,
+      5,
+      6,
+      11,
+      12,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      5,
+      6,
+      11,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "random_forest",
+    "farm": "Wind Farm B",
+    "held_asset": 11,
+    "threshold": 0.8777208690435627,
+    "quantile": 0.99,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.7957133462993411,
+        "episodes_per_30_days": 15.315162948025762,
+        "alert_fraction": 0.06075587068236519
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.8312868669345528,
+        "episodes_per_30_days": 9.694919664346582,
+        "alert_fraction": 0.026344890392246145
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.8557640674576731,
+        "episodes_per_30_days": 4.496194626943342,
+        "alert_fraction": 0.010082612372341117
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.8777208690435627,
+        "episodes_per_30_days": 0.9835425746438562,
+        "alert_fraction": 0.002927210043582905
+      }
+    ],
+    "model_sha256": "0f44bf03c80a79f97caaf169adddf8ed28468d00c07202318ee2a062c8b00fd1",
+    "training_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      12,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "random_forest",
+    "farm": "Wind Farm B",
+    "held_asset": 12,
+    "threshold": 0.893818253613628,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.6947437847408295,
+        "episodes_per_30_days": 11.886572575424058,
+        "alert_fraction": 0.07403211187362424
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.7819596412288603,
+        "episodes_per_30_days": 9.089731969441926,
+        "alert_fraction": 0.030849410850705684
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.8110747789184505,
+        "episodes_per_30_days": 5.174155121066943,
+        "alert_fraction": 0.01191246924770167
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.8413328966377795,
+        "episodes_per_30_days": 1.9577884241874919,
+        "alert_fraction": 0.004240580085459018
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 0.8632482773564824,
+        "episodes_per_30_days": 1.2585782726919592,
+        "alert_fraction": 0.0022335879839440634
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 0.893818253613628,
+        "episodes_per_30_days": 0.27968406059821316,
+        "alert_fraction": 0.0003560792438171695
+      }
+    ],
+    "model_sha256": "29c87dcda98029eb233546bdf16a266beb5d861df8eaf02b64ff6f1d5401770f",
+    "training_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      11,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      11,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "random_forest",
+    "farm": "Wind Farm B",
+    "held_asset": 13,
+    "threshold": 0.8743896320434035,
+    "quantile": 0.995,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.7439851587569802,
+        "episodes_per_30_days": 15.309454499430451,
+        "alert_fraction": 0.05853689406404253
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.7895094900192422,
+        "episodes_per_30_days": 10.11517529426655,
+        "alert_fraction": 0.025281609922794584
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.8192489748504617,
+        "episodes_per_30_days": 5.1942792051639035,
+        "alert_fraction": 0.010062017466143526
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.8528822987806388,
+        "episodes_per_30_days": 1.9136818124288064,
+        "alert_fraction": 0.0037653461587140867
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 0.8743896320434035,
+        "episodes_per_30_days": 0.5467662321225162,
+        "alert_fraction": 0.0022781926338438173
+      }
+    ],
+    "model_sha256": "adf3660a671145b005601c92519fa7f948eb2dbf05c650b90698188521d854df",
+    "training_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      11,
+      12,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      11,
+      12,
+      14
+    ]
+  },
+  {
+    "family": "random_forest",
+    "farm": "Wind Farm B",
+    "held_asset": 14,
+    "threshold": 0.8617971374125054,
+    "quantile": 0.995,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.7572542983648812,
+        "episodes_per_30_days": 17.512386590309504,
+        "alert_fraction": 0.06222250820410527
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.7935021542578922,
+        "episodes_per_30_days": 8.478218904832378,
+        "alert_fraction": 0.027572228299337236
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.8227787803487528,
+        "episodes_per_30_days": 6.393410977414581,
+        "alert_fraction": 0.010777942217360531
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.8474933302068863,
+        "episodes_per_30_days": 1.6678463419342384,
+        "alert_fraction": 0.0032172961842867253
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 0.8617971374125054,
+        "episodes_per_30_days": 0.9729103661283057,
+        "alert_fraction": 0.0017373399395148317
+      }
+    ],
+    "model_sha256": "df0351c5661d840b857de92424ecd774a1d1244d3a03c89ac76a28f56c1a2dfc",
+    "training_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      11,
+      12,
+      13
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      11,
+      12,
+      13
+    ]
+  },
+  {
+    "family": "rbf_svm_approx",
+    "farm": "Wind Farm A",
+    "held_asset": 0,
+    "threshold": 1.1432601971389604,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.5032066810797753,
+        "episodes_per_30_days": 16.741782689823452,
+        "alert_fraction": 0.05640878426869528
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.6456061520831369,
+        "episodes_per_30_days": 10.33443375915028,
+        "alert_fraction": 0.024496435577245106
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.7646053346077784,
+        "episodes_per_30_days": 4.960528204392134,
+        "alert_fraction": 0.00928185254294053
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.8860136249658778,
+        "episodes_per_30_days": 1.8601980766470503,
+        "alert_fraction": 0.002966365245682025
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 0.9823443506657643,
+        "episodes_per_30_days": 1.0334433759150279,
+        "alert_fraction": 0.001291804219893785
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 1.1432601971389604,
+        "episodes_per_30_days": 0.20668867518300557,
+        "alert_fraction": 9.56892014736137e-05
+      }
+    ],
+    "model_sha256": "b34221aee44cb69b6d189fa53e9d563fdeab1cf901ebf3fcd41d6f5cd78625e1",
+    "training_assets": [
+      10,
+      11,
+      13,
+      21
+    ],
+    "calibration_assets": [
+      10,
+      11,
+      13,
+      21
+    ]
+  },
+  {
+    "family": "rbf_svm_approx",
+    "farm": "Wind Farm A",
+    "held_asset": 10,
+    "threshold": 1.0898955568518875,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.4000819913053972,
+        "episodes_per_30_days": 17.945047795405635,
+        "alert_fraction": 0.05960662629498023
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.5634172755986291,
+        "episodes_per_30_days": 11.026475151393823,
+        "alert_fraction": 0.025123867674290576
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.7015461966452611,
+        "episodes_per_30_days": 4.75651869275812,
+        "alert_fraction": 0.01040988939492518
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.8494841386987481,
+        "episodes_per_30_days": 1.7296431610029528,
+        "alert_fraction": 0.003803613432761123
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 0.94041487586782,
+        "episodes_per_30_days": 1.0810269756268454,
+        "alert_fraction": 0.0013512837195335569
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 1.0898955568518875,
+        "episodes_per_30_days": 0.4324107902507382,
+        "alert_fraction": 0.00015014263550372855
+      }
+    ],
+    "model_sha256": "d87a5f8f1b6595b4f3ad8ac447c7e3342e3c2f1e1d7f94cbaf59d32b76f13cb2",
+    "training_assets": [
+      0,
+      11,
+      13,
+      21
+    ],
+    "calibration_assets": [
+      0,
+      11,
+      13,
+      21
+    ]
+  },
+  {
+    "family": "rbf_svm_approx",
+    "farm": "Wind Farm A",
+    "held_asset": 11,
+    "threshold": 1.4316051414765052,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.5147056549592263,
+        "episodes_per_30_days": 18.155027498184083,
+        "alert_fraction": 0.05909515409359759
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.7191921096519621,
+        "episodes_per_30_days": 10.982670955691605,
+        "alert_fraction": 0.023088097955795372
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.8752892707712486,
+        "episodes_per_30_days": 4.482722839057798,
+        "alert_fraction": 0.011310573830030092
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 1.0816236767799439,
+        "episodes_per_30_days": 1.7930891356231191,
+        "alert_fraction": 0.004928919788315866
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 1.227982357105465,
+        "episodes_per_30_days": 1.1206807097644496,
+        "alert_fraction": 0.0016602677181695549
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 1.4316051414765052,
+        "episodes_per_30_days": 0.0,
+        "alert_fraction": 0.0
+      }
+    ],
+    "model_sha256": "387a741d50da4904a1f5cc923e105895d449516133bf7acf6d6416fcd4600a73",
+    "training_assets": [
+      0,
+      10,
+      13,
+      21
+    ],
+    "calibration_assets": [
+      0,
+      10,
+      13,
+      21
+    ]
+  },
+  {
+    "family": "rbf_svm_approx",
+    "farm": "Wind Farm A",
+    "held_asset": 13,
+    "threshold": 0.9926616834556662,
+    "quantile": 0.995,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.473322095646465,
+        "episodes_per_30_days": 18.983301725334194,
+        "alert_fraction": 0.059438456912900686
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.6331724037270693,
+        "episodes_per_30_days": 11.589805263888245,
+        "alert_fraction": 0.022804014986817153
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.7565380600407063,
+        "episodes_per_30_days": 5.994726860631851,
+        "alert_fraction": 0.008834821222073177
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.8842359656631454,
+        "episodes_per_30_days": 2.7975392016281972,
+        "alert_fraction": 0.00328414820296961
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 0.9926616834556662,
+        "episodes_per_30_days": 0.9991211434386419,
+        "alert_fraction": 0.0018964799481937184
+      }
+    ],
+    "model_sha256": "90b19bd59cb4e9b26ddbe7bc2146b77d737508dcae6531ef60db429f7747c259",
+    "training_assets": [
+      0,
+      10,
+      11,
+      21
+    ],
+    "calibration_assets": [
+      0,
+      10,
+      11,
+      21
+    ]
+  },
+  {
+    "family": "rbf_svm_approx",
+    "farm": "Wind Farm A",
+    "held_asset": 21,
+    "threshold": 1.2382958836208224,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.49158342389312426,
+        "episodes_per_30_days": 18.831902495440595,
+        "alert_fraction": 0.05751523508740714
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.6492744011431334,
+        "episodes_per_30_days": 11.529736221698325,
+        "alert_fraction": 0.023264089675726168
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.7853110931457696,
+        "episodes_per_30_days": 4.227569947956052,
+        "alert_fraction": 0.010987055735954807
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.9346903871628397,
+        "episodes_per_30_days": 2.3059472443396647,
+        "alert_fraction": 0.0038254526044215116
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 1.0725157047231855,
+        "episodes_per_30_days": 1.345135892531471,
+        "alert_fraction": 0.001601352253013656
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 1.2382958836208224,
+        "episodes_per_30_days": 0.3843245407232775,
+        "alert_fraction": 0.00017792802811262843
+      }
+    ],
+    "model_sha256": "56043c4898d09873cfd59e98c95064c1b6d439cd9e31cc2cd905bc5c9609eef5",
+    "training_assets": [
+      0,
+      10,
+      11,
+      13
+    ],
+    "calibration_assets": [
+      0,
+      10,
+      11,
+      13
+    ]
+  },
+  {
+    "family": "rbf_svm_approx",
+    "farm": "Wind Farm B",
+    "held_asset": 0,
+    "threshold": 1.1867203432552396,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.4962040995299979,
+        "episodes_per_30_days": 15.674312772892195,
+        "alert_fraction": 0.06567861755119611
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.6232070991401405,
+        "episodes_per_30_days": 10.095320091015312,
+        "alert_fraction": 0.029210995633724864
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.7287676447511231,
+        "episodes_per_30_days": 5.446159522784576,
+        "alert_fraction": 0.012022630834512023
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.8373254038242415,
+        "episodes_per_30_days": 1.8596642272922945,
+        "alert_fraction": 0.004489268802656664
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 0.934150225796877,
+        "episodes_per_30_days": 1.062665272738454,
+        "alert_fraction": 0.0020601439025890165
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 1.1867203432552396,
+        "episodes_per_30_days": 0.13283315909230675,
+        "alert_fraction": 0.00015374208228276245
+      }
+    ],
+    "model_sha256": "2889a2ada56f35bad7009401429338ca0a659f75b05d9b69e711cd9b6264d2d6",
+    "training_assets": [
+      2,
+      5,
+      6,
+      7,
+      11,
+      12,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      2,
+      5,
+      6,
+      7,
+      11,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "rbf_svm_approx",
+    "farm": "Wind Farm B",
+    "held_asset": 2,
+    "threshold": 0.9046631251815422,
+    "quantile": 0.995,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.41657553174321166,
+        "episodes_per_30_days": 15.564802598193443,
+        "alert_fraction": 0.0608444128691769
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.5501961050603343,
+        "episodes_per_30_days": 10.52268344666599,
+        "alert_fraction": 0.02851923272099868
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.6680196874200732,
+        "episodes_per_30_days": 5.699786866944078,
+        "alert_fraction": 0.010707398761798437
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.8258879591682511,
+        "episodes_per_30_days": 2.6306708616664976,
+        "alert_fraction": 0.0035522175987009034
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 0.9046631251815422,
+        "episodes_per_30_days": 0.8768902872221658,
+        "alert_fraction": 0.001370141073784634
+      }
+    ],
+    "model_sha256": "0cc07634a7f096b2323f1979dcb2062e5505bf0dfece8bc8406e6fe041b527b0",
+    "training_assets": [
+      0,
+      5,
+      6,
+      7,
+      11,
+      12,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      5,
+      6,
+      7,
+      11,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "rbf_svm_approx",
+    "farm": "Wind Farm B",
+    "held_asset": 5,
+    "threshold": 0.9408143580894124,
+    "quantile": 0.995,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.488607805010702,
+        "episodes_per_30_days": 16.112209116990755,
+        "alert_fraction": 0.05830411220911699
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.6098304768703307,
+        "episodes_per_30_days": 7.436404207841887,
+        "alert_fraction": 0.02464137711189034
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.7129378988574436,
+        "episodes_per_30_days": 3.4427797258527253,
+        "alert_fraction": 0.013165444692381257
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.8450466438034313,
+        "episodes_per_30_days": 1.3771118903410902,
+        "alert_fraction": 0.004781638508128785
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 0.9408143580894124,
+        "episodes_per_30_days": 0.550844756136436,
+        "alert_fraction": 0.0032515141855275743
+      }
+    ],
+    "model_sha256": "203a1620a937864b12ac7d30f92e9e844f85e0731298c72f7e06211eb9b9b1e4",
+    "training_assets": [
+      0,
+      2,
+      6,
+      7,
+      11,
+      12,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      6,
+      7,
+      11,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "rbf_svm_approx",
+    "farm": "Wind Farm B",
+    "held_asset": 6,
+    "threshold": 1.1846508674752219,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.5937709488924707,
+        "episodes_per_30_days": 13.840934790802864,
+        "alert_fraction": 0.06800477446915441
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.738702752940749,
+        "episodes_per_30_days": 9.36298529966076,
+        "alert_fraction": 0.030248774971730116
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.8370581450437768,
+        "episodes_per_30_days": 5.427817565020731,
+        "alert_fraction": 0.013475310968714663
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.9533846146778007,
+        "episodes_per_30_days": 2.035431586882774,
+        "alert_fraction": 0.004837291116974494
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 1.0172127327038882,
+        "episodes_per_30_days": 1.085563513004146,
+        "alert_fraction": 0.0024814675210453573
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 1.1846508674752219,
+        "episodes_per_30_days": 0.2713908782510365,
+        "alert_fraction": 0.00012564392511622062
+      }
+    ],
+    "model_sha256": "c847728e3b97d1e490b3a402de8ecf0a8ff1d2654fabe021d0c0606eec1e6499",
+    "training_assets": [
+      0,
+      2,
+      5,
+      7,
+      11,
+      12,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      5,
+      7,
+      11,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "rbf_svm_approx",
+    "farm": "Wind Farm B",
+    "held_asset": 7,
+    "threshold": 1.1829071451220223,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.49661157039185694,
+        "episodes_per_30_days": 13.327271546405143,
+        "alert_fraction": 0.06897447554718451
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.6603190918302482,
+        "episodes_per_30_days": 8.27693706566214,
+        "alert_fraction": 0.03036305773852049
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.7893699393539286,
+        "episodes_per_30_days": 4.629473274014418,
+        "alert_fraction": 0.013151912710268235
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.9251627042314602,
+        "episodes_per_30_days": 2.525167240371501,
+        "alert_fraction": 0.0047736572059492105
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 1.0276183014386908,
+        "episodes_per_30_days": 1.6834448269143338,
+        "alert_fraction": 0.0017211145028252256
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 1.1829071451220223,
+        "episodes_per_30_days": 0.14028706890952783,
+        "alert_fraction": 9.742157563161655e-05
+      }
+    ],
+    "model_sha256": "5387736efd036d4e1582786c3d4cd88f43aed28912994746d1fdc606fecd9b14",
+    "training_assets": [
+      0,
+      2,
+      5,
+      6,
+      11,
+      12,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      5,
+      6,
+      11,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "rbf_svm_approx",
+    "farm": "Wind Farm B",
+    "held_asset": 11,
+    "threshold": 1.465524380423762,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.4656581742101463,
+        "episodes_per_30_days": 15.17465686593378,
+        "alert_fraction": 0.06605737331685423
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.6401674250866037,
+        "episodes_per_30_days": 7.165810186690952,
+        "alert_fraction": 0.03424835750991999
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.8239161242911022,
+        "episodes_per_30_days": 5.05821895531126,
+        "alert_fraction": 0.013953034541078515
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.9896412230207786,
+        "episodes_per_30_days": 2.248097313471671,
+        "alert_fraction": 0.005561699082807519
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 1.1447862790632046,
+        "episodes_per_30_days": 1.1240486567358354,
+        "alert_fraction": 0.002211669810707084
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 1.465524380423762,
+        "episodes_per_30_days": 0.28101216418395886,
+        "alert_fraction": 0.00042281922851753075
+      }
+    ],
+    "model_sha256": "de9ff8e37d5fb49930f9297230ee3c248a499c81eedd41995a2b1cd30544120f",
+    "training_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      12,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "rbf_svm_approx",
+    "farm": "Wind Farm B",
+    "held_asset": 12,
+    "threshold": 0.9092740287393939,
+    "quantile": 0.995,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.3958072339714223,
+        "episodes_per_30_days": 16.081833484397254,
+        "alert_fraction": 0.06309076783633304
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.5083297981692778,
+        "episodes_per_30_days": 9.229573999741035,
+        "alert_fraction": 0.029619318917519098
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.6105527991137486,
+        "episodes_per_30_days": 5.034313090767837,
+        "alert_fraction": 0.012948336138806164
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.7544263641626531,
+        "episodes_per_30_days": 2.5171565453839184,
+        "alert_fraction": 0.005664897060727697
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 0.9092740287393939,
+        "episodes_per_30_days": 0.8390521817946394,
+        "alert_fraction": 0.0026544089084552633
+      }
+    ],
+    "model_sha256": "5958e98b6cf31ae077aebe38908ab291f604e79ff3fe8dbc9bd92dcee24d01fd",
+    "training_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      11,
+      13,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      11,
+      13,
+      14
+    ]
+  },
+  {
+    "family": "rbf_svm_approx",
+    "farm": "Wind Farm B",
+    "held_asset": 13,
+    "threshold": 1.1824664886452596,
+    "quantile": 0.999,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.4331927323302277,
+        "episodes_per_30_days": 13.532464245032273,
+        "alert_fraction": 0.06726996582711049
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.584384335364136,
+        "episodes_per_30_days": 9.431717504113404,
+        "alert_fraction": 0.03085052524996836
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.7131652825796739,
+        "episodes_per_30_days": 4.510821415010758,
+        "alert_fraction": 0.014080496139729148
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.8605408568647871,
+        "episodes_per_30_days": 1.9136818124288064,
+        "alert_fraction": 0.005505632198455891
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 0.9723274780354906,
+        "episodes_per_30_days": 1.0935324642450324,
+        "alert_fraction": 0.0024996835843564104
+      },
+      {
+        "quantile": 0.999,
+        "threshold": 1.1824664886452596,
+        "episodes_per_30_days": 0.4100746740918871,
+        "alert_fraction": 0.000348057207948361
+      }
+    ],
+    "model_sha256": "b8ba2ff4c44f8da574a820d8f05c09be0c5c93ad66d827a67d42a8b7d7534e76",
+    "training_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      11,
+      12,
+      14
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      11,
+      12,
+      14
+    ]
+  },
+  {
+    "family": "rbf_svm_approx",
+    "farm": "Wind Farm B",
+    "held_asset": 14,
+    "threshold": 1.0216108036350924,
+    "quantile": 0.995,
+    "threshold_audit": [
+      {
+        "quantile": 0.9,
+        "threshold": 0.5809261398553136,
+        "episodes_per_30_days": 15.288591467730518,
+        "alert_fraction": 0.06659803101473522
+      },
+      {
+        "quantile": 0.95,
+        "threshold": 0.7283523622461002,
+        "episodes_per_30_days": 7.505308538704074,
+        "alert_fraction": 0.03175471333890998
+      },
+      {
+        "quantile": 0.975,
+        "threshold": 0.8433761735055956,
+        "episodes_per_30_days": 3.891641464513223,
+        "alert_fraction": 0.013190914355575574
+      },
+      {
+        "quantile": 0.99,
+        "threshold": 0.9518222117199445,
+        "episodes_per_30_days": 1.9458207322566115,
+        "alert_fraction": 0.003249469146129593
+      },
+      {
+        "quantile": 0.995,
+        "threshold": 1.0216108036350924,
+        "episodes_per_30_days": 0.8339231709671192,
+        "alert_fraction": 0.00164082105398623
+      }
+    ],
+    "model_sha256": "8c0185ebf14ce6eecced377aee92506cce4f6ef8e2d011f395f4c6a0ac11e609",
+    "training_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      11,
+      12,
+      13
+    ],
+    "calibration_assets": [
+      0,
+      2,
+      5,
+      6,
+      7,
+      11,
+      12,
+      13
+    ]
+  }
+]
