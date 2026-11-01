@@ -16,6 +16,7 @@ import pytest
 
 pytest.importorskip("torch")
 
+from hydropredict.assessment_store import AssessmentStore
 from hydropredict.auth import AuthStore
 from hydropredict.dashboard import DashboardHandler, InferenceService
 from hydropredict.models.lstm import LSTMConfig, SHPLSTMAutoencoder
@@ -37,6 +38,65 @@ def records() -> list[dict[str, Any]]:
         {"t": t.isoformat(), **{f"V{i}": index + i for i in range(1, 7)}}
         for index, t in enumerate(pd.date_range("2026-01-01", periods=20, freq="5min", tz="UTC"))
     ]
+
+
+def test_saved_assessment_http_flow(service: InferenceService, tmp_path: Path) -> None:
+    auth = AuthStore(tmp_path / "accounts.sqlite3")
+    token = auth.register({"email": "review@example.com", "password": "long test password"})
+    user = auth.user(token)
+    assert user is not None
+    auth.profile(
+        user["id"],
+        {
+            "name": "Reviewer",
+            "company": "Test",
+            "username": "reviewer",
+            "job_position": "Engineer",
+        },
+    )
+    store = AssessmentStore(tmp_path / "assessments.sqlite3")
+    handler = partial(DashboardHandler, service=service, auth=auth, assessments=store)
+    with HTTPServer(("127.0.0.1", 0), handler) as server:
+        worker = threading.Thread(target=server.serve_forever, daemon=True)
+        worker.start()
+        connection = http.client.HTTPConnection("127.0.0.1", server.server_port, timeout=10)
+        headers = {"Content-Type": "application/json", "Cookie": f"hp_session={token}"}
+        try:
+            connection.request(
+                "POST",
+                "/api/assess",
+                json.dumps({"name": "test.csv", "records": records()}),
+                headers,
+            )
+            response = connection.getresponse()
+            assert response.status == 200
+            run = json.loads(response.read())
+            assert run["result"]["scored_observations"] == 14
+            connection.request("GET", "/api/run?id=" + run["id"], headers=headers)
+            response = connection.getresponse()
+            assert response.status == 200
+            assert json.loads(response.read())["records"] == records()
+            connection.request("GET", "/", headers=headers)
+            response = connection.getresponse()
+            assert response.status == 200
+            assert b"Review unusual behaviour" in response.read()
+            connection.request("GET", "/api/runs")
+            response = connection.getresponse()
+            assert response.status == 401
+            response.read()
+            connection.request(
+                "POST",
+                "/api/review",
+                json.dumps({"run_id": run["id"], "episode": "invalid", "action": "acknowledged"}),
+                headers,
+            )
+            response = connection.getresponse()
+            assert response.status == 400
+            response.read()
+        finally:
+            connection.close()
+            server.shutdown()
+            worker.join(timeout=5)
 
 
 def test_scores_match_direct_inference_and_account_for_gaps(service: InferenceService) -> None:

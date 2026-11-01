@@ -1,0 +1,477 @@
+{
+  "primary": {
+    "train_recordings": [
+      "97.mat",
+      "98.mat",
+      "109.mat",
+      "122.mat",
+      "135.mat",
+      "110.mat",
+      "123.mat",
+      "136.mat",
+      "174.mat",
+      "189.mat",
+      "201.mat",
+      "175.mat",
+      "190.mat",
+      "202.mat",
+      "213.mat",
+      "226.mat",
+      "238.mat",
+      "214.mat",
+      "227.mat",
+      "239.mat"
+    ],
+    "test": {
+      "recordings": 10,
+      "correct": 8,
+      "accuracy": 0.8,
+      "macro_f1": 0.8375,
+      "confusion_matrix": [
+        [
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          2,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          3
+        ]
+      ],
+      "per_class": {
+        "Healthy": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 1.0
+        },
+        "Inner race fault": {
+          "precision": 1.0,
+          "recall": 0.6666666666666666,
+          "f1-score": 0.8,
+          "support": 3.0
+        },
+        "Outer race fault": {
+          "precision": 1.0,
+          "recall": 0.6666666666666666,
+          "f1-score": 0.8,
+          "support": 3.0
+        },
+        "Rolling element fault": {
+          "precision": 0.6,
+          "recall": 1.0,
+          "f1-score": 0.75,
+          "support": 3.0
+        },
+        "accuracy": 0.8,
+        "macro avg": {
+          "precision": 0.9,
+          "recall": 0.8333333333333333,
+          "f1-score": 0.8375,
+          "support": 10.0
+        },
+        "weighted avg": {
+          "precision": 0.8800000000000001,
+          "recall": 0.8,
+          "f1-score": 0.805,
+          "support": 10.0
+        }
+      },
+      "window_accuracy": 0.7758620689655172,
+      "predictions": [
+        {
+          "recording": "100.mat",
+          "actual": "Healthy",
+          "predicted": "Healthy",
+          "windows": 29
+        },
+        {
+          "recording": "112.mat",
+          "actual": "Inner race fault",
+          "predicted": "Inner race fault",
+          "windows": 29
+        },
+        {
+          "recording": "125.mat",
+          "actual": "Rolling element fault",
+          "predicted": "Rolling element fault",
+          "windows": 29
+        },
+        {
+          "recording": "138.mat",
+          "actual": "Outer race fault",
+          "predicted": "Outer race fault",
+          "windows": 29
+        },
+        {
+          "recording": "177.mat",
+          "actual": "Inner race fault",
+          "predicted": "Inner race fault",
+          "windows": 29
+        },
+        {
+          "recording": "192.mat",
+          "actual": "Rolling element fault",
+          "predicted": "Rolling element fault",
+          "windows": 29
+        },
+        {
+          "recording": "204.mat",
+          "actual": "Outer race fault",
+          "predicted": "Rolling element fault",
+          "windows": 29
+        },
+        {
+          "recording": "217.mat",
+          "actual": "Inner race fault",
+          "predicted": "Rolling element fault",
+          "windows": 29
+        },
+        {
+          "recording": "229.mat",
+          "actual": "Rolling element fault",
+          "predicted": "Rolling element fault",
+          "windows": 29
+        },
+        {
+          "recording": "241.mat",
+          "actual": "Outer race fault",
+          "predicted": "Outer race fault",
+          "windows": 29
+        }
+      ]
+    },
+    "validation": {
+      "recordings": 10,
+      "correct": 9,
+      "accuracy": 0.9,
+      "macro_f1": 0.9142857142857143,
+      "confusion_matrix": [
+        [
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          2,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          3
+        ]
+      ],
+      "per_class": {
+        "Healthy": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 1.0
+        },
+        "Inner race fault": {
+          "precision": 1.0,
+          "recall": 0.6666666666666666,
+          "f1-score": 0.8,
+          "support": 3.0
+        },
+        "Outer race fault": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 3.0
+        },
+        "Rolling element fault": {
+          "precision": 0.75,
+          "recall": 1.0,
+          "f1-score": 0.8571428571428571,
+          "support": 3.0
+        },
+        "accuracy": 0.9,
+        "macro avg": {
+          "precision": 0.9375,
+          "recall": 0.9166666666666666,
+          "f1-score": 0.9142857142857143,
+          "support": 10.0
+        },
+        "weighted avg": {
+          "precision": 0.925,
+          "recall": 0.9,
+          "f1-score": 0.8971428571428571,
+          "support": 10.0
+        }
+      },
+      "window_accuracy": 0.9344827586206896,
+      "predictions": [
+        {
+          "recording": "99.mat",
+          "actual": "Healthy",
+          "predicted": "Healthy",
+          "windows": 29
+        },
+        {
+          "recording": "111.mat",
+          "actual": "Inner race fault",
+          "predicted": "Inner race fault",
+          "windows": 29
+        },
+        {
+          "recording": "124.mat",
+          "actual": "Rolling element fault",
+          "predicted": "Rolling element fault",
+          "windows": 29
+        },
+        {
+          "recording": "137.mat",
+          "actual": "Outer race fault",
+          "predicted": "Outer race fault",
+          "windows": 29
+        },
+        {
+          "recording": "176.mat",
+          "actual": "Inner race fault",
+          "predicted": "Rolling element fault",
+          "windows": 29
+        },
+        {
+          "recording": "191.mat",
+          "actual": "Rolling element fault",
+          "predicted": "Rolling element fault",
+          "windows": 29
+        },
+        {
+          "recording": "203.mat",
+          "actual": "Outer race fault",
+          "predicted": "Outer race fault",
+          "windows": 29
+        },
+        {
+          "recording": "215.mat",
+          "actual": "Inner race fault",
+          "predicted": "Inner race fault",
+          "windows": 29
+        },
+        {
+          "recording": "228.mat",
+          "actual": "Rolling element fault",
+          "predicted": "Rolling element fault",
+          "windows": 29
+        },
+        {
+          "recording": "240.mat",
+          "actual": "Outer race fault",
+          "predicted": "Outer race fault",
+          "windows": 29
+        }
+      ]
+    }
+  },
+  "size_challenge": {
+    "train_recordings": [
+      "97.mat",
+      "98.mat",
+      "99.mat",
+      "109.mat",
+      "122.mat",
+      "135.mat",
+      "110.mat",
+      "123.mat",
+      "136.mat",
+      "111.mat",
+      "124.mat",
+      "137.mat",
+      "112.mat",
+      "125.mat",
+      "138.mat",
+      "213.mat",
+      "226.mat",
+      "238.mat",
+      "214.mat",
+      "227.mat",
+      "239.mat",
+      "215.mat",
+      "228.mat",
+      "240.mat",
+      "217.mat",
+      "229.mat",
+      "241.mat"
+    ],
+    "test": {
+      "recordings": 13,
+      "correct": 5,
+      "accuracy": 0.38461538461538464,
+      "macro_f1": 0.375,
+      "confusion_matrix": [
+        [
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          4
+        ],
+        [
+          0,
+          0,
+          0,
+          4
+        ],
+        [
+          0,
+          0,
+          0,
+          4
+        ]
+      ],
+      "per_class": {
+        "Healthy": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 1.0
+        },
+        "Inner race fault": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 4.0
+        },
+        "Outer race fault": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 4.0
+        },
+        "Rolling element fault": {
+          "precision": 0.3333333333333333,
+          "recall": 1.0,
+          "f1-score": 0.5,
+          "support": 4.0
+        },
+        "accuracy": 0.38461538461538464,
+        "macro avg": {
+          "precision": 0.3333333333333333,
+          "recall": 0.5,
+          "f1-score": 0.375,
+          "support": 13.0
+        },
+        "weighted avg": {
+          "precision": 0.17948717948717946,
+          "recall": 0.38461538461538464,
+          "f1-score": 0.23076923076923078,
+          "support": 13.0
+        }
+      },
+      "window_accuracy": 0.3449367088607595,
+      "predictions": [
+        {
+          "recording": "100.mat",
+          "actual": "Healthy",
+          "predicted": "Healthy",
+          "windows": 29
+        },
+        {
+          "recording": "174.mat",
+          "actual": "Inner race fault",
+          "predicted": "Rolling element fault",
+          "windows": 3
+        },
+        {
+          "recording": "189.mat",
+          "actual": "Rolling element fault",
+          "predicted": "Rolling element fault",
+          "windows": 15
+        },
+        {
+          "recording": "201.mat",
+          "actual": "Outer race fault",
+          "predicted": "Rolling element fault",
+          "windows": 14
+        },
+        {
+          "recording": "175.mat",
+          "actual": "Inner race fault",
+          "predicted": "Rolling element fault",
+          "windows": 23
+        },
+        {
+          "recording": "190.mat",
+          "actual": "Rolling element fault",
+          "predicted": "Rolling element fault",
+          "windows": 29
+        },
+        {
+          "recording": "202.mat",
+          "actual": "Outer race fault",
+          "predicted": "Rolling element fault",
+          "windows": 29
+        },
+        {
+          "recording": "176.mat",
+          "actual": "Inner race fault",
+          "predicted": "Rolling element fault",
+          "windows": 29
+        },
+        {
+          "recording": "191.mat",
+          "actual": "Rolling element fault",
+          "predicted": "Rolling element fault",
+          "windows": 29
+        },
+        {
+          "recording": "203.mat",
+          "actual": "Outer race fault",
+          "predicted": "Rolling element fault",
+          "windows": 29
+        },
+        {
+          "recording": "177.mat",
+          "actual": "Inner race fault",
+          "predicted": "Rolling element fault",
+          "windows": 29
+        },
+        {
+          "recording": "192.mat",
+          "actual": "Rolling element fault",
+          "predicted": "Rolling element fault",
+          "windows": 29
+        },
+        {
+          "recording": "204.mat",
+          "actual": "Outer race fault",
+          "predicted": "Rolling element fault",
+          "windows": 29
+        }
+      ]
+    }
+  }
+}

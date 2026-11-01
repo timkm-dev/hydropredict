@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HydroPredict · Bearing assessment</title><link rel="stylesheet" href="shp.css"><script type="module" src="bearing.js?v=preloaded-1"></script></head>
+<body><header><a class="brand" href="/">≋ HydroPredict</a><nav><a href="/">SHP monitoring</a><a href="auth.html?profile">Account</a></nav></header>
+<main><div class="heading"><div><p class="eyebrow">CWRU · LABORATORY BENCHMARK</p><h1>Assess a bearing recording.</h1><p>Identify the vibration pattern and inspect the supporting evidence.</p></div><span class="badge" id="connection">Connecting…</span></div>
+<p class="scope">Classifies recorded bearing conditions. This does not forecast failures or establish equipment health outside the CWRU laboratory setup.</p>
+<section class="panel"><div class="section-head"><h2>1. Choose a recording</h2><label>Saved assessments<select id="history"><option value="">Select an assessment</option></select></label></div>
+<div class="input-row"><label>Preloaded recording<select id="example"></select></label><button id="try-example" disabled>Assess selected recording</button></div>
+<p><strong id="filename">Loading recordings…</strong></p>
+<p class="caption" id="preloaded-summary">Held-out CWRU recordings are stored on this computer. No upload needed.</p>
+<details><summary>Upload a different recording</summary><div class="input-row" style="margin-top:16px"><label class="upload">Import MATLAB file<input type="file" id="file" accept=".mat"></label><button id="assess" disabled>Assess upload</button></div><p class="caption">48 kHz drive-end signal (*_DE_time). Maximum 20 MB.</p>
+<label style="margin-top:16px"><input type="checkbox" id="rate-confirm">I confirm this is a CWRU drive-end recording sampled at 48,000 Hz.</label></details>
+<p id="message" role="status" aria-live="polite">Loading preloaded data…</p></section>
+<section id="result" hidden><article class="panel"><p class="eyebrow">PREDICTED CONDITION</p><h2 id="condition"></h2><p id="reference"></p><p id="agreement"></p><div id="support"></div><p class="caption">Model support is averaged across signal windows; it is not calibrated diagnostic confidence.</p></article>
+<article class="panel"><h2>What influenced the result?</h2><ul id="explanation"></ul><p class="caption">Feature contributions explain the classifier's decision, not a confirmed physical cause.</p></article>
+<details class="panel"><summary>Assessment and benchmark details</summary><p id="details"></p><p id="evaluation"></p><p id="challenge"></p><p class="caption">Related seeded conditions appear across loads. The size challenge uses separate fault-size families, but neither test proves transfer to a new plant or unseen bearing population.</p></details></section>
+</main></body></html>
+
