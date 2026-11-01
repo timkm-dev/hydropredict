@@ -115,7 +115,7 @@ interval is reported.
 Reproduce into **new** output directories (the runner refuses existing paths):
 
 ```powershell
-.venv/Scripts/python.exe scripts/train_care_baseline.py 'C:\Users\tmuny\Downloads\CARE_To_Compare\CARE_To_Compare' --output docs/results/care-baseline-reproduction --models .local/care-baseline-reproduction-models
+.venv/Scripts/python.exe scripts/train_care_baseline.py --output docs/results/care-baseline-reproduction --models .local/care-baseline-reproduction-models
 ```
 
 The source data and existing application/model configuration were left unchanged.

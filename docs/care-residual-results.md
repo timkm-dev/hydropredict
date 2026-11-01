@@ -80,7 +80,7 @@ repeatedly tuning these exposed cases until a favorable score appears.
 ## Reproduction and evidence
 
 ```powershell
-.venv/Scripts/python.exe -m scripts.train_care_residual 'C:\Users\tmuny\Downloads\CARE_To_Compare\CARE_To_Compare' --output docs/results/care-residual-reproduction --models .local/care-residual-reproduction-models
+.venv/Scripts/python.exe -m scripts.train_care_residual --output docs/results/care-residual-reproduction --models .local/care-residual-reproduction-models
 ```
 
 The runner requires new output directories. Results are in

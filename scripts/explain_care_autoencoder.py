@@ -16,6 +16,7 @@ from hydropredict.analysis.care_explain import (
     sensor_component,
     top_sensors,
 )
+from hydropredict.data.care import care_root
 from scripts.select_care_autoencoder import evaluate, load, smooth
 from scripts.train_care_autoencoder import AutoEncoder, prepare
 
@@ -44,11 +45,14 @@ def reconstruct(path, folder, model_path):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("root", type=Path)
+    parser.add_argument(
+        "root", type=Path, nargs="?", help="CARE folder (default: CARE_DATA_DIR in .env)"
+    )
     parser.add_argument("--farms", nargs="+", required=True)
     parser.add_argument("--scores", type=Path, required=True)
     parser.add_argument("--results", type=Path, required=True)
     args = parser.parse_args()
+    args.root = care_root(args.root)
     selection = json.loads((args.results / "selection.json").read_text())
     window, quantile = selection["window"], selection["quantile"]
     datasets = load(args.root, args.scores, args.farms)

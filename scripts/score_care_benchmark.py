@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 
 from hydropredict.analysis.care_score import care_score, score_event
+from hydropredict.data.care import care_root
 from scripts.train_care_baseline import digest
 
 MODELS = {
@@ -41,9 +42,12 @@ def predictions(record, saved, frame, pred):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("root", type=Path)
+    parser.add_argument(
+        "root", type=Path, nargs="?", help="CARE folder (default: CARE_DATA_DIR in .env)"
+    )
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
+    args.root = care_root(args.root)
     args.output.mkdir(parents=True, exist_ok=False)
     rows, scored = [], []
     for model, (results, scores_dir) in MODELS.items():

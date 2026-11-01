@@ -13,6 +13,7 @@ import numpy as np
 import pandas as pd
 
 from hydropredict.analysis.care_score import care_score, score_event
+from hydropredict.data.care import care_root
 
 WINDOWS = (1, 6, 36, 144)
 QUANTILES = (0.9, 0.95, 0.975, 0.99, 0.995, 0.999)
@@ -93,11 +94,14 @@ def event_table(events, window, quantile):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("mode", choices=["select", "confirm"])
-    parser.add_argument("root", type=Path)
+    parser.add_argument(
+        "root", type=Path, nargs="?", help="CARE folder (default: CARE_DATA_DIR in .env)"
+    )
     parser.add_argument("--farms", nargs="+", required=True)
     parser.add_argument("--scores", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
+    args.root = care_root(args.root)
     datasets = load(args.root, args.scores, args.farms)
     tag = "-".join(f[-1] for f in args.farms)
     selection_path = args.output / "selection.json"
