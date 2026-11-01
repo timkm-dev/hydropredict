@@ -28,6 +28,7 @@ from hydropredict.models.lstm import SHPLSTMAutoencoder
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_BUNDLE = ROOT / "models/lstm-diagnostics-2026-10-15-v1/frozen_bundle_copy"
+CARE_DATA = ROOT / "frontend/care-data"
 MAX_BYTES = 25 * 1024 * 1024
 MAX_ROWS = 100_000
 
@@ -104,6 +105,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         google: GoogleLogin | None = None,
         assessments: AssessmentStore | None = None,
         bearing: Any = None,
+        care_data: Path = CARE_DATA,
         **kwargs: Any,
     ) -> None:
         self.service = service
@@ -111,6 +113,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         self.google = google
         self.assessments = assessments
         self.bearing = bearing
+        self.care_data = care_data
         self.session_cookie: str | None = None
         super().__init__(*args, directory=str(ROOT / "frontend"), **kwargs)
 
@@ -121,6 +124,14 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             return cookie[name].value if name in cookie else ""
         except Exception:
             return ""
+
+    def care_alerts(self) -> set[str]:
+        """Alert ids in the generated replay data; reviews must name one of them."""
+        try:
+            fleet = json.loads((self.care_data / "fleet.json").read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return set()
+        return {a["id"] for period in fleet.get("periods", []) for a in period.get("alerts", [])}
 
     def respond(self, status: int, payload: dict[str, Any]) -> None:
         body = json.dumps(payload, allow_nan=False).encode()
@@ -150,7 +161,11 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             if self.path.startswith("/api/") and user is None:
                 self.respond(401, {"error": "Please sign in to continue."})
                 return
-            if path in ("/", "/index.html", "/shp.html") and (not user or not user["username"]):
+            if path.startswith("/care-data/") and (not user or not user["username"]):
+                self.respond(401, {"error": "Please sign in to continue."})
+                return
+            pages = ("/", "/index.html", "/shp.html", "/care.html")
+            if path in pages and (not user or not user["username"]):
                 self.send_response(302)
                 self.send_header("Location", "/auth.html")
                 self.end_headers()
@@ -188,13 +203,19 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                     self.respond(200, self.assessments.get(str(user["id"]), run_id))
             except ValueError as error:
                 self.respond(404, {"error": str(error)})
+        elif path == "/api/care/reviews":
+            user = self.auth.user(self.token()) if self.auth else None
+            if not user or self.assessments is None:
+                self.respond(401, {"error": "Sign in to see alert reviews."})
+                return
+            self.respond(200, {"reviews": self.assessments.care_reviews(str(user["id"]))})
         elif self.path == "/api/model":
             self.respond(200, self.service.info())
         elif self.path.startswith("/api/"):
             self.respond(404, {"error": "Unknown endpoint."})
         else:
             if path in {"/", "/index.html"}:
-                self.path = "/shp.html"
+                self.path = "/care.html"
             super().do_GET()
 
     def redirect(self, location: str, cookies: tuple[str, ...] = ()) -> None:
@@ -271,6 +292,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             "/api/score",
             "/api/assess",
             "/api/review",
+            "/api/care/review",
             "/api/bearing/assess",
             "/api/auth/register",
             "/api/auth/login",
@@ -312,6 +334,13 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 if not user["username"]:
                     self.respond(403, {"error": "Complete your profile first."})
                     return
+            if self.path == "/api/care/review":
+                if user is None or self.assessments is None:
+                    self.respond(401, {"error": "Sign in to review alerts."})
+                    return
+                self.assessments.care_review(str(user["id"]), payload, self.care_alerts())
+                self.respond(200, {"reviews": self.assessments.care_reviews(str(user["id"]))})
+                return
             if self.path == "/api/bearing/assess":
                 if not user:
                     self.respond(401, {"error": "Sign in to assess bearing recordings."})

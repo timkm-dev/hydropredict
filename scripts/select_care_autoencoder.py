@@ -37,18 +37,26 @@ def load(root, scores_dir, farms):
     return datasets
 
 
+def decide(d, window, quantile):
+    """Prediction-period decisions for one dataset under one decision rule."""
+    times = pd.DatetimeIndex(d["times"].astype("datetime64[ns]"))
+    smoothed = smooth(times, d["scores"], window)
+    reference = smoothed[d["calibration"] & ~np.isnan(smoothed)]
+    threshold = float(np.quantile(reference, quantile))
+    pred = d["prediction"]
+    flags = np.nan_to_num(smoothed[pred], nan=-np.inf) > threshold
+    status = d["status"][pred]
+    # Publisher guidance: Farm A status may be ignored in prediction periods.
+    normal = np.ones(len(status), bool) if d["farm"] == "Wind Farm A" else status == 0
+    return dict(
+        times=times[pred], smoothed=smoothed[pred], threshold=threshold, flags=flags, normal=normal
+    )
+
+
 def evaluate(datasets, window, quantile):
     events = []
     for d in datasets:
-        times = pd.DatetimeIndex(d["times"].astype("datetime64[ns]"))
-        smoothed = smooth(times, d["scores"], window)
-        reference = smoothed[d["calibration"] & ~np.isnan(smoothed)]
-        threshold = float(np.quantile(reference, quantile))
-        pred = d["prediction"]
-        flags = np.nan_to_num(smoothed[pred], nan=-np.inf) > threshold
-        status = d["status"][pred]
-        # Publisher guidance: Farm A status may be ignored in prediction periods.
-        normal = np.ones(len(status), bool) if d["farm"] == "Wind Farm A" else status == 0
+        decision = decide(d, window, quantile)
         event = d["event"]
         events.append(
             (
@@ -56,9 +64,9 @@ def evaluate(datasets, window, quantile):
                 score_event(
                     int(event.event_id),
                     event.event_label,
-                    times[pred],
-                    flags,
-                    normal,
+                    decision["times"],
+                    decision["flags"],
+                    decision["normal"],
                     pd.Timestamp(event.event_start),
                     pd.Timestamp(event.event_end),
                 ),
