@@ -1,0 +1,13 @@
+{
+  "protocol_sha256": "b8f457667f94f73b7432094efb4d6e10374645a96980c4f36579ace9c898c3a8",
+  "script_sha256": "eebe22d658ff5952597afc97a057d3b2a8173fff3afc6c8671fe5f1a6e7098c9",
+  "sklearn": "1.9.1",
+  "pandas": "3.0.6",
+  "numpy": "2.5.3",
+  "model": "ExtraTreesRegressor",
+  "trees": 100,
+  "max_depth": 12,
+  "min_samples_leaf": 20,
+  "seed": 42,
+  "elapsed_seconds": 68.67165779999777
+}

@@ -1,0 +1,30 @@
+[
+  {
+    "version": "v1",
+    "farm": "Wind Farm A",
+    "descriptive_file_auc": 0.5333333333333333,
+    "normal_median_p90": 0.9290678770497671,
+    "anomaly_median_p90": 0.8993555635631951
+  },
+  {
+    "version": "v1",
+    "farm": "Wind Farm B",
+    "descriptive_file_auc": 0.42592592592592593,
+    "normal_median_p90": 0.9418021948027975,
+    "anomaly_median_p90": 0.9305066812068707
+  },
+  {
+    "version": "v2",
+    "farm": "Wind Farm A",
+    "descriptive_file_auc": 0.6416666666666666,
+    "normal_median_p90": 0.6218612900619704,
+    "anomaly_median_p90": 0.6617508304122364
+  },
+  {
+    "version": "v2",
+    "farm": "Wind Farm B",
+    "descriptive_file_auc": 0.46296296296296297,
+    "normal_median_p90": 0.5696462082497816,
+    "anomaly_median_p90": 0.61453217811117
+  }
+]

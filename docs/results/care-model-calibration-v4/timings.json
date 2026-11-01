@@ -1,0 +1,18 @@
+[
+  {
+    "family": "logistic",
+    "elapsed_seconds": 6.772647400001006
+  },
+  {
+    "family": "gaussian_nb",
+    "elapsed_seconds": 4.205365599998913
+  },
+  {
+    "family": "random_forest",
+    "elapsed_seconds": 64.77398549999634
+  },
+  {
+    "family": "rbf_svm_approx",
+    "elapsed_seconds": 7.665572700003395
+  }
+]

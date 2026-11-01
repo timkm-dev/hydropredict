@@ -1,0 +1,98 @@
+[
+  {
+    "family": "gaussian_nb",
+    "farm": "Wind Farm A",
+    "anomaly_files": 12,
+    "detected": 0,
+    "detected_24h": 0,
+    "normal_episodes": 0,
+    "normal_episodes_per_30_days": 0.0,
+    "normal_alert_fraction": 0.0,
+    "minimum_valid_fraction": 0.8886569241475296,
+    "gate_pass": false
+  },
+  {
+    "family": "gaussian_nb",
+    "farm": "Wind Farm B",
+    "anomaly_files": 6,
+    "detected": 0,
+    "detected_24h": 0,
+    "normal_episodes": 0,
+    "normal_episodes_per_30_days": 0.0,
+    "normal_alert_fraction": 0.0,
+    "minimum_valid_fraction": 0.9730146491904395,
+    "gate_pass": false
+  },
+  {
+    "family": "logistic",
+    "farm": "Wind Farm A",
+    "anomaly_files": 12,
+    "detected": 1,
+    "detected_24h": 1,
+    "normal_episodes": 1,
+    "normal_episodes_per_30_days": 0.16574585635359115,
+    "normal_alert_fraction": 3.83670963781461e-05,
+    "minimum_valid_fraction": 0.8886569241475296,
+    "gate_pass": false
+  },
+  {
+    "family": "logistic",
+    "farm": "Wind Farm B",
+    "anomaly_files": 6,
+    "detected": 1,
+    "detected_24h": 1,
+    "normal_episodes": 16,
+    "normal_episodes_per_30_days": 2.0438215204470858,
+    "normal_alert_fraction": 0.012951299565333097,
+    "minimum_valid_fraction": 0.9730146491904395,
+    "gate_pass": false
+  },
+  {
+    "family": "random_forest",
+    "farm": "Wind Farm A",
+    "anomaly_files": 12,
+    "detected": 0,
+    "detected_24h": 0,
+    "normal_episodes": 1,
+    "normal_episodes_per_30_days": 0.16574585635359115,
+    "normal_alert_fraction": 7.67341927562922e-05,
+    "minimum_valid_fraction": 0.8886569241475296,
+    "gate_pass": false
+  },
+  {
+    "family": "random_forest",
+    "farm": "Wind Farm B",
+    "anomaly_files": 6,
+    "detected": 0,
+    "detected_24h": 0,
+    "normal_episodes": 0,
+    "normal_episodes_per_30_days": 0.0,
+    "normal_alert_fraction": 0.0,
+    "minimum_valid_fraction": 0.9730146491904395,
+    "gate_pass": false
+  },
+  {
+    "family": "rbf_svm_approx",
+    "farm": "Wind Farm A",
+    "anomaly_files": 12,
+    "detected": 0,
+    "detected_24h": 0,
+    "normal_episodes": 0,
+    "normal_episodes_per_30_days": 0.0,
+    "normal_alert_fraction": 0.0,
+    "minimum_valid_fraction": 0.8886569241475296,
+    "gate_pass": false
+  },
+  {
+    "family": "rbf_svm_approx",
+    "farm": "Wind Farm B",
+    "anomaly_files": 6,
+    "detected": 0,
+    "detected_24h": 0,
+    "normal_episodes": 0,
+    "normal_episodes_per_30_days": 0.0,
+    "normal_alert_fraction": 0.0,
+    "minimum_valid_fraction": 0.9730146491904395,
+    "gate_pass": false
+  }
+]
