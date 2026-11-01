@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>HydroPredict · SHP monitoring</title>
+  <link rel="stylesheet" href="shp.css"><script type="module" src="shp.js"></script>
+</head>
+<body>
+  <header><a class="brand" href="/">≋ HydroPredict</a><nav aria-label="Account and evidence"><a href="bearing.html">Bearing assessment</a><a href="evidence.html">Evaluation evidence</a><a href="auth.html?profile" id="account">Account</a><button id="logout" class="quiet">Sign out</button></nav></header>
+  <main>
+    <div class="heading"><div><p class="eyebrow">SHP · HISTORICAL TELEMETRY</p><h1>Review unusual behaviour.</h1><p>Assess plant readings and record what needs investigation.</p></div><span id="connection" class="badge">Connecting…</span></div>
+    <p class="scope">Anomaly monitoring. Alerts indicate unusual measurements; they do not confirm a fault or predict when equipment will fail.</p>
+    <section class="panel" aria-labelledby="input-title">
+      <div class="section-head"><h2 id="input-title">1. Choose telemetry</h2><label class="history-label">Saved assessments<select id="history"><option value="">Select an assessment</option></select></label></div>
+      <div class="input-row"><label class="upload">Import CSV<input id="file" type="file" accept=".csv,text/csv"></label><div class="file-description"><strong id="dataset">No file selected</strong><p id="data-summary">Required columns: t, V1–V6. Use the SHP source measurements.</p></div><button id="assess" disabled>Run assessment</button></div>
+      <p id="message" role="status" aria-live="polite">Import telemetry or open a saved assessment to begin.</p>
+    </section>
+    <section id="results" hidden aria-labelledby="results-title">
+      <div class="section-head"><h2 id="results-title">2. Inspect the assessment</h2><label>Display period<select id="period"><option value="24">Last 24 hours</option><option value="all">All readings</option></select></label></div>
+      <div class="metrics"><article><span>Readings assessed</span><strong id="scored">—</strong></article><article><span>Not assessed</span><strong id="unscored">—</strong><small>Gaps or insufficient history</small></article><article><span>Flagged episodes</span><strong id="episodes">—</strong><small id="pending"></small></article></div>
+      <article class="panel"><div class="section-head"><h3>Anomaly score</h3><span class="legend">Dashed line: alert threshold</span></div><div id="score-chart" class="chart"></div><p class="caption">Charts use UTC. Gaps are not assessed. Below-threshold readings do not confirm equipment health.</p></article>
+      <article class="panel"><div class="section-head"><h3>Measurement history</h3><label>Signal<select id="channel"><option>V1</option><option>V2</option><option>V3</option><option>V4</option><option>V5</option><option>V6</option></select></label></div><div id="signal-chart" class="chart"></div><p class="caption">Source values; measurement units and equipment identity are unverified.</p></article>
+      <article class="panel"><div class="section-head"><h2>3. Review flagged episodes</h2><label>Show<select id="filter"><option value="all">All episodes</option><option value="open">Awaiting review</option></select></label></div><p class="caption">Adjacent flagged readings form one episode. Reviewing an episode does not change the model result.</p><div class="table-wrap"><table><thead><tr><th>Start · UTC</th><th>Duration</th><th>Main signal</th><th>Review</th><th><span class="sr-only">Action</span></th></tr></thead><tbody id="events"></tbody></table></div><p id="empty"></p><div class="pagination"><button id="previous" class="quiet">Previous</button><span id="page"></span><button id="next" class="quiet">Next</button></div></article>
+      <section id="detail" class="panel detail" hidden tabindex="-1" aria-labelledby="detail-title"><div class="section-head"><h2 id="detail-title">Episode review</h2><button id="close-detail" class="quiet">Close</button></div><p id="explanation"></p><form id="review-form"><label>Review decision<select id="decision"><option value="acknowledged">Acknowledge</option><option value="dismissed">Dismiss</option><option value="open">Reopen for review</option></select></label><label>Notes <span class="caption">(required when dismissing)</span><textarea id="notes" maxlength="2000" rows="3" placeholder="Record your observation or reason."></textarea></label><button id="save-review">Save response</button><span id="review-message" role="status"></span></form><details><summary>Response history</summary><div id="review-history"></div></details></section>
+      <details class="model-details"><summary>Assessment details</summary><p id="model-details"></p><p>Saved on this computer for your account. Downloaded or imported files are not sent to an external inference service.</p></details>
+    </section>
+  </main>
+</body>
+</html>

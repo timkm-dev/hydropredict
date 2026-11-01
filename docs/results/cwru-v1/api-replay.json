@@ -1,0 +1,16 @@
+{
+  "held_out_examples": 10,
+  "100.mat": {
+    "prediction": "Healthy",
+    "windows": 29,
+    "persisted": true
+  },
+  "175.mat": {
+    "prediction": "Inner race fault",
+    "windows": 23,
+    "persisted": true
+  },
+  "unauthenticated_rejected": true,
+  "other_owner_rejected": true,
+  "restart_persistence": true
+}

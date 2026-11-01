@@ -1,5 +1,21 @@
 # HydroPredict dashboard
 
+**Bearing assessment:** open `/bearing.html` or follow the link from SHP monitoring.
+The page opens with ten held-out recordings preloaded and the first selected.
+Select **Assess selected recording**; no upload or sample-rate confirmation is
+needed for these known files. Saved results remain in the history selector.
+Alternatively, expand **Upload a different recording** to import a 48 kHz CWRU drive-end `.mat` file (up to
+20 MB). Keep original numeric filenames for files with multiple DE arrays.
+Predictions, feature contributions and benchmark limitations are displayed;
+assessment history is stored per account. See [CWRU results](../docs/cwru-results.md).
+
+The inference server now opens the concise SHP monitoring page by default:
+import CSV, assess readings, inspect charts, and save episode review responses.
+Assessments and notes persist per account in local SQLite. See
+[the operator workflow](../docs/shp-operator-workflow.md) for launch, storage and
+current limitations. The older synthetic dashboard described below is retained
+as a legacy frontend asset, not the default server homepage.
+
 ## Anomalies and recorded faults
 
 Select **Anomalies & faults** in the navigation for the real-evidence proof of

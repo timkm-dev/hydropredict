@@ -1,0 +1,242 @@
+{
+  "97.mat": {
+    "original_samples": 243938,
+    "resampled_samples": 60985,
+    "windows": 14,
+    "unused_resampled_samples": 3641
+  },
+  "98.mat": {
+    "original_samples": 483903,
+    "resampled_samples": 120976,
+    "windows": 29,
+    "unused_resampled_samples": 2192
+  },
+  "99.mat": {
+    "original_samples": 485063,
+    "resampled_samples": 121266,
+    "windows": 29,
+    "unused_resampled_samples": 2482
+  },
+  "100.mat": {
+    "original_samples": 485643,
+    "resampled_samples": 121411,
+    "windows": 29,
+    "unused_resampled_samples": 2627
+  },
+  "109.mat": {
+    "original_samples": 243938,
+    "resampled_samples": 60985,
+    "windows": 14,
+    "unused_resampled_samples": 3641
+  },
+  "122.mat": {
+    "original_samples": 244739,
+    "resampled_samples": 61185,
+    "windows": 14,
+    "unused_resampled_samples": 3841
+  },
+  "135.mat": {
+    "original_samples": 243538,
+    "resampled_samples": 60885,
+    "windows": 14,
+    "unused_resampled_samples": 3541
+  },
+  "110.mat": {
+    "original_samples": 486224,
+    "resampled_samples": 121556,
+    "windows": 29,
+    "unused_resampled_samples": 2772
+  },
+  "123.mat": {
+    "original_samples": 487384,
+    "resampled_samples": 121846,
+    "windows": 29,
+    "unused_resampled_samples": 3062
+  },
+  "136.mat": {
+    "original_samples": 486804,
+    "resampled_samples": 121701,
+    "windows": 29,
+    "unused_resampled_samples": 2917
+  },
+  "111.mat": {
+    "original_samples": 485643,
+    "resampled_samples": 121411,
+    "windows": 29,
+    "unused_resampled_samples": 2627
+  },
+  "124.mat": {
+    "original_samples": 486804,
+    "resampled_samples": 121701,
+    "windows": 29,
+    "unused_resampled_samples": 2917
+  },
+  "137.mat": {
+    "original_samples": 486804,
+    "resampled_samples": 121701,
+    "windows": 29,
+    "unused_resampled_samples": 2917
+  },
+  "112.mat": {
+    "original_samples": 485643,
+    "resampled_samples": 121411,
+    "windows": 29,
+    "unused_resampled_samples": 2627
+  },
+  "125.mat": {
+    "original_samples": 488545,
+    "resampled_samples": 122137,
+    "windows": 29,
+    "unused_resampled_samples": 3353
+  },
+  "138.mat": {
+    "original_samples": 487964,
+    "resampled_samples": 121991,
+    "windows": 29,
+    "unused_resampled_samples": 3207
+  },
+  "174.mat": {
+    "original_samples": 63788,
+    "resampled_samples": 15947,
+    "windows": 3,
+    "unused_resampled_samples": 3659
+  },
+  "189.mat": {
+    "original_samples": 249146,
+    "resampled_samples": 62287,
+    "windows": 15,
+    "unused_resampled_samples": 847
+  },
+  "201.mat": {
+    "original_samples": 245140,
+    "resampled_samples": 61285,
+    "windows": 14,
+    "unused_resampled_samples": 3941
+  },
+  "175.mat": {
+    "original_samples": 381890,
+    "resampled_samples": 95473,
+    "windows": 23,
+    "unused_resampled_samples": 1265
+  },
+  "190.mat": {
+    "original_samples": 486224,
+    "resampled_samples": 121556,
+    "windows": 29,
+    "unused_resampled_samples": 2772
+  },
+  "202.mat": {
+    "original_samples": 484483,
+    "resampled_samples": 121121,
+    "windows": 29,
+    "unused_resampled_samples": 2337
+  },
+  "176.mat": {
+    "original_samples": 487964,
+    "resampled_samples": 121991,
+    "windows": 29,
+    "unused_resampled_samples": 3207
+  },
+  "191.mat": {
+    "original_samples": 487384,
+    "resampled_samples": 121846,
+    "windows": 29,
+    "unused_resampled_samples": 3062
+  },
+  "203.mat": {
+    "original_samples": 486804,
+    "resampled_samples": 121701,
+    "windows": 29,
+    "unused_resampled_samples": 2917
+  },
+  "177.mat": {
+    "original_samples": 485063,
+    "resampled_samples": 121266,
+    "windows": 29,
+    "unused_resampled_samples": 2482
+  },
+  "192.mat": {
+    "original_samples": 486804,
+    "resampled_samples": 121701,
+    "windows": 29,
+    "unused_resampled_samples": 2917
+  },
+  "204.mat": {
+    "original_samples": 488545,
+    "resampled_samples": 122137,
+    "windows": 29,
+    "unused_resampled_samples": 3353
+  },
+  "213.mat": {
+    "original_samples": 244339,
+    "resampled_samples": 61085,
+    "windows": 14,
+    "unused_resampled_samples": 3741
+  },
+  "226.mat": {
+    "original_samples": 243938,
+    "resampled_samples": 60985,
+    "windows": 14,
+    "unused_resampled_samples": 3641
+  },
+  "238.mat": {
+    "original_samples": 246342,
+    "resampled_samples": 61586,
+    "windows": 15,
+    "unused_resampled_samples": 146
+  },
+  "214.mat": {
+    "original_samples": 485063,
+    "resampled_samples": 121266,
+    "windows": 29,
+    "unused_resampled_samples": 2482
+  },
+  "227.mat": {
+    "original_samples": 486804,
+    "resampled_samples": 121701,
+    "windows": 29,
+    "unused_resampled_samples": 2917
+  },
+  "239.mat": {
+    "original_samples": 489125,
+    "resampled_samples": 122282,
+    "windows": 29,
+    "unused_resampled_samples": 3498
+  },
+  "215.mat": {
+    "original_samples": 491446,
+    "resampled_samples": 122862,
+    "windows": 29,
+    "unused_resampled_samples": 4078
+  },
+  "228.mat": {
+    "original_samples": 487384,
+    "resampled_samples": 121846,
+    "windows": 29,
+    "unused_resampled_samples": 3062
+  },
+  "240.mat": {
+    "original_samples": 487964,
+    "resampled_samples": 121991,
+    "windows": 29,
+    "unused_resampled_samples": 3207
+  },
+  "217.mat": {
+    "original_samples": 489125,
+    "resampled_samples": 122282,
+    "windows": 29,
+    "unused_resampled_samples": 3498
+  },
+  "229.mat": {
+    "original_samples": 486804,
+    "resampled_samples": 121701,
+    "windows": 29,
+    "unused_resampled_samples": 2917
+  },
+  "241.mat": {
+    "original_samples": 489125,
+    "resampled_samples": 122282,
+    "windows": 29,
+    "unused_resampled_samples": 3498
+  }
+}
