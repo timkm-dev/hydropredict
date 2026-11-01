@@ -1,0 +1,52 @@
+{
+  "issue": 20,
+  "seed": 42,
+  "sequence_length": 7,
+  "calibration_quantile": 0.98,
+  "families": [
+    "dictionary",
+    "random_convolution"
+  ],
+  "representations": [
+    "levels",
+    "shape"
+  ],
+  "alert_rules": [
+    "single",
+    "three"
+  ],
+  "folds": {
+    "primary": [
+      "2018-08-01",
+      "2019-01-01",
+      "2019-02-01",
+      "2019-05-01"
+    ],
+    "november": [
+      "2018-08-01",
+      "2018-10-01",
+      "2018-11-01",
+      "2018-12-01"
+    ],
+    "december": [
+      "2018-08-01",
+      "2018-11-01",
+      "2018-12-01",
+      "2019-01-01"
+    ]
+  },
+  "interpretation": "Retrospective exploration; not independent validation",
+  "script_sha256": "8e0d1f53382936860b18a799ea22323a17bb608ef6ccd567daf3f131a2e39c1d",
+  "input_checksums": {
+    "calibration-features.csv": "9d84f804ffe89ec267d8bb500c80309adffa033d56ec77de45018258f117400e",
+    "calibration-observations.csv": "5a2ff7f4ac8ebe59f28d910d5b716d15e1cc0ffec14a8930c057136079ffdb01",
+    "code.zip": "256aece41add5ab1b4aabd666f4d5f2447eb85f822f57fb315d153726c450b98",
+    "development-features.csv": "8a30947aae6d9c061e7089b90e67e009cce3f15ffc9e87b241a609086f7da1c2",
+    "development-observations.csv": "274e73bf757e8abd5ed655adb670204aaaf94a23fc573f84573e53bc5449187b",
+    "faults.csv": "ba993960ab2c8066562b8a64b4ff2edf1211f0a18c4670668cde3661ef9e049a",
+    "fit-features.csv": "d8967fcec4351936e8edb3f74ac196face81312b9f3825c9224a0d1d4fb57743",
+    "fit-observations.csv": "34d457b5394c092ad10f910d55b6f066ba648a786be5e8b9c182ac82721b57da",
+    "provenance.csv": "60dd7835f7b330c294a27e6366eb471dff5b2b8f868677d53adba0dd2d927858",
+    "report.json": "f121d8adb464cfa917e2daf24c298d9ef2978e15d33329d67819f695b6c859d1"
+  }
+}

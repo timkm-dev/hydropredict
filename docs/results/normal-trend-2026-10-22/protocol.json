@@ -1,0 +1,17 @@
+{
+  "protocol_sha256": "de1e46267a9464751d2f2808494dc3e59756d2bb9018a78e075172e2fac369fc",
+  "implementation_sha256": "66149db9950cc6735950ac089dde789d1963e6d9f7f8d1dd9697569760760a53",
+  "source_commit": "8bd27d6ee5b90692bd4a7253a34a30d8f31640ee",
+  "input_sha256": "36998f8e432815c43843e410dfefa7618346b9134d5678342b1c73c627194cf1",
+  "diagnostics_sha256": "20daf26dc65c74ae0fc2e3e74660ac7b4464b680e1ccf7cafbdd3821f5ba77d8",
+  "fit_rows": 17744,
+  "calibration_rows": 4731,
+  "matched_calibration_rows": 4731,
+  "python": "3.14.4",
+  "numpy": "2.5.3",
+  "pandas": "3.0.6",
+  "prefix_invariance": true,
+  "statistic_replay": true,
+  "test_evaluated": false,
+  "model_promoted": false
+}

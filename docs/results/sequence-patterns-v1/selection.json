@@ -1,0 +1,29 @@
+{
+  "candidate": "random_convolution-shape",
+  "rule": "single",
+  "status": "experimental_only",
+  "production_promotion": false,
+  "primary_threshold": 0.7351437420608714,
+  "model_file": "models/sequence-patterns-v1-complete/primary-random_convolution-shape.joblib",
+  "reason": "Highest observed eligible-group coverage; nominal alert burden above 2% and chance-timing evidence insufficient for reliable prediction",
+  "evaluations": [
+    {
+      "fold": "november",
+      "warned": 2,
+      "eligible": 3,
+      "nominal_alert_fraction": 0.02049088043233506
+    },
+    {
+      "fold": "december",
+      "warned": 5,
+      "eligible": 5,
+      "nominal_alert_fraction": 0.025549877804932238
+    },
+    {
+      "fold": "primary",
+      "warned": 3,
+      "eligible": 3,
+      "nominal_alert_fraction": 0.02523712737127371
+    }
+  ]
+}

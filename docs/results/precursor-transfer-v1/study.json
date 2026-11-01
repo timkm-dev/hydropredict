@@ -1,0 +1,17 @@
+{
+  "candidates": [
+    "absolute_hgb",
+    "absolute_logistic",
+    "relative_hgb",
+    "relative_logistic"
+  ],
+  "script_sha256": "63bfda797e1f1060a41cabe2391d3673ecf9e164a05647e054f1617a3fd52c67",
+  "protocol_sha256": "ce28d75f1a1b2642da5294a6aaa4d9d81f3d87773469393d71a0ac078b08da96",
+  "shared_script_sha256": "a77a7c55980e2b1bab9eb8d06a3818210158cf99175bfdad72bbe5e4f379621f",
+  "package_manifest_sha256": "e0b9beecb3698d28a58707fa7a5a8f6183d16cd3ef0aeba00e98534d06034008",
+  "python": "3.14.4",
+  "sklearn": "1.9.1",
+  "numpy": "2.5.3",
+  "pandas": "3.0.6",
+  "development_measurements_loaded": false
+}

@@ -1,0 +1,9 @@
+{
+  "commit": "165038a8d79cfa8c0897028847a2af5720fd60c7",
+  "files": {
+    "README.md": "7b2037257910a402083a6f482efe580433108b17f9f6d47b7bcae1ef3b08fb49",
+    "LICENSE": "705d5c857fef78d7719915e4fef073210eff52cc4e98aa8678c327cc4e704607",
+    "scripts/isolation_forest.py": "88877ce1b0c83dfdd432166f902dec732af895a618224727abdda39d47e553cd",
+    "out/results.csv": "04d001be04b70fcaf474c4c2336d2fc7af6e1c60d480d7a5e4fc74fbca4b03aa"
+  }
+}

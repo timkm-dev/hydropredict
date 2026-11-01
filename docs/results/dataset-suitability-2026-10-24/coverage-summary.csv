@@ -1,0 +1,4 @@
+period,fault_timestamps,overlap_groups,raw_eligible_faults,raw_eligible_groups,sequence_eligible_faults,sequence_eligible_groups,six_hour_context_eligible_faults,six_hour_context_eligible_groups
+earlier,39,29,28,21,21,18,14,14
+development,9,7,6,4,3,3,2,2
+later,11,10,5,4,4,4,3,3
