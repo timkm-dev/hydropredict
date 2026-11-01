@@ -96,7 +96,8 @@ def reconstruction_scores(model, x, valid):
     return scores
 
 
-def run_file(path, folder, out_dir, seed=42, device="cpu"):
+def prepare(path, folder):
+    """Load one dataset and rebuild the exact model inputs and row splits."""
     header = pd.read_csv(path, sep=";", nrows=0).columns
     features = allowed_features(folder, header)
     keys = ["time_stamp", "train_test", "status_type_id"]
@@ -114,6 +115,25 @@ def run_file(path, folder, out_dir, seed=42, device="cpu"):
     fit, stop, calibration, tail, pred = splits(frame, valid)
     if len(fit) < 1000 or len(stop) < 200 or len(calibration) < 500 or x.shape[1] == 0:
         raise ValueError(f"Insufficient normal history: {path}")
+    return dict(
+        frame=frame,
+        times=times,
+        x=x,
+        valid=valid,
+        fit=fit,
+        stop=stop,
+        calibration=calibration,
+        tail=tail,
+        pred=pred,
+    )
+
+
+def run_file(path, folder, out_dir, seed=42, device="cpu"):
+    data = prepare(path, folder)
+    frame, times, x, valid = data["frame"], data["times"], data["x"], data["valid"]
+    fit, stop, calibration, tail, pred = (
+        data[k] for k in ("fit", "stop", "calibration", "tail", "pred")
+    )
     mean = x.iloc[fit].mean().to_numpy()
     std = np.maximum(x.iloc[fit].std().to_numpy(), 1e-6)
     z = np.nan_to_num(((x.to_numpy() - mean) / std).astype(np.float32), nan=0.0)
