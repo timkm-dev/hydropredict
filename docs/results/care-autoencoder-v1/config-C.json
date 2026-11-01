@@ -1,0 +1,10 @@
+{
+  "protocol_sha256": "e7e29c0f538030ea7e2d3be487264d789fcf068084c55a192d8762aea5287828",
+  "script_sha256": "0c57d61730117837490c5f6547d5f9b7eec531fbbf6ebd4e4404f4ce188c6543",
+  "torch": "2.11.0+cu130",
+  "numpy": "2.1.3",
+  "pandas": "2.2.3",
+  "seed": 42,
+  "device": "cuda",
+  "gpu": "Tesla T4"
+}

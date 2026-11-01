@@ -51,6 +51,26 @@ faults may not show in temperature at all.
 - **Small samples.** 18 faults, several repeated turbines, keyword matching of
   free-text fault labels. Treat the p-values as indicative.
 
+## Farm C worked examples
+
+Farm C's free-text fault notes (mixed languages, several faults per note) cannot be
+matched reliably by keyword, so as planned it is not scored for plausibility.
+These are its 9 alarms, read by hand. Full table:
+`docs/results/care-autoencoder-v1/explanations-C.csv`.
+
+| Fault note (shortened) | Alarm, hours before end | Top 3 sensors | Reading |
+|---|---:|---|---|
+| C 47: rotor brake and hydraulic problems, hydraulic pump disabled | 103 | Hydraulic system pressure (43%), hydraulic oil tank temperature 1 (10%) and 2 (10%) | Points to the fault |
+| C 5: failure in own-consumption current measurement | 38 | Internal consumption voltage L1, L3, L2 (30% each) | Points to the fault |
+| C 70: axis 1 DC-link voltage low, battery | 464 | Filter pump pollution indicator (29%), battery charge 2 (4%), hydraulic oil temperature (3%) | Partly: battery second |
+| C 55: hub wiring for blade control damaged | 390 | Pitch axis 2 battery voltages (25%, 19%, 19%) | Plausible: blade-pitch system |
+| C 11, C 33: blade cabinet caps / blade grease collector missing | 500, 490 | Gearbox oil temperature 1 (60%, 93%) | No: one sensor dominates |
+| C 16, C 28, C 31: hub battery charger; carbon brush and accumulators; pitch and slip ring | 19 to 451 | Aerator, cooling-water conductivity, wind speed | No clear link |
+
+About four of nine alarms name the affected system. The misses repeat the A/B
+pattern: one easily deviating sensor (gearbox oil temperature 1 in C) can dominate
+explanations for unrelated faults.
+
 ## How this fits the system
 
 The model warns, then names the sensors to inspect first, and the operator
