@@ -1,0 +1,297 @@
+model,predictions,variant,farm,event_id,label,f_beta,accuracy,weighted_score,max_criticality,first_detection,tp,fp,fn,tn
+Isolation Forest (v1),pointwise,reference,Wind Farm A,0,anomaly,0.061619718309859156,0.2878787878787879,0.016634082104797047,12,,28,37,1984,789
+Isolation Forest (v1),pointwise,paper,Wind Farm A,0,anomaly,0.061619718309859156,0.2878787878787879,0.014692952475700889,12,,28,37,1984,789
+Isolation Forest (v1),persistent,reference,Wind Farm A,0,anomaly,0.0024606299212598425,0.28999295278365045,0.0007950112770675061,4,,1,4,2011,822
+Isolation Forest (v1),persistent,paper,Wind Farm A,0,anomaly,0.0024606299212598425,0.28999295278365045,0.0006626356195881875,4,,1,4,2011,822
+Isolation Forest (v1),pointwise,reference,Wind Farm A,3,normal,,0.9872804360993337,,16,,0,42,0,3260
+Isolation Forest (v1),pointwise,paper,Wind Farm A,3,normal,,0.9872804360993337,,16,,0,42,0,3260
+Isolation Forest (v1),persistent,reference,Wind Farm A,3,normal,,0.999091459721381,,3,,0,3,0,3299
+Isolation Forest (v1),persistent,paper,Wind Farm A,3,normal,,0.999091459721381,,3,,0,3,0,3299
+Isolation Forest (v1),pointwise,reference,Wind Farm A,10,anomaly,0.0,0.22695035460992907,0.0,0,,0,0,981,288
+Isolation Forest (v1),pointwise,paper,Wind Farm A,10,anomaly,0.0,0.22695035460992907,0.0,0,,0,0,981,288
+Isolation Forest (v1),persistent,reference,Wind Farm A,10,anomaly,0.0,0.22695035460992907,0.0,0,,0,0,981,288
+Isolation Forest (v1),persistent,paper,Wind Farm A,10,anomaly,0.0,0.22695035460992907,0.0,0,,0,0,981,288
+Isolation Forest (v1),pointwise,reference,Wind Farm A,13,normal,,0.9631593636617359,,19,,0,132,0,3451
+Isolation Forest (v1),pointwise,paper,Wind Farm A,13,normal,,0.9631593636617359,,19,,0,132,0,3451
+Isolation Forest (v1),persistent,reference,Wind Farm A,13,normal,,0.992464415294446,,12,,0,27,0,3556
+Isolation Forest (v1),persistent,paper,Wind Farm A,13,normal,,0.992464415294446,,12,,0,27,0,3556
+Isolation Forest (v1),pointwise,reference,Wind Farm A,14,normal,,0.9889531825355077,,4,,0,21,0,1880
+Isolation Forest (v1),pointwise,paper,Wind Farm A,14,normal,,0.9889531825355077,,4,,0,21,0,1880
+Isolation Forest (v1),persistent,reference,Wind Farm A,14,normal,,1.0,,0,,0,0,0,1901
+Isolation Forest (v1),persistent,paper,Wind Farm A,14,normal,,1.0,,0,,0,0,0,1901
+Isolation Forest (v1),pointwise,reference,Wind Farm A,17,normal,,1.0,,0,,0,0,0,2781
+Isolation Forest (v1),pointwise,paper,Wind Farm A,17,normal,,1.0,,0,,0,0,0,2781
+Isolation Forest (v1),persistent,reference,Wind Farm A,17,normal,,1.0,,0,,0,0,0,2781
+Isolation Forest (v1),persistent,paper,Wind Farm A,17,normal,,1.0,,0,,0,0,0,2781
+Isolation Forest (v1),pointwise,reference,Wind Farm A,22,anomaly,0.07042253521126761,0.13763066202090593,0.023669446494387035,3,,15,0,990,143
+Isolation Forest (v1),pointwise,paper,Wind Farm A,22,anomaly,0.07042253521126761,0.13763066202090593,0.019897196169121213,3,,15,0,990,143
+Isolation Forest (v1),persistent,reference,Wind Farm A,22,anomaly,0.0,0.12456445993031359,0.0,0,,0,0,1005,143
+Isolation Forest (v1),persistent,paper,Wind Farm A,22,anomaly,0.0,0.12456445993031359,0.0,0,,0,0,1005,143
+Isolation Forest (v1),pointwise,reference,Wind Farm A,24,normal,,0.9996315401621223,,1,,0,1,0,2713
+Isolation Forest (v1),pointwise,paper,Wind Farm A,24,normal,,0.9996315401621223,,1,,0,1,0,2713
+Isolation Forest (v1),persistent,reference,Wind Farm A,24,normal,,1.0,,0,,0,0,0,2714
+Isolation Forest (v1),persistent,paper,Wind Farm A,24,normal,,1.0,,0,,0,0,0,2714
+Isolation Forest (v1),pointwise,reference,Wind Farm A,25,normal,,0.9686339248865043,,17,,0,76,0,2347
+Isolation Forest (v1),pointwise,paper,Wind Farm A,25,normal,,0.9686339248865043,,17,,0,76,0,2347
+Isolation Forest (v1),persistent,reference,Wind Farm A,25,normal,,0.9826661163846472,,11,,0,42,0,2381
+Isolation Forest (v1),persistent,paper,Wind Farm A,25,normal,,0.9826661163846472,,11,,0,42,0,2381
+Isolation Forest (v1),pointwise,reference,Wind Farm A,26,anomaly,0.0,0.2997918112421929,0.0,0,,0,0,1009,432
+Isolation Forest (v1),pointwise,paper,Wind Farm A,26,anomaly,0.0,0.2997918112421929,0.0,0,,0,0,1009,432
+Isolation Forest (v1),persistent,reference,Wind Farm A,26,anomaly,0.0,0.2997918112421929,0.0,0,,0,0,1009,432
+Isolation Forest (v1),persistent,paper,Wind Farm A,26,anomaly,0.0,0.2997918112421929,0.0,0,,0,0,1009,432
+Isolation Forest (v1),pointwise,reference,Wind Farm A,38,normal,,0.9654088050314465,,33,,0,88,0,2456
+Isolation Forest (v1),pointwise,paper,Wind Farm A,38,normal,,0.9654088050314465,,33,,0,88,0,2456
+Isolation Forest (v1),persistent,reference,Wind Farm A,38,normal,,0.9811320754716981,,21,,0,48,0,2496
+Isolation Forest (v1),persistent,paper,Wind Farm A,38,normal,,0.9811320754716981,,21,,0,48,0,2496
+Isolation Forest (v1),pointwise,reference,Wind Farm A,40,anomaly,0.2908496732026144,0.14982790038469326,0.031968811437956185,318,2023-01-19 23:50:00,356,47,4152,384
+Isolation Forest (v1),pointwise,paper,Wind Farm A,40,anomaly,0.2908496732026144,0.14982790038469326,0.03961373507989051,318,2023-01-20 00:00:00,356,47,4152,384
+Isolation Forest (v1),persistent,reference,Wind Farm A,40,anomaly,0.2642065142065142,0.14679084834986839,0.02632930029093598,292,2023-01-20 03:40:00,305,11,4203,420
+Isolation Forest (v1),persistent,paper,Wind Farm A,40,anomaly,0.2642065142065142,0.14679084834986839,0.03290624320679856,292,2023-01-20 03:50:00,305,11,4203,420
+Isolation Forest (v1),pointwise,reference,Wind Farm A,42,anomaly,0.0,0.3638660770688566,0.0,0,,0,0,1007,576
+Isolation Forest (v1),pointwise,paper,Wind Farm A,42,anomaly,0.0,0.3638660770688566,0.0,0,,0,0,1007,576
+Isolation Forest (v1),persistent,reference,Wind Farm A,42,anomaly,0.0,0.3638660770688566,0.0,0,,0,0,1007,576
+Isolation Forest (v1),persistent,paper,Wind Farm A,42,anomaly,0.0,0.3638660770688566,0.0,0,,0,0,1007,576
+Isolation Forest (v1),pointwise,reference,Wind Farm A,45,anomaly,0.3622715404699739,0.36319444444444443,0.17532758527502154,22,,111,20,897,412
+Isolation Forest (v1),pointwise,paper,Wind Farm A,45,anomaly,0.3622715404699739,0.36319444444444443,0.14680111210875352,22,,111,20,897,412
+Isolation Forest (v1),persistent,reference,Wind Farm A,45,anomaly,0.05169172932330827,0.3055555555555556,0.01745079333594656,11,,11,3,997,429
+Isolation Forest (v1),persistent,paper,Wind Farm A,45,anomaly,0.05169172932330827,0.3055555555555556,0.014547857956723321,11,,11,3,997,429
+Isolation Forest (v1),pointwise,reference,Wind Farm A,51,anomaly,0.0029394473838918285,0.2987881320518178,0.00021928267227275873,4,,1,6,1672,714
+Isolation Forest (v1),pointwise,paper,Wind Farm A,51,anomaly,0.0029394473838918285,0.2987881320518178,0.00027396888237610575,4,,1,6,1672,714
+Isolation Forest (v1),persistent,reference,Wind Farm A,51,anomaly,0.0,0.30087755954868367,0.0,0,,0,0,1673,720
+Isolation Forest (v1),persistent,paper,Wind Farm A,51,anomaly,0.0,0.30087755954868367,0.0,0,,0,0,1673,720
+Isolation Forest (v1),pointwise,reference,Wind Farm A,68,anomaly,0.004916420845624385,0.12200435729847495,0.0008900282652994148,2,,2,3,2012,278
+Isolation Forest (v1),pointwise,paper,Wind Farm A,68,anomaly,0.004916420845624385,0.12200435729847495,0.001112556418922862,2,,2,3,2012,278
+Isolation Forest (v1),persistent,reference,Wind Farm A,68,anomaly,0.0,0.1224400871459695,0.0,0,,0,0,2014,281
+Isolation Forest (v1),persistent,paper,Wind Farm A,68,anomaly,0.0,0.1224400871459695,0.0,0,,0,0,2014,281
+Isolation Forest (v1),pointwise,reference,Wind Farm A,69,normal,,0.9996143463170073,,1,,0,1,0,2592
+Isolation Forest (v1),pointwise,paper,Wind Farm A,69,normal,,0.9996143463170073,,1,,0,1,0,2592
+Isolation Forest (v1),persistent,reference,Wind Farm A,69,normal,,1.0,,0,,0,0,0,2593
+Isolation Forest (v1),persistent,paper,Wind Farm A,69,normal,,1.0,,0,,0,0,0,2593
+Isolation Forest (v1),pointwise,reference,Wind Farm A,71,normal,,0.9967333605553287,,3,,0,8,0,2441
+Isolation Forest (v1),pointwise,paper,Wind Farm A,71,normal,,0.9967333605553287,,3,,0,8,0,2441
+Isolation Forest (v1),persistent,reference,Wind Farm A,71,normal,,1.0,,0,,0,0,0,2449
+Isolation Forest (v1),persistent,paper,Wind Farm A,71,normal,,1.0,,0,,0,0,0,2449
+Isolation Forest (v1),pointwise,reference,Wind Farm A,72,anomaly,0.0,0.4997521070897372,0.0,0,,0,0,1009,1008
+Isolation Forest (v1),pointwise,paper,Wind Farm A,72,anomaly,0.0,0.4997521070897372,0.0,0,,0,0,1009,1008
+Isolation Forest (v1),persistent,reference,Wind Farm A,72,anomaly,0.0,0.4997521070897372,0.0,0,,0,0,1009,1008
+Isolation Forest (v1),persistent,paper,Wind Farm A,72,anomaly,0.0,0.4997521070897372,0.0,0,,0,0,1009,1008
+Isolation Forest (v1),pointwise,reference,Wind Farm A,73,anomaly,0.3407732164208848,0.3973395026026605,0.19398230686354337,55,,171,204,838,516
+Isolation Forest (v1),pointwise,paper,Wind Farm A,73,anomaly,0.3407732164208848,0.3973395026026605,0.17144051192931822,55,,171,204,838,516
+Isolation Forest (v1),persistent,reference,Wind Farm A,73,anomaly,0.30786516853932583,0.3990746096009254,0.150038420362098,49,,137,167,872,553
+Isolation Forest (v1),persistent,paper,Wind Farm A,73,anomaly,0.30786516853932583,0.3990746096009254,0.1337303331483928,49,,137,167,872,553
+Isolation Forest (v1),pointwise,reference,Wind Farm A,84,anomaly,0.0,0.30062630480167013,0.0,0,,0,0,1005,432
+Isolation Forest (v1),pointwise,paper,Wind Farm A,84,anomaly,0.0,0.30062630480167013,0.0,0,,0,0,1005,432
+Isolation Forest (v1),persistent,reference,Wind Farm A,84,anomaly,0.0,0.30062630480167013,0.0,0,,0,0,1005,432
+Isolation Forest (v1),persistent,paper,Wind Farm A,84,anomaly,0.0,0.30062630480167013,0.0,0,,0,0,1005,432
+Isolation Forest (v1),pointwise,reference,Wind Farm A,92,normal,,0.9904171364148816,,3,,0,17,0,1757
+Isolation Forest (v1),pointwise,paper,Wind Farm A,92,normal,,0.9904171364148816,,3,,0,17,0,1757
+Isolation Forest (v1),persistent,reference,Wind Farm A,92,normal,,1.0,,0,,0,0,0,1774
+Isolation Forest (v1),persistent,paper,Wind Farm A,92,normal,,1.0,,0,,0,0,0,1774
+Isolation Forest (v1),pointwise,reference,Wind Farm B,2,normal,,0.9967592592592592,,0,,0,7,0,2153
+Isolation Forest (v1),pointwise,paper,Wind Farm B,2,normal,,0.9967592592592592,,0,,0,7,0,2153
+Isolation Forest (v1),persistent,reference,Wind Farm B,2,normal,,1.0,,0,,0,0,0,2160
+Isolation Forest (v1),persistent,paper,Wind Farm B,2,normal,,1.0,,0,,0,0,0,2160
+Isolation Forest (v1),pointwise,reference,Wind Farm B,7,anomaly,0.0,0.14274078599063328,0.0,0,,0,0,4210,701
+Isolation Forest (v1),pointwise,paper,Wind Farm B,7,anomaly,0.0,0.14274078599063328,0.0,0,,0,0,4210,701
+Isolation Forest (v1),persistent,reference,Wind Farm B,7,anomaly,0.0,0.14274078599063328,0.0,0,,0,0,4210,701
+Isolation Forest (v1),persistent,paper,Wind Farm B,7,anomaly,0.0,0.14274078599063328,0.0,0,,0,0,4210,701
+Isolation Forest (v1),pointwise,reference,Wind Farm B,19,anomaly,0.015565548253199585,0.22997835497835498,0.003074640306677622,7,,9,0,2846,841
+Isolation Forest (v1),pointwise,paper,Wind Farm B,19,anomaly,0.015565548253199585,0.22997835497835498,0.003843422350473753,7,,9,0,2846,841
+Isolation Forest (v1),persistent,reference,Wind Farm B,19,anomaly,0.0017488632388947185,0.2278138528138528,0.00034045593950652426,1,,1,0,2854,841
+Isolation Forest (v1),persistent,paper,Wind Farm B,19,anomaly,0.0017488632388947185,0.2278138528138528,0.0004255831545544025,1,,1,0,2854,841
+Isolation Forest (v1),pointwise,reference,Wind Farm B,21,normal,,0.9905437352245863,,4,,0,12,0,1257
+Isolation Forest (v1),pointwise,paper,Wind Farm B,21,normal,,0.9905437352245863,,4,,0,12,0,1257
+Isolation Forest (v1),persistent,reference,Wind Farm B,21,normal,,1.0,,0,,0,0,0,1269
+Isolation Forest (v1),persistent,paper,Wind Farm B,21,normal,,1.0,,0,,0,0,0,1269
+Isolation Forest (v1),pointwise,reference,Wind Farm B,23,normal,,1.0,,0,,0,0,0,1743
+Isolation Forest (v1),pointwise,paper,Wind Farm B,23,normal,,1.0,,0,,0,0,0,1743
+Isolation Forest (v1),persistent,reference,Wind Farm B,23,normal,,1.0,,0,,0,0,0,1743
+Isolation Forest (v1),persistent,paper,Wind Farm B,23,normal,,1.0,,0,,0,0,0,1743
+Isolation Forest (v1),pointwise,reference,Wind Farm B,27,anomaly,0.008861058601134215,0.03485964104924068,0.0037100660100789287,11,,15,0,8389,288
+Isolation Forest (v1),pointwise,paper,Wind Farm B,27,anomaly,0.008861058601134215,0.03485964104924068,0.0037890653800846225,11,,15,0,8389,288
+Isolation Forest (v1),persistent,reference,Wind Farm B,27,anomaly,0.001782319391634981,0.033479061205706394,0.0003934341585587856,3,,3,0,8401,288
+Isolation Forest (v1),persistent,paper,Wind Farm B,27,anomaly,0.001782319391634981,0.033479061205706394,0.0004592002872841724,3,,3,0,8401,288
+Isolation Forest (v1),pointwise,reference,Wind Farm B,34,anomaly,0.03968253968253968,0.22293648752892775,0.012086264064586068,5,,25,1,3021,842
+Isolation Forest (v1),pointwise,paper,Wind Farm B,34,anomaly,0.03968253968253968,0.22293648752892775,0.01042400219303123,5,,25,1,3021,842
+Isolation Forest (v1),persistent,reference,Wind Farm B,34,anomaly,0.0,0.21676523527899202,0.0,0,,0,0,3046,843
+Isolation Forest (v1),persistent,paper,Wind Farm B,34,anomaly,0.0,0.21676523527899202,0.0,0,,0,0,3046,843
+Isolation Forest (v1),pointwise,reference,Wind Farm B,52,normal,,1.0,,0,,0,0,0,2730
+Isolation Forest (v1),pointwise,paper,Wind Farm B,52,normal,,1.0,,0,,0,0,0,2730
+Isolation Forest (v1),persistent,reference,Wind Farm B,52,normal,,1.0,,0,,0,0,0,2730
+Isolation Forest (v1),persistent,paper,Wind Farm B,52,normal,,1.0,,0,,0,0,0,2730
+Isolation Forest (v1),pointwise,reference,Wind Farm B,53,anomaly,0.14063714063714064,0.03169322360357205,0.07400146632658247,62,,181,0,5530,0
+Isolation Forest (v1),pointwise,paper,Wind Farm B,53,anomaly,0.14063714063714064,0.03169322360357205,0.07175630652660361,62,,181,0,5530,0
+Isolation Forest (v1),persistent,reference,Wind Farm B,53,anomaly,0.08638956805215973,0.018560672386622307,0.05078788372647805,47,,106,0,5605,0
+Isolation Forest (v1),persistent,paper,Wind Farm B,53,anomaly,0.08638956805215973,0.018560672386622307,0.04815128679360064,47,,106,0,5605,0
+Isolation Forest (v1),pointwise,reference,Wind Farm B,74,normal,,0.9566081483935078,,12,,0,131,0,2888
+Isolation Forest (v1),pointwise,paper,Wind Farm B,74,normal,,0.9566081483935078,,12,,0,131,0,2888
+Isolation Forest (v1),persistent,reference,Wind Farm B,74,normal,,0.975819807883405,,7,,0,73,0,2946
+Isolation Forest (v1),persistent,paper,Wind Farm B,74,normal,,0.975819807883405,,7,,0,73,0,2946
+Isolation Forest (v1),pointwise,reference,Wind Farm B,77,anomaly,0.011955700981625975,0.045968624589565854,0.008374849496058852,6,,19,2,7843,359
+Isolation Forest (v1),pointwise,paper,Wind Farm B,77,anomaly,0.011955700981625975,0.045968624589565854,0.010240124555875883,6,,19,2,7843,359
+Isolation Forest (v1),persistent,reference,Wind Farm B,77,anomaly,0.0019030702867292566,0.04402286270217682,0.002127562887372828,2,,3,2,7859,359
+Isolation Forest (v1),persistent,paper,Wind Farm B,77,anomaly,0.0019030702867292566,0.04402286270217682,0.0026590592283736994,2,,3,2,7859,359
+Isolation Forest (v1),pointwise,reference,Wind Farm B,82,normal,,1.0,,0,,0,0,0,2387
+Isolation Forest (v1),pointwise,paper,Wind Farm B,82,normal,,1.0,,0,,0,0,0,2387
+Isolation Forest (v1),persistent,reference,Wind Farm B,82,normal,,1.0,,0,,0,0,0,2387
+Isolation Forest (v1),persistent,paper,Wind Farm B,82,normal,,1.0,,0,,0,0,0,2387
+Isolation Forest (v1),pointwise,reference,Wind Farm B,83,normal,,0.9981336029240221,,8,,0,24,0,12835
+Isolation Forest (v1),pointwise,paper,Wind Farm B,83,normal,,0.9981336029240221,,8,,0,24,0,12835
+Isolation Forest (v1),persistent,reference,Wind Farm B,83,normal,,0.999611167275838,,4,,0,5,0,12854
+Isolation Forest (v1),persistent,paper,Wind Farm B,83,normal,,0.999611167275838,,4,,0,5,0,12854
+Isolation Forest (v1),pointwise,reference,Wind Farm B,86,normal,,1.0,,0,,0,0,0,2856
+Isolation Forest (v1),pointwise,paper,Wind Farm B,86,normal,,1.0,,0,,0,0,0,2856
+Isolation Forest (v1),persistent,reference,Wind Farm B,86,normal,,1.0,,0,,0,0,0,2856
+Isolation Forest (v1),persistent,paper,Wind Farm B,86,normal,,1.0,,0,,0,0,0,2856
+Isolation Forest (v1),pointwise,reference,Wind Farm B,87,normal,,0.9976141785957737,,4,,0,7,0,2927
+Isolation Forest (v1),pointwise,paper,Wind Farm B,87,normal,,0.9976141785957737,,4,,0,7,0,2927
+Isolation Forest (v1),persistent,reference,Wind Farm B,87,normal,,1.0,,0,,0,0,0,2934
+Isolation Forest (v1),persistent,paper,Wind Farm B,87,normal,,1.0,,0,,0,0,0,2934
+Extra Trees residuals (v2),pointwise,reference,Wind Farm A,0,anomaly,0.017416934619506965,0.14869626497533475,0.006602766083352129,7,,13,417,1999,409
+Extra Trees residuals (v2),pointwise,paper,Wind Farm A,0,anomaly,0.017416934619506965,0.14869626497533475,0.005892400361707139,7,,13,417,1999,409
+Extra Trees residuals (v2),persistent,reference,Wind Farm A,0,anomaly,0.0,0.15891472868217055,0.0,2,,0,375,2012,451
+Extra Trees residuals (v2),persistent,paper,Wind Farm A,0,anomaly,0.0,0.15891472868217055,0.0,2,,0,375,2012,451
+Extra Trees residuals (v2),pointwise,reference,Wind Farm A,3,normal,,0.9993943064809206,,2,,0,2,0,3300
+Extra Trees residuals (v2),pointwise,paper,Wind Farm A,3,normal,,0.9993943064809206,,2,,0,2,0,3300
+Extra Trees residuals (v2),persistent,reference,Wind Farm A,3,normal,,1.0,,0,,0,0,0,3302
+Extra Trees residuals (v2),persistent,paper,Wind Farm A,3,normal,,1.0,,0,,0,0,0,3302
+Extra Trees residuals (v2),pointwise,reference,Wind Farm A,10,anomaly,0.320374370050396,0.2868400315208826,0.13299230434046724,70,,89,13,892,275
+Extra Trees residuals (v2),pointwise,paper,Wind Farm A,10,anomaly,0.320374370050396,0.2868400315208826,0.1155537815364807,70,,89,13,892,275
+Extra Trees residuals (v2),persistent,reference,Wind Farm A,10,anomaly,0.25691699604743085,0.27344365642237983,0.10595486317427051,65,,65,6,916,282
+Extra Trees residuals (v2),persistent,paper,Wind Farm A,10,anomaly,0.25691699604743085,0.27344365642237983,0.0883302114755473,65,,65,6,916,282
+Extra Trees residuals (v2),pointwise,reference,Wind Farm A,13,normal,,0.9879988836170807,,37,,0,43,0,3540
+Extra Trees residuals (v2),pointwise,paper,Wind Farm A,13,normal,,0.9879988836170807,,37,,0,43,0,3540
+Extra Trees residuals (v2),persistent,reference,Wind Farm A,13,normal,,0.990789840915434,,32,,0,33,0,3550
+Extra Trees residuals (v2),persistent,paper,Wind Farm A,13,normal,,0.990789840915434,,32,,0,33,0,3550
+Extra Trees residuals (v2),pointwise,reference,Wind Farm A,14,normal,,0.9889531825355077,,7,,0,21,0,1880
+Extra Trees residuals (v2),pointwise,paper,Wind Farm A,14,normal,,0.9889531825355077,,7,,0,21,0,1880
+Extra Trees residuals (v2),persistent,reference,Wind Farm A,14,normal,,0.9978958442924777,,2,,0,4,0,1897
+Extra Trees residuals (v2),persistent,paper,Wind Farm A,14,normal,,0.9978958442924777,,2,,0,4,0,1897
+Extra Trees residuals (v2),pointwise,reference,Wind Farm A,17,normal,,0.8428622797554837,,47,,0,437,0,2344
+Extra Trees residuals (v2),pointwise,paper,Wind Farm A,17,normal,,0.8428622797554837,,47,,0,437,0,2344
+Extra Trees residuals (v2),persistent,reference,Wind Farm A,17,normal,,0.915138439410284,,33,,0,236,0,2545
+Extra Trees residuals (v2),persistent,paper,Wind Farm A,17,normal,,0.915138439410284,,33,,0,236,0,2545
+Extra Trees residuals (v2),pointwise,reference,Wind Farm A,22,anomaly,0.004897159647404506,0.12282229965156795,0.0004745661072171001,1,,1,3,1004,140
+Extra Trees residuals (v2),pointwise,paper,Wind Farm A,22,anomaly,0.004897159647404506,0.12282229965156795,0.0005929212596605558,1,,1,3,1004,140
+Extra Trees residuals (v2),persistent,reference,Wind Farm A,22,anomaly,0.0,0.12456445993031359,0.0,0,,0,0,1005,143
+Extra Trees residuals (v2),persistent,paper,Wind Farm A,22,anomaly,0.0,0.12456445993031359,0.0,0,,0,0,1005,143
+Extra Trees residuals (v2),pointwise,reference,Wind Farm A,24,normal,,0.9966838614591009,,5,,0,9,0,2705
+Extra Trees residuals (v2),pointwise,paper,Wind Farm A,24,normal,,0.9966838614591009,,5,,0,9,0,2705
+Extra Trees residuals (v2),persistent,reference,Wind Farm A,24,normal,,1.0,,0,,0,0,0,2714
+Extra Trees residuals (v2),persistent,paper,Wind Farm A,24,normal,,1.0,,0,,0,0,0,2714
+Extra Trees residuals (v2),pointwise,reference,Wind Farm A,25,normal,,0.9921584812216261,,3,,0,19,0,2404
+Extra Trees residuals (v2),pointwise,paper,Wind Farm A,25,normal,,0.9921584812216261,,3,,0,19,0,2404
+Extra Trees residuals (v2),persistent,reference,Wind Farm A,25,normal,,1.0,,0,,0,0,0,2423
+Extra Trees residuals (v2),persistent,paper,Wind Farm A,25,normal,,1.0,,0,,0,0,0,2423
+Extra Trees residuals (v2),pointwise,reference,Wind Farm A,26,anomaly,0.26233359436178544,0.3462873004857738,0.07658279912075046,14,,67,0,942,432
+Extra Trees residuals (v2),pointwise,paper,Wind Farm A,26,anomaly,0.26233359436178544,0.3462873004857738,0.07092414141857453,14,,67,0,942,432
+Extra Trees residuals (v2),persistent,reference,Wind Farm A,26,anomaly,0.1085972850678733,0.3164469118667592,0.024465568115328382,9,,24,0,985,432
+Extra Trees residuals (v2),persistent,paper,Wind Farm A,26,anomaly,0.1085972850678733,0.3164469118667592,0.023907764684920972,9,,24,0,985,432
+Extra Trees residuals (v2),pointwise,reference,Wind Farm A,38,normal,,0.9917452830188679,,11,,0,21,0,2523
+Extra Trees residuals (v2),pointwise,paper,Wind Farm A,38,normal,,0.9917452830188679,,11,,0,21,0,2523
+Extra Trees residuals (v2),persistent,reference,Wind Farm A,38,normal,,0.9980345911949685,,5,,0,5,0,2539
+Extra Trees residuals (v2),persistent,paper,Wind Farm A,38,normal,,0.9980345911949685,,5,,0,5,0,2539
+Extra Trees residuals (v2),pointwise,reference,Wind Farm A,40,anomaly,0.45309304703476483,0.2065195383680907,0.06961695016329371,605,2023-01-18 00:20:00,709,120,3799,311
+Extra Trees residuals (v2),pointwise,paper,Wind Farm A,40,anomaly,0.45309304703476483,0.2065195383680907,0.08529770929556345,605,2023-01-18 00:30:00,709,120,3799,311
+Extra Trees residuals (v2),persistent,reference,Wind Farm A,40,anomaly,0.436612309310889,0.199433083620166,0.06383840071298247,600,2023-01-18 01:10:00,664,110,3844,321
+Extra Trees residuals (v2),persistent,paper,Wind Farm A,40,anomaly,0.436612309310889,0.199433083620166,0.07964691395336126,600,2023-01-18 01:20:00,664,110,3844,321
+Extra Trees residuals (v2),pointwise,reference,Wind Farm A,42,anomaly,0.2872260015117158,0.40998104864181933,0.028893090517522393,52,,76,3,931,573
+Extra Trees residuals (v2),pointwise,paper,Wind Farm A,42,anomaly,0.2872260015117158,0.40998104864181933,0.036089098167134695,52,,76,3,931,573
+Extra Trees residuals (v2),persistent,reference,Wind Farm A,42,anomaly,0.2241238793806031,0.3986102337334176,0.01496023992748334,46,,55,0,952,576
+Extra Trees residuals (v2),persistent,paper,Wind Farm A,42,anomaly,0.2241238793806031,0.3986102337334176,0.018675891277613002,46,,55,0,952,576
+Extra Trees residuals (v2),pointwise,reference,Wind Farm A,45,anomaly,0.024319066147859923,0.3034722222222222,0.006875997999671509,1,,5,0,1003,432
+Extra Trees residuals (v2),pointwise,paper,Wind Farm A,45,anomaly,0.024319066147859923,0.3034722222222222,0.0066126627076015096,1,,5,0,1003,432
+Extra Trees residuals (v2),persistent,reference,Wind Farm A,45,anomaly,0.0,0.3,0.0,0,,0,0,1008,432
+Extra Trees residuals (v2),persistent,paper,Wind Farm A,45,anomaly,0.0,0.3,0.0,0,,0,0,1008,432
+Extra Trees residuals (v2),pointwise,reference,Wind Farm A,51,anomaly,0.06662965019433648,0.3075637275386544,0.0005532553260469952,24,,24,8,1649,712
+Extra Trees residuals (v2),pointwise,paper,Wind Farm A,51,anomaly,0.06662965019433648,0.3075637275386544,0.0006861133749940715,24,,24,8,1649,712
+Extra Trees residuals (v2),persistent,reference,Wind Farm A,51,anomaly,0.05406943653955606,0.30798161303802757,0.00040179596509404703,19,,19,2,1654,718
+Extra Trees residuals (v2),persistent,paper,Wind Farm A,51,anomaly,0.05406943653955606,0.30798161303802757,0.0004979086644922254,19,,19,2,1654,718
+Extra Trees residuals (v2),pointwise,reference,Wind Farm A,68,anomaly,0.030631479736098022,0.12200435729847495,0.0067877473213698815,8,,13,14,2001,267
+Extra Trees residuals (v2),pointwise,paper,Wind Farm A,68,anomaly,0.030631479736098022,0.12200435729847495,0.007730360247675312,8,,13,14,2001,267
+Extra Trees residuals (v2),persistent,reference,Wind Farm A,68,anomaly,0.007288629737609329,0.12026143790849673,0.0013310984026819164,3,,3,8,2011,273
+Extra Trees residuals (v2),persistent,paper,Wind Farm A,68,anomaly,0.007288629737609329,0.12026143790849673,0.0016639030839741737,3,,3,8,2011,273
+Extra Trees residuals (v2),pointwise,reference,Wind Farm A,69,normal,,1.0,,0,,0,0,0,2593
+Extra Trees residuals (v2),pointwise,paper,Wind Farm A,69,normal,,1.0,,0,,0,0,0,2593
+Extra Trees residuals (v2),persistent,reference,Wind Farm A,69,normal,,1.0,,0,,0,0,0,2593
+Extra Trees residuals (v2),persistent,paper,Wind Farm A,69,normal,,1.0,,0,,0,0,0,2593
+Extra Trees residuals (v2),pointwise,reference,Wind Farm A,71,normal,,0.9836668027766435,,11,,0,40,0,2409
+Extra Trees residuals (v2),pointwise,paper,Wind Farm A,71,normal,,0.9836668027766435,,11,,0,40,0,2409
+Extra Trees residuals (v2),persistent,reference,Wind Farm A,71,normal,,0.9975500204164965,,4,,0,6,0,2443
+Extra Trees residuals (v2),persistent,paper,Wind Farm A,71,normal,,0.9975500204164965,,4,,0,6,0,2443
+Extra Trees residuals (v2),pointwise,reference,Wind Farm A,72,anomaly,0.01296456352636128,0.4843827466534457,0.003802627353124435,2,,3,34,1006,974
+Extra Trees residuals (v2),pointwise,paper,Wind Farm A,72,anomaly,0.01296456352636128,0.4843827466534457,0.003471728665408547,2,,3,34,1006,974
+Extra Trees residuals (v2),persistent,reference,Wind Farm A,72,anomaly,0.0,0.4888448190381755,0.0,0,,0,22,1009,986
+Extra Trees residuals (v2),persistent,paper,Wind Farm A,72,anomaly,0.0,0.4888448190381755,0.0,0,,0,22,1009,986
+Extra Trees residuals (v2),pointwise,reference,Wind Farm A,73,anomaly,0.0663544106167057,0.3967611336032389,0.011083184502709325,20,,17,51,992,669
+Extra Trees residuals (v2),pointwise,paper,Wind Farm A,73,anomaly,0.0663544106167057,0.3967611336032389,0.011634221287985134,20,,17,51,992,669
+Extra Trees residuals (v2),persistent,reference,Wind Farm A,73,anomaly,0.0176522506619594,0.4031231925968768,0.0008651618767885362,15,,4,27,1005,693
+Extra Trees residuals (v2),persistent,paper,Wind Farm A,73,anomaly,0.0176522506619594,0.4031231925968768,0.001079511101998734,15,,4,27,1005,693
+Extra Trees residuals (v2),pointwise,reference,Wind Farm A,84,anomaly,0.06103286384976526,0.3082811412665275,0.004129622532546577,8,,13,2,992,430
+Extra Trees residuals (v2),pointwise,paper,Wind Farm A,84,anomaly,0.06103286384976526,0.3082811412665275,0.0051566982605222075,8,,13,2,992,430
+Extra Trees residuals (v2),persistent,reference,Wind Farm A,84,anomaly,0.014749262536873156,0.302713987473904,0.000946492803381824,2,,3,0,1002,432
+Extra Trees residuals (v2),persistent,paper,Wind Farm A,84,anomaly,0.014749262536873156,0.302713987473904,0.0011818809073411974,2,,3,0,1002,432
+Extra Trees residuals (v2),pointwise,reference,Wind Farm A,92,normal,,0.9887260428410372,,7,,0,20,0,1754
+Extra Trees residuals (v2),pointwise,paper,Wind Farm A,92,normal,,0.9887260428410372,,7,,0,20,0,1754
+Extra Trees residuals (v2),persistent,reference,Wind Farm A,92,normal,,0.9988726042841037,,2,,0,2,0,1772
+Extra Trees residuals (v2),persistent,paper,Wind Farm A,92,normal,,0.9988726042841037,,2,,0,2,0,1772
+Extra Trees residuals (v2),pointwise,reference,Wind Farm B,2,normal,,0.8930555555555556,,142,,0,231,0,1929
+Extra Trees residuals (v2),pointwise,paper,Wind Farm B,2,normal,,0.8930555555555556,,142,,0,231,0,1929
+Extra Trees residuals (v2),persistent,reference,Wind Farm B,2,normal,,0.9064814814814814,,127,,0,202,0,1958
+Extra Trees residuals (v2),persistent,paper,Wind Farm B,2,normal,,0.9064814814814814,,127,,0,202,0,1958
+Extra Trees residuals (v2),pointwise,reference,Wind Farm B,7,anomaly,0.0,0.14274078599063328,0.0,0,,0,0,4210,701
+Extra Trees residuals (v2),pointwise,paper,Wind Farm B,7,anomaly,0.0,0.14274078599063328,0.0,0,,0,0,4210,701
+Extra Trees residuals (v2),persistent,reference,Wind Farm B,7,anomaly,0.0,0.14274078599063328,0.0,0,,0,0,4210,701
+Extra Trees residuals (v2),persistent,paper,Wind Farm B,7,anomaly,0.0,0.14274078599063328,0.0,0,,0,0,4210,701
+Extra Trees residuals (v2),pointwise,reference,Wind Farm B,19,anomaly,0.06873977086743044,0.23674242424242425,0.012819107371621199,18,,42,8,2813,833
+Extra Trees residuals (v2),pointwise,paper,Wind Farm B,19,anomaly,0.06873977086743044,0.23674242424242425,0.014429903731291072,18,,42,8,2813,833
+Extra Trees residuals (v2),persistent,reference,Wind Farm B,19,anomaly,0.040499493756328046,0.23322510822510822,0.007158119858898071,13,,24,3,2831,838
+Extra Trees residuals (v2),persistent,paper,Wind Farm B,19,anomaly,0.040499493756328046,0.23322510822510822,0.008242400211875826,13,,24,3,2831,838
+Extra Trees residuals (v2),pointwise,reference,Wind Farm B,21,normal,,0.9479905437352246,,35,,0,66,0,1203
+Extra Trees residuals (v2),pointwise,paper,Wind Farm B,21,normal,,0.9479905437352246,,35,,0,66,0,1203
+Extra Trees residuals (v2),persistent,reference,Wind Farm B,21,normal,,0.9676910953506698,,30,,0,41,0,1228
+Extra Trees residuals (v2),persistent,paper,Wind Farm B,21,normal,,0.9676910953506698,,30,,0,41,0,1228
+Extra Trees residuals (v2),pointwise,reference,Wind Farm B,23,normal,,0.9856569133677567,,19,,0,25,0,1718
+Extra Trees residuals (v2),pointwise,paper,Wind Farm B,23,normal,,0.9856569133677567,,19,,0,25,0,1718
+Extra Trees residuals (v2),persistent,reference,Wind Farm B,23,normal,,0.9919678714859438,,14,,0,14,0,1729
+Extra Trees residuals (v2),persistent,paper,Wind Farm B,23,normal,,0.9919678714859438,,14,,0,14,0,1729
+Extra Trees residuals (v2),pointwise,reference,Wind Farm B,27,anomaly,0.09712467076382791,0.05349746893695352,0.026534360869279343,158,2023-09-26 20:00:00,177,0,8227,288
+Extra Trees residuals (v2),pointwise,paper,Wind Farm B,27,anomaly,0.09712467076382791,0.05349746893695352,0.028459204952110163,158,2023-09-26 20:10:00,177,0,8227,288
+Extra Trees residuals (v2),persistent,reference,Wind Farm B,27,anomaly,0.08433200177541056,0.05062126092959043,0.021430794107276902,143,2023-09-26 22:30:00,152,0,8252,288
+Extra Trees residuals (v2),persistent,paper,Wind Farm B,27,anomaly,0.08433200177541056,0.05062126092959043,0.02327360297208158,143,2023-09-26 22:40:00,152,0,8252,288
+Extra Trees residuals (v2),pointwise,reference,Wind Farm B,34,anomaly,0.0058309037900874635,0.19413731036256107,7.243150559677412e-05,3,,4,92,3042,751
+Extra Trees residuals (v2),pointwise,paper,Wind Farm B,34,anomaly,0.0058309037900874635,0.19413731036256107,9.029191309111271e-05,3,,4,92,3042,751
+Extra Trees residuals (v2),persistent,reference,Wind Farm B,34,anomaly,0.0,0.21625096425816406,0.0,0,,0,2,3046,841
+Extra Trees residuals (v2),persistent,paper,Wind Farm B,34,anomaly,0.0,0.21625096425816406,0.0,0,,0,2,3046,841
+Extra Trees residuals (v2),pointwise,reference,Wind Farm B,52,normal,,0.9809523809523809,,41,,0,52,0,2678
+Extra Trees residuals (v2),pointwise,paper,Wind Farm B,52,normal,,0.9809523809523809,,41,,0,52,0,2678
+Extra Trees residuals (v2),persistent,reference,Wind Farm B,52,normal,,0.9846153846153847,,36,,0,42,0,2688
+Extra Trees residuals (v2),persistent,paper,Wind Farm B,52,normal,,0.9846153846153847,,36,,0,42,0,2688
+Extra Trees residuals (v2),pointwise,reference,Wind Farm B,53,anomaly,0.09691487643353255,0.021012081947119593,0.025680401661393567,28,,120,0,5591,0
+Extra Trees residuals (v2),pointwise,paper,Wind Farm B,53,anomaly,0.09691487643353255,0.021012081947119593,0.02581902242239563,28,,120,0,5591,0
+Extra Trees residuals (v2),persistent,reference,Wind Farm B,53,anomaly,0.04311073541842773,0.008930134827525827,0.011694035413510306,25,,51,0,5660,0
+Extra Trees residuals (v2),persistent,paper,Wind Farm B,53,anomaly,0.04311073541842773,0.008930134827525827,0.011026269259472149,25,,51,0,5660,0
+Extra Trees residuals (v2),pointwise,reference,Wind Farm B,74,normal,,0.9950314673733024,,8,,0,15,0,3004
+Extra Trees residuals (v2),pointwise,paper,Wind Farm B,74,normal,,0.9950314673733024,,8,,0,15,0,3004
+Extra Trees residuals (v2),persistent,reference,Wind Farm B,74,normal,,0.9990062934746605,,3,,0,3,0,3016
+Extra Trees residuals (v2),persistent,paper,Wind Farm B,74,normal,,0.9990062934746605,,3,,0,3,0,3016
+Extra Trees residuals (v2),pointwise,reference,Wind Farm B,77,anomaly,0.11272141706924316,0.06627751428918886,0.020673242587351388,60,,196,12,7666,349
+Extra Trees residuals (v2),pointwise,paper,Wind Farm B,77,anomaly,0.11272141706924316,0.06627751428918886,0.02227368814713304,60,,196,12,7666,349
+Extra Trees residuals (v2),persistent,reference,Wind Farm B,77,anomaly,0.07821758710594928,0.05849446673963274,0.011732328653953862,55,,132,12,7730,349
+Extra Trees residuals (v2),persistent,paper,Wind Farm B,77,anomaly,0.07821758710594928,0.05849446673963274,0.013440122741525388,55,,132,12,7730,349
+Extra Trees residuals (v2),pointwise,reference,Wind Farm B,82,normal,,0.9916212819438626,,18,,0,20,0,2367
+Extra Trees residuals (v2),pointwise,paper,Wind Farm B,82,normal,,0.9916212819438626,,18,,0,20,0,2367
+Extra Trees residuals (v2),persistent,reference,Wind Farm B,82,normal,,0.9945538332635107,,13,,0,13,0,2374
+Extra Trees residuals (v2),persistent,paper,Wind Farm B,82,normal,,0.9945538332635107,,13,,0,13,0,2374
+Extra Trees residuals (v2),pointwise,reference,Wind Farm B,83,normal,,0.9999222334551676,,1,,0,1,0,12858
+Extra Trees residuals (v2),pointwise,paper,Wind Farm B,83,normal,,0.9999222334551676,,1,,0,1,0,12858
+Extra Trees residuals (v2),persistent,reference,Wind Farm B,83,normal,,1.0,,0,,0,0,0,12859
+Extra Trees residuals (v2),persistent,paper,Wind Farm B,83,normal,,1.0,,0,,0,0,0,12859
+Extra Trees residuals (v2),pointwise,reference,Wind Farm B,86,normal,,1.0,,0,,0,0,0,2856
+Extra Trees residuals (v2),pointwise,paper,Wind Farm B,86,normal,,1.0,,0,,0,0,0,2856
+Extra Trees residuals (v2),persistent,reference,Wind Farm B,86,normal,,1.0,,0,,0,0,0,2856
+Extra Trees residuals (v2),persistent,paper,Wind Farm B,86,normal,,1.0,,0,,0,0,0,2856
+Extra Trees residuals (v2),pointwise,reference,Wind Farm B,87,normal,,0.9904567143830948,,16,,0,28,0,2906
+Extra Trees residuals (v2),pointwise,paper,Wind Farm B,87,normal,,0.9904567143830948,,16,,0,28,0,2906
+Extra Trees residuals (v2),persistent,reference,Wind Farm B,87,normal,,0.9948875255623721,,11,,0,15,0,2919
+Extra Trees residuals (v2),persistent,paper,Wind Farm B,87,normal,,0.9948875255623721,,11,,0,15,0,2919
