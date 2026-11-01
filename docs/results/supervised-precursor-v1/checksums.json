@@ -1,0 +1,7 @@
+{
+  "calibration-scores.csv": "85b02c67d74d44ae834908e650d5bf16a6c1191c88ca0bc3a3cef5f0dcdc6ca2",
+  "classifier.joblib": "a76bbc4b3b4c2d873a5fbff1196607253cf8c472f2d542c8c868f16828e73c80",
+  "development-scores.csv": "adfad9ea91384397cbe0b8366959da766c489945bbf326f04fbde845c349d404",
+  "frozen.json": "76d778e635688921f171157b024f1fab7e720358636bf6c17e74fbe330b2dfe3",
+  "results.json": "1100bfc2f2922b018c213244705452142176282fcfd12d0b44316f634946bc5b"
+}

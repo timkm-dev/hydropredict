@@ -1,0 +1,1188 @@
+[
+  {
+    "candidate": "absolute_hgb",
+    "fold": "november",
+    "threshold": 0.7533542707751258,
+    "replay_exact": true,
+    "counts": [
+      {
+        "observations": 7075,
+        "endpoints": 6902,
+        "positive": 261,
+        "warmup_excluded": 173
+      },
+      {
+        "observations": 8724,
+        "endpoints": 8462,
+        "positive": 415,
+        "warmup_excluded": 262
+      },
+      {
+        "observations": 5019,
+        "endpoints": 4846,
+        "positive": 274,
+        "warmup_excluded": 173
+      }
+    ],
+    "metrics": {
+      "score_rows": 4846,
+      "events": [
+        {
+          "fault_time": "2018-11-02T01:49:01+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 251.12,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 0,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-11-02T02:36:36+00:00",
+          "observations": 62,
+          "occupied_slots": 62,
+          "expected_slots": 72,
+          "coverage_fraction": 0.8611111111111112,
+          "last_observation_gap_seconds": 3106.12,
+          "has_any_prior_data": true,
+          "eligible": false,
+          "group": 0,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-11-02T03:09:00+00:00",
+          "observations": 56,
+          "occupied_slots": 56,
+          "expected_slots": 72,
+          "coverage_fraction": 0.7777777777777778,
+          "last_observation_gap_seconds": 5050.12,
+          "has_any_prior_data": true,
+          "eligible": false,
+          "group": 0,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-11-02T09:30:08+00:00",
+          "observations": 66,
+          "occupied_slots": 66,
+          "expected_slots": 72,
+          "coverage_fraction": 0.9166666666666666,
+          "last_observation_gap_seconds": 317.613,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 1,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-11-03T12:42:00+00:00",
+          "observations": 64,
+          "occupied_slots": 64,
+          "expected_slots": 72,
+          "coverage_fraction": 0.8888888888888888,
+          "last_observation_gap_seconds": 2456.923,
+          "has_any_prior_data": true,
+          "eligible": false,
+          "group": 2,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-11-05T13:11:10+00:00",
+          "observations": 0,
+          "occupied_slots": 0,
+          "expected_slots": 72,
+          "coverage_fraction": 0.0,
+          "last_observation_gap_seconds": null,
+          "has_any_prior_data": false,
+          "eligible": false,
+          "group": 3,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-11-06T14:59:00+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 84.057,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 4,
+          "warning_observed": false,
+          "lead_minutes": null
+        }
+      ],
+      "eligible_groups": [
+        0,
+        1,
+        4
+      ],
+      "warned_groups": [],
+      "nominal_points": 4430,
+      "nominal_alerts": 0,
+      "nominal_alert_fraction": 0.0,
+      "nominal_episodes": 0,
+      "observed_nominal_hours": 367.3383263888889,
+      "episodes_per_observed_day": 0.0
+    }
+  },
+  {
+    "candidate": "absolute_logistic",
+    "fold": "november",
+    "threshold": 0.7905305754312968,
+    "replay_exact": true,
+    "counts": [
+      {
+        "observations": 7075,
+        "endpoints": 6902,
+        "positive": 261,
+        "warmup_excluded": 173
+      },
+      {
+        "observations": 8724,
+        "endpoints": 8462,
+        "positive": 415,
+        "warmup_excluded": 262
+      },
+      {
+        "observations": 5019,
+        "endpoints": 4846,
+        "positive": 274,
+        "warmup_excluded": 173
+      }
+    ],
+    "metrics": {
+      "score_rows": 4846,
+      "events": [
+        {
+          "fault_time": "2018-11-02T01:49:01+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 251.12,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 0,
+          "warning_observed": true,
+          "lead_minutes": 269.19083333333333
+        },
+        {
+          "fault_time": "2018-11-02T02:36:36+00:00",
+          "observations": 62,
+          "occupied_slots": 62,
+          "expected_slots": 72,
+          "coverage_fraction": 0.8611111111111112,
+          "last_observation_gap_seconds": 3106.12,
+          "has_any_prior_data": true,
+          "eligible": false,
+          "group": 0,
+          "warning_observed": true,
+          "lead_minutes": 316.7741666666667
+        },
+        {
+          "fault_time": "2018-11-02T03:09:00+00:00",
+          "observations": 56,
+          "occupied_slots": 56,
+          "expected_slots": 72,
+          "coverage_fraction": 0.7777777777777778,
+          "last_observation_gap_seconds": 5050.12,
+          "has_any_prior_data": true,
+          "eligible": false,
+          "group": 0,
+          "warning_observed": true,
+          "lead_minutes": 349.1741666666667
+        },
+        {
+          "fault_time": "2018-11-02T09:30:08+00:00",
+          "observations": 66,
+          "occupied_slots": 66,
+          "expected_slots": 72,
+          "coverage_fraction": 0.9166666666666666,
+          "last_observation_gap_seconds": 317.613,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 1,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-11-03T12:42:00+00:00",
+          "observations": 64,
+          "occupied_slots": 64,
+          "expected_slots": 72,
+          "coverage_fraction": 0.8888888888888888,
+          "last_observation_gap_seconds": 2456.923,
+          "has_any_prior_data": true,
+          "eligible": false,
+          "group": 2,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-11-05T13:11:10+00:00",
+          "observations": 0,
+          "occupied_slots": 0,
+          "expected_slots": 72,
+          "coverage_fraction": 0.0,
+          "last_observation_gap_seconds": null,
+          "has_any_prior_data": false,
+          "eligible": false,
+          "group": 3,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-11-06T14:59:00+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 84.057,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 4,
+          "warning_observed": false,
+          "lead_minutes": null
+        }
+      ],
+      "eligible_groups": [
+        0,
+        1,
+        4
+      ],
+      "warned_groups": [
+        0
+      ],
+      "nominal_points": 4430,
+      "nominal_alerts": 195,
+      "nominal_alert_fraction": 0.04401805869074492,
+      "nominal_episodes": 36,
+      "observed_nominal_hours": 367.3383263888889,
+      "episodes_per_observed_day": 2.3520551435335713
+    }
+  },
+  {
+    "candidate": "relative_hgb",
+    "fold": "november",
+    "threshold": 0.7138874664621001,
+    "replay_exact": true,
+    "counts": [
+      {
+        "observations": 7075,
+        "endpoints": 6902,
+        "positive": 261,
+        "warmup_excluded": 173
+      },
+      {
+        "observations": 8724,
+        "endpoints": 8462,
+        "positive": 415,
+        "warmup_excluded": 262
+      },
+      {
+        "observations": 5019,
+        "endpoints": 4846,
+        "positive": 274,
+        "warmup_excluded": 173
+      }
+    ],
+    "metrics": {
+      "score_rows": 4846,
+      "events": [
+        {
+          "fault_time": "2018-11-02T01:49:01+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 251.12,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 0,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-11-02T02:36:36+00:00",
+          "observations": 62,
+          "occupied_slots": 62,
+          "expected_slots": 72,
+          "coverage_fraction": 0.8611111111111112,
+          "last_observation_gap_seconds": 3106.12,
+          "has_any_prior_data": true,
+          "eligible": false,
+          "group": 0,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-11-02T03:09:00+00:00",
+          "observations": 56,
+          "occupied_slots": 56,
+          "expected_slots": 72,
+          "coverage_fraction": 0.7777777777777778,
+          "last_observation_gap_seconds": 5050.12,
+          "has_any_prior_data": true,
+          "eligible": false,
+          "group": 0,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-11-02T09:30:08+00:00",
+          "observations": 66,
+          "occupied_slots": 66,
+          "expected_slots": 72,
+          "coverage_fraction": 0.9166666666666666,
+          "last_observation_gap_seconds": 317.613,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 1,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-11-03T12:42:00+00:00",
+          "observations": 64,
+          "occupied_slots": 64,
+          "expected_slots": 72,
+          "coverage_fraction": 0.8888888888888888,
+          "last_observation_gap_seconds": 2456.923,
+          "has_any_prior_data": true,
+          "eligible": false,
+          "group": 2,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-11-05T13:11:10+00:00",
+          "observations": 0,
+          "occupied_slots": 0,
+          "expected_slots": 72,
+          "coverage_fraction": 0.0,
+          "last_observation_gap_seconds": null,
+          "has_any_prior_data": false,
+          "eligible": false,
+          "group": 3,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-11-06T14:59:00+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 84.057,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 4,
+          "warning_observed": false,
+          "lead_minutes": null
+        }
+      ],
+      "eligible_groups": [
+        0,
+        1,
+        4
+      ],
+      "warned_groups": [],
+      "nominal_points": 4430,
+      "nominal_alerts": 1,
+      "nominal_alert_fraction": 0.0002257336343115124,
+      "nominal_episodes": 1,
+      "observed_nominal_hours": 367.3383263888889,
+      "episodes_per_observed_day": 0.06533486509815477
+    }
+  },
+  {
+    "candidate": "relative_logistic",
+    "fold": "november",
+    "threshold": 0.7196004323296077,
+    "replay_exact": true,
+    "counts": [
+      {
+        "observations": 7075,
+        "endpoints": 6902,
+        "positive": 261,
+        "warmup_excluded": 173
+      },
+      {
+        "observations": 8724,
+        "endpoints": 8462,
+        "positive": 415,
+        "warmup_excluded": 262
+      },
+      {
+        "observations": 5019,
+        "endpoints": 4846,
+        "positive": 274,
+        "warmup_excluded": 173
+      }
+    ],
+    "metrics": {
+      "score_rows": 4846,
+      "events": [
+        {
+          "fault_time": "2018-11-02T01:49:01+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 251.12,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 0,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-11-02T02:36:36+00:00",
+          "observations": 62,
+          "occupied_slots": 62,
+          "expected_slots": 72,
+          "coverage_fraction": 0.8611111111111112,
+          "last_observation_gap_seconds": 3106.12,
+          "has_any_prior_data": true,
+          "eligible": false,
+          "group": 0,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-11-02T03:09:00+00:00",
+          "observations": 56,
+          "occupied_slots": 56,
+          "expected_slots": 72,
+          "coverage_fraction": 0.7777777777777778,
+          "last_observation_gap_seconds": 5050.12,
+          "has_any_prior_data": true,
+          "eligible": false,
+          "group": 0,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-11-02T09:30:08+00:00",
+          "observations": 66,
+          "occupied_slots": 66,
+          "expected_slots": 72,
+          "coverage_fraction": 0.9166666666666666,
+          "last_observation_gap_seconds": 317.613,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 1,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-11-03T12:42:00+00:00",
+          "observations": 64,
+          "occupied_slots": 64,
+          "expected_slots": 72,
+          "coverage_fraction": 0.8888888888888888,
+          "last_observation_gap_seconds": 2456.923,
+          "has_any_prior_data": true,
+          "eligible": false,
+          "group": 2,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-11-05T13:11:10+00:00",
+          "observations": 0,
+          "occupied_slots": 0,
+          "expected_slots": 72,
+          "coverage_fraction": 0.0,
+          "last_observation_gap_seconds": null,
+          "has_any_prior_data": false,
+          "eligible": false,
+          "group": 3,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-11-06T14:59:00+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 84.057,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 4,
+          "warning_observed": false,
+          "lead_minutes": null
+        }
+      ],
+      "eligible_groups": [
+        0,
+        1,
+        4
+      ],
+      "warned_groups": [],
+      "nominal_points": 4430,
+      "nominal_alerts": 1,
+      "nominal_alert_fraction": 0.0002257336343115124,
+      "nominal_episodes": 1,
+      "observed_nominal_hours": 367.3383263888889,
+      "episodes_per_observed_day": 0.06533486509815477
+    }
+  },
+  {
+    "candidate": "absolute_hgb",
+    "fold": "december",
+    "threshold": 0.7952318132683935,
+    "replay_exact": true,
+    "counts": [
+      {
+        "observations": 15871,
+        "endpoints": 15442,
+        "positive": 732,
+        "warmup_excluded": 429
+      },
+      {
+        "observations": 5019,
+        "endpoints": 4846,
+        "positive": 274,
+        "warmup_excluded": 173
+      },
+      {
+        "observations": 5660,
+        "endpoints": 5422,
+        "positive": 467,
+        "warmup_excluded": 238
+      }
+    ],
+    "metrics": {
+      "score_rows": 5422,
+      "events": [
+        {
+          "fault_time": "2018-12-03T00:18:36+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 190.89,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 0,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-03T19:50:47+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 79.737,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 1,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-03T20:25:30+00:00",
+          "observations": 65,
+          "occupied_slots": 65,
+          "expected_slots": 72,
+          "coverage_fraction": 0.9027777777777778,
+          "last_observation_gap_seconds": 2162.737,
+          "has_any_prior_data": true,
+          "eligible": false,
+          "group": 1,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-04T21:05:31+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 64.283,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 2,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-05T20:35:04+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 37.037,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 3,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-14T11:11:58+00:00",
+          "observations": 67,
+          "occupied_slots": 67,
+          "expected_slots": 72,
+          "coverage_fraction": 0.9305555555555556,
+          "last_observation_gap_seconds": 1698.253,
+          "has_any_prior_data": true,
+          "eligible": false,
+          "group": 4,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-17T11:50:06+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 80.36,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 5,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-17T16:05:00+00:00",
+          "observations": 61,
+          "occupied_slots": 61,
+          "expected_slots": 72,
+          "coverage_fraction": 0.8472222222222222,
+          "last_observation_gap_seconds": 74.773,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 5,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-26T04:00:38+00:00",
+          "observations": 0,
+          "occupied_slots": 0,
+          "expected_slots": 72,
+          "coverage_fraction": 0.0,
+          "last_observation_gap_seconds": null,
+          "has_any_prior_data": false,
+          "eligible": false,
+          "group": 6,
+          "warning_observed": false,
+          "lead_minutes": null
+        }
+      ],
+      "eligible_groups": [
+        0,
+        1,
+        2,
+        3,
+        5
+      ],
+      "warned_groups": [],
+      "nominal_points": 4492,
+      "nominal_alerts": 0,
+      "nominal_alert_fraction": 0.0,
+      "nominal_episodes": 0,
+      "observed_nominal_hours": 371.52856472222226,
+      "episodes_per_observed_day": 0.0
+    }
+  },
+  {
+    "candidate": "absolute_logistic",
+    "fold": "december",
+    "threshold": 0.811299838805343,
+    "replay_exact": true,
+    "counts": [
+      {
+        "observations": 15871,
+        "endpoints": 15442,
+        "positive": 732,
+        "warmup_excluded": 429
+      },
+      {
+        "observations": 5019,
+        "endpoints": 4846,
+        "positive": 274,
+        "warmup_excluded": 173
+      },
+      {
+        "observations": 5660,
+        "endpoints": 5422,
+        "positive": 467,
+        "warmup_excluded": 238
+      }
+    ],
+    "metrics": {
+      "score_rows": 5422,
+      "events": [
+        {
+          "fault_time": "2018-12-03T00:18:36+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 190.89,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 0,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-03T19:50:47+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 79.737,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 1,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-03T20:25:30+00:00",
+          "observations": 65,
+          "occupied_slots": 65,
+          "expected_slots": 72,
+          "coverage_fraction": 0.9027777777777778,
+          "last_observation_gap_seconds": 2162.737,
+          "has_any_prior_data": true,
+          "eligible": false,
+          "group": 1,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-04T21:05:31+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 64.283,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 2,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-05T20:35:04+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 37.037,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 3,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-14T11:11:58+00:00",
+          "observations": 67,
+          "occupied_slots": 67,
+          "expected_slots": 72,
+          "coverage_fraction": 0.9305555555555556,
+          "last_observation_gap_seconds": 1698.253,
+          "has_any_prior_data": true,
+          "eligible": false,
+          "group": 4,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-17T11:50:06+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 80.36,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 5,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-17T16:05:00+00:00",
+          "observations": 61,
+          "occupied_slots": 61,
+          "expected_slots": 72,
+          "coverage_fraction": 0.8472222222222222,
+          "last_observation_gap_seconds": 74.773,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 5,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-26T04:00:38+00:00",
+          "observations": 0,
+          "occupied_slots": 0,
+          "expected_slots": 72,
+          "coverage_fraction": 0.0,
+          "last_observation_gap_seconds": null,
+          "has_any_prior_data": false,
+          "eligible": false,
+          "group": 6,
+          "warning_observed": false,
+          "lead_minutes": null
+        }
+      ],
+      "eligible_groups": [
+        0,
+        1,
+        2,
+        3,
+        5
+      ],
+      "warned_groups": [],
+      "nominal_points": 4492,
+      "nominal_alerts": 89,
+      "nominal_alert_fraction": 0.01981300089047195,
+      "nominal_episodes": 22,
+      "observed_nominal_hours": 371.52856472222226,
+      "episodes_per_observed_day": 1.421155868310598
+    }
+  },
+  {
+    "candidate": "relative_hgb",
+    "fold": "december",
+    "threshold": 0.6450359311734265,
+    "replay_exact": true,
+    "counts": [
+      {
+        "observations": 15871,
+        "endpoints": 15442,
+        "positive": 732,
+        "warmup_excluded": 429
+      },
+      {
+        "observations": 5019,
+        "endpoints": 4846,
+        "positive": 274,
+        "warmup_excluded": 173
+      },
+      {
+        "observations": 5660,
+        "endpoints": 5422,
+        "positive": 467,
+        "warmup_excluded": 238
+      }
+    ],
+    "metrics": {
+      "score_rows": 5422,
+      "events": [
+        {
+          "fault_time": "2018-12-03T00:18:36+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 190.89,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 0,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-03T19:50:47+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 79.737,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 1,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-03T20:25:30+00:00",
+          "observations": 65,
+          "occupied_slots": 65,
+          "expected_slots": 72,
+          "coverage_fraction": 0.9027777777777778,
+          "last_observation_gap_seconds": 2162.737,
+          "has_any_prior_data": true,
+          "eligible": false,
+          "group": 1,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-04T21:05:31+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 64.283,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 2,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-05T20:35:04+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 37.037,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 3,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-14T11:11:58+00:00",
+          "observations": 67,
+          "occupied_slots": 67,
+          "expected_slots": 72,
+          "coverage_fraction": 0.9305555555555556,
+          "last_observation_gap_seconds": 1698.253,
+          "has_any_prior_data": true,
+          "eligible": false,
+          "group": 4,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-17T11:50:06+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 80.36,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 5,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-17T16:05:00+00:00",
+          "observations": 61,
+          "occupied_slots": 61,
+          "expected_slots": 72,
+          "coverage_fraction": 0.8472222222222222,
+          "last_observation_gap_seconds": 74.773,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 5,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-26T04:00:38+00:00",
+          "observations": 0,
+          "occupied_slots": 0,
+          "expected_slots": 72,
+          "coverage_fraction": 0.0,
+          "last_observation_gap_seconds": null,
+          "has_any_prior_data": false,
+          "eligible": false,
+          "group": 6,
+          "warning_observed": false,
+          "lead_minutes": null
+        }
+      ],
+      "eligible_groups": [
+        0,
+        1,
+        2,
+        3,
+        5
+      ],
+      "warned_groups": [],
+      "nominal_points": 4492,
+      "nominal_alerts": 6,
+      "nominal_alert_fraction": 0.0013357079252003562,
+      "nominal_episodes": 5,
+      "observed_nominal_hours": 371.52856472222226,
+      "episodes_per_observed_day": 0.3229899700705905
+    }
+  },
+  {
+    "candidate": "relative_logistic",
+    "fold": "december",
+    "threshold": 0.5827595213186201,
+    "replay_exact": true,
+    "counts": [
+      {
+        "observations": 15871,
+        "endpoints": 15442,
+        "positive": 732,
+        "warmup_excluded": 429
+      },
+      {
+        "observations": 5019,
+        "endpoints": 4846,
+        "positive": 274,
+        "warmup_excluded": 173
+      },
+      {
+        "observations": 5660,
+        "endpoints": 5422,
+        "positive": 467,
+        "warmup_excluded": 238
+      }
+    ],
+    "metrics": {
+      "score_rows": 5422,
+      "events": [
+        {
+          "fault_time": "2018-12-03T00:18:36+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 190.89,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 0,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-03T19:50:47+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 79.737,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 1,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-03T20:25:30+00:00",
+          "observations": 65,
+          "occupied_slots": 65,
+          "expected_slots": 72,
+          "coverage_fraction": 0.9027777777777778,
+          "last_observation_gap_seconds": 2162.737,
+          "has_any_prior_data": true,
+          "eligible": false,
+          "group": 1,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-04T21:05:31+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 64.283,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 2,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-05T20:35:04+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 37.037,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 3,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-14T11:11:58+00:00",
+          "observations": 67,
+          "occupied_slots": 67,
+          "expected_slots": 72,
+          "coverage_fraction": 0.9305555555555556,
+          "last_observation_gap_seconds": 1698.253,
+          "has_any_prior_data": true,
+          "eligible": false,
+          "group": 4,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-17T11:50:06+00:00",
+          "observations": 72,
+          "occupied_slots": 72,
+          "expected_slots": 72,
+          "coverage_fraction": 1.0,
+          "last_observation_gap_seconds": 80.36,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 5,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-17T16:05:00+00:00",
+          "observations": 61,
+          "occupied_slots": 61,
+          "expected_slots": 72,
+          "coverage_fraction": 0.8472222222222222,
+          "last_observation_gap_seconds": 74.773,
+          "has_any_prior_data": true,
+          "eligible": true,
+          "group": 5,
+          "warning_observed": false,
+          "lead_minutes": null
+        },
+        {
+          "fault_time": "2018-12-26T04:00:38+00:00",
+          "observations": 0,
+          "occupied_slots": 0,
+          "expected_slots": 72,
+          "coverage_fraction": 0.0,
+          "last_observation_gap_seconds": null,
+          "has_any_prior_data": false,
+          "eligible": false,
+          "group": 6,
+          "warning_observed": false,
+          "lead_minutes": null
+        }
+      ],
+      "eligible_groups": [
+        0,
+        1,
+        2,
+        3,
+        5
+      ],
+      "warned_groups": [],
+      "nominal_points": 4492,
+      "nominal_alerts": 27,
+      "nominal_alert_fraction": 0.006010685663401603,
+      "nominal_episodes": 10,
+      "observed_nominal_hours": 371.52856472222226,
+      "episodes_per_observed_day": 0.645979940141181
+    }
+  }
+]

@@ -1,0 +1,13 @@
+{
+  "protocol_sha256": "d8a79ba9d8ed8d9da4e02f0a0dee6d95b700e725cc4c06afd0dc2d21da00a082",
+  "script_sha256": "bebd8b34436ff96d1cdff991a03b97385aa49b7f6306b3080d03556229110ebd",
+  "eif_sha256": "861a932a923ea22f18ce8ab32db7992171b2f1b52e92f6ff37e5b67b74d1a312",
+  "shared_script_sha256": "a77a7c55980e2b1bab9eb8d06a3818210158cf99175bfdad72bbe5e4f379621f",
+  "package_manifest_sha256": "e0b9beecb3698d28a58707fa7a5a8f6183d16cd3ef0aeba00e98534d06034008",
+  "baseline_sha256": "704834F304120719A682DD4F0E6B3151231FDF238EE824765AA0F7C701EBFC79",
+  "python": "3.14.4",
+  "numpy": "2.5.3",
+  "pandas": "3.0.6",
+  "sklearn": "1.9.1",
+  "development_only": true
+}

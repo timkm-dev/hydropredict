@@ -1,0 +1,17 @@
+{
+  "source_hashes": {
+    "shp_train": "9561e703783cf4f09000616c17840e5962b3b88eb1de0c3d421d693188748cd1",
+    "shp_test": "a773c7a0d47830a18bec7e08f09bf47f836ca30672164b7df7423049ad1758aa",
+    "shp_faults": "a50dcacb60252b654d5d40b2f3546b4a728ee17d95c2f175f9e323ab42ccf522"
+  },
+  "control_windows": 402,
+  "control_selection": "earlier publisher-normal windows, >=6h apart, 20 nearest first-hour six-channel means in fitting-SD units",
+  "physical_regime_matching": false,
+  "fitted_detector": false,
+  "later_measurements_read": false,
+  "later_predictions_computed": false,
+  "sequence_inventory": "7 readings, 150\u2013450s steps; full-union availability upper bound, not model scoring",
+  "groups": "overlapping six-hour precursor windows; not verified independent failures",
+  "limitations": "Descriptive post-selection analysis, no p-values; control means may be poorly matched; source-normal windows are selected and calendar-shifted.",
+  "script_sha256": "abb58d563ae746b59f4042abc4f7ffe76911c5ed5781e61e3e9c954bac015ff2"
+}
