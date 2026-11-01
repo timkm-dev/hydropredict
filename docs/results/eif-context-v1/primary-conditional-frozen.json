@@ -1,0 +1,28 @@
+{
+  "candidate": "conditional",
+  "fold": "primary",
+  "boundaries": [
+    "2018-08-01T00:00:00+00:00",
+    "2019-01-01T00:00:00+00:00",
+    "2019-02-01T00:00:00+00:00",
+    "2019-05-01T00:00:00+00:00"
+  ],
+  "threshold": 2.3573202794325376,
+  "fitting_rows": 23872,
+  "calibration_rows": 7602,
+  "calibration_nominal_rows": 6863,
+  "persistence": 3,
+  "seed": 42,
+  "ntrees": null,
+  "sample_size": null,
+  "regression": {
+    "learning_rate": 0.05,
+    "max_iter": 100,
+    "max_leaf_nodes": 15,
+    "max_depth": 4,
+    "min_samples_leaf": 30,
+    "l2_regularization": 1,
+    "early_stopping": false,
+    "random_state": 42
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "protocol_sha256": "3ba8196fdd81b4ce0a59a34350bcb86f7b10ce29aa3714994d1d7f4fb360d26a",
+  "code_sha256": "be8107601ccde5a889cd0914ff9515653789c80c11f05a36a37d033a6261a8b6",
+  "cache_sha256": "d3dafe10a8d7554f72f4ab7ae88e5435fcc958bbd75a554a78dfb0666fc9e15b",
+  "cache_identity": {
+    "upstream": "64c8bfabfdcfbbb704d8d639e75b7be5b4fbafca0320076664f55d035074b112",
+    "feature_code": "58760ae9c0be079a3d8024e318ccea85dd54daf092f246c9a380d0a4a25ad934"
+  },
+  "sklearn": "1.9.1",
+  "numpy": "2.5.3",
+  "pandas": "3.0.6",
+  "families": [
+    "logistic",
+    "gaussian_nb",
+    "random_forest",
+    "rbf_svm_approx"
+  ],
+  "vectorized_replay_cases_verified": 37
+}

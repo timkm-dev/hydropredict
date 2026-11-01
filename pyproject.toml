@@ -25,6 +25,7 @@ dependencies = [
 [project.optional-dependencies]
 lstm = ["torch>=2.6,<3"]
 analysis = ["matplotlib>=3.9,<4"]
+bearing = ["xgboost>=3.1,<4"]
 dev = [
   "mypy>=1.15",
   "pandas-stubs>=2.2",
@@ -55,6 +56,10 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["B", "E", "F", "I", "SIM", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+# Report builders embed long prose and table text verbatim.
+"scripts/build_*_mentor_report.py" = ["E501"]
 
 [tool.mypy]
 python_version = "3.12"

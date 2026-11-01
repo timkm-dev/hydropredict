@@ -16,6 +16,7 @@ import pytest
 
 pytest.importorskip("torch")
 
+from hydropredict.assessment_store import AssessmentStore
 from hydropredict.auth import AuthStore
 from hydropredict.dashboard import DashboardHandler, InferenceService
 from hydropredict.models.lstm import LSTMConfig, SHPLSTMAutoencoder
@@ -37,6 +38,69 @@ def records() -> list[dict[str, Any]]:
         {"t": t.isoformat(), **{f"V{i}": index + i for i in range(1, 7)}}
         for index, t in enumerate(pd.date_range("2026-01-01", periods=20, freq="5min", tz="UTC"))
     ]
+
+
+def test_saved_assessment_http_flow(service: InferenceService, tmp_path: Path) -> None:
+    auth = AuthStore(tmp_path / "accounts.sqlite3")
+    token = auth.register({"email": "review@example.com", "password": "long test password"})
+    user = auth.user(token)
+    assert user is not None
+    auth.profile(
+        user["id"],
+        {
+            "name": "Reviewer",
+            "company": "Test",
+            "username": "reviewer",
+            "job_position": "Engineer",
+        },
+    )
+    store = AssessmentStore(tmp_path / "assessments.sqlite3")
+    handler = partial(DashboardHandler, service=service, auth=auth, assessments=store)
+    with HTTPServer(("127.0.0.1", 0), handler) as server:
+        worker = threading.Thread(target=server.serve_forever, daemon=True)
+        worker.start()
+        connection = http.client.HTTPConnection("127.0.0.1", server.server_port, timeout=10)
+        headers = {"Content-Type": "application/json", "Cookie": f"hp_session={token}"}
+        try:
+            connection.request(
+                "POST",
+                "/api/assess",
+                json.dumps({"name": "test.csv", "records": records()}),
+                headers,
+            )
+            response = connection.getresponse()
+            assert response.status == 200
+            run = json.loads(response.read())
+            assert run["result"]["scored_observations"] == 14
+            connection.request("GET", "/api/run?id=" + run["id"], headers=headers)
+            response = connection.getresponse()
+            assert response.status == 200
+            assert json.loads(response.read())["records"] == records()
+            connection.request("GET", "/", headers=headers)
+            response = connection.getresponse()
+            assert response.status == 200
+            assert b"What needs attention?" in response.read()
+            connection.request("GET", "/shp.html", headers=headers)
+            response = connection.getresponse()
+            assert response.status == 200
+            assert b"Review unusual behaviour" in response.read()
+            connection.request("GET", "/api/runs")
+            response = connection.getresponse()
+            assert response.status == 401
+            response.read()
+            connection.request(
+                "POST",
+                "/api/review",
+                json.dumps({"run_id": run["id"], "episode": "invalid", "action": "acknowledged"}),
+                headers,
+            )
+            response = connection.getresponse()
+            assert response.status == 400
+            response.read()
+        finally:
+            connection.close()
+            server.shutdown()
+            worker.join(timeout=5)
 
 
 def test_scores_match_direct_inference_and_account_for_gaps(service: InferenceService) -> None:
@@ -150,6 +214,55 @@ def test_authenticated_http_flow(service: InferenceService, tmp_path: Path) -> N
             response = connection.getresponse()
             assert response.status == 401
             response.read()
+        finally:
+            connection.close()
+            server.shutdown()
+            worker.join(timeout=5)
+
+
+def test_care_replay_data_and_alert_reviews(service: InferenceService, tmp_path: Path) -> None:
+    care = tmp_path / "care-data"
+    care.mkdir()
+    fleet = {"periods": [{"key": "C-47", "alerts": [{"id": "C-47-1"}]}]}
+    (care / "fleet.json").write_text(json.dumps(fleet))
+    handler = partial(
+        DashboardHandler,
+        service=service,
+        auth=AuthStore(tmp_path / "accounts.sqlite3"),
+        assessments=AssessmentStore(tmp_path / "assessments.sqlite3"),
+        care_data=care,
+    )
+    with HTTPServer(("127.0.0.1", 0), handler) as server:
+        worker = threading.Thread(target=server.serve_forever, daemon=True)
+        worker.start()
+        connection = http.client.HTTPConnection("127.0.0.1", server.server_port, timeout=10)
+
+        def call(method: str, path: str, body: Any = None, headers: Any = None) -> Any:
+            data = None if body is None else json.dumps(body)
+            connection.request(method, path, data, headers or {})
+            response = connection.getresponse()
+            return response.status, response.getheader("Set-Cookie"), response.read()
+
+        try:
+            assert call("GET", "/care-data/fleet.json")[0] == 401
+            assert call("GET", "/care.html")[0] == 302
+            headers = {"Content-Type": "application/json"}
+            credentials = {"email": "care@example.com", "password": "a long test password"}
+            _, cookie, _ = call("POST", "/api/auth/register", credentials, headers)
+            headers["Cookie"] = cookie.split(";", 1)[0]
+            profile = {"name": "T", "company": "W", "username": "tech", "job_position": "Tech"}
+            assert call("POST", "/api/auth/profile", profile, headers)[0] == 200
+            status, _, body = call("GET", "/", headers=headers)
+            assert status == 200 and b"care.js" in body
+            review = {"alert": "C-47-1", "action": "inspect", "comment": "Check pump A"}
+            status, _, body = call("POST", "/api/care/review", review, headers)
+            assert status == 200 and json.loads(body)["reviews"][0]["action"] == "inspect"
+            missing = {"alert": "C-47-1", "action": "dismissed"}
+            assert call("POST", "/api/care/review", missing, headers)[0] == 400
+            unknown = {"alert": "Z-1-1", "action": "inspect"}
+            assert call("POST", "/api/care/review", unknown, headers)[0] == 400
+            status, _, body = call("GET", "/api/care/reviews", headers=headers)
+            assert [r["alert"] for r in json.loads(body)["reviews"]] == ["C-47-1"]
         finally:
             connection.close()
             server.shutdown()

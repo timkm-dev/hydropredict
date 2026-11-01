@@ -1,0 +1,39 @@
+{
+  "script_sha256": "572c2dbd8891cea2e834d3f80d8a39921d52055daa9231868bf32c54aa452a28",
+  "scorer_sha256": "44908588761c5dfbfe9380ddd1cbcdfe90de94ec181cf4910a31686dd57224b0",
+  "variants": {
+    "reference": {
+      "normal_status": [
+        0
+      ],
+      "descend": [
+        1,
+        4
+      ],
+      "threshold": 72
+    },
+    "paper": {
+      "normal_status": [
+        0,
+        2
+      ],
+      "descend": [
+        1,
+        2
+      ],
+      "threshold": 73
+    }
+  },
+  "models": {
+    "Isolation Forest (v1)": [
+      "docs/results/care-baseline-v1",
+      ".local/care-baseline-v1-models"
+    ],
+    "Extra Trees residuals (v2)": [
+      "docs/results/care-residual-v2",
+      ".local/care-residual-v2-models"
+    ]
+  },
+  "farm_a_status": "ignored (all prediction rows treated as normal)",
+  "farm_c": "not scored; held out"
+}

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>HydroPredict · Anomalies and faults</title>
+  <link rel="stylesheet" href="evidence.css">
+  <script type="module" src="evidence.js"></script>
+</head>
+<body>
+  <header><a class="brand" href="index.html">≋ HydroPredict<span>.</span></a><a class="back" href="/">← Back to early warning</a><span class="research">RESEARCH / PROOF OF CONCEPT</span></header>
+  <main>
+    <div class="heading"><div><p class="eyebrow">FROM A FLAGGED READING TO A RECORDED FAULT</p><h1>Did the anomalies warn us?</h1><p class="intro">Explore real saved LSTM results alongside recorded faults. See where a warning appeared, where it did not, and where the data cannot tell us.</p></div><div class="period">DEVELOPMENT EVIDENCE<strong>February–April 2019</strong><span>All timestamps in UTC</span></div></div>
+    <div id="load-status" class="loading" role="status">Loading verified local research evidence…</div>
+    <div id="evidence" hidden>
+      <section class="stats" id="stats" aria-label="Fault comparison summary"></section>
+      <aside class="reading-guide"><strong>How to read this</strong><p><span class="dot orange"></span>An anomaly is a score above the frozen threshold. <span class="dot red"></span>A fault is a recorded event. We count a warning only when an anomaly occurs <b>within the six hours before a fault</b>. A match in time does not establish a cause.</p></aside>
+      <section class="panel"><div class="panel-heading"><div><p class="eyebrow">01 / THE FULL PICTURE</p><h2>Anomalies and faults across the study</h2><p>Orange marks are anomaly readings. Numbered fault buttons select an event below.</p></div><span class="tag">SAVED DECISIONS · NO RETRAINING</span></div><div id="overview" class="chart" aria-label="Study timeline"></div><div id="fault-buttons" class="fault-buttons" aria-label="Select a fault"></div><p id="association" class="footnote"></p></section>
+      <section class="panel"><div class="panel-heading"><div><p class="eyebrow">02 / INSPECT A FAULT</p><h2 id="event-title"></h2><p id="event-date"></p></div><div class="controls"><label for="history">Show history<select id="history"><option value="6">6 hours</option><option value="12">12 hours</option></select></label><button id="previous" aria-label="Previous fault">←</button><button id="next" aria-label="Next fault">→</button></div></div>
+        <div class="event-layout"><div><div class="chart-legend"><span><i class="line teal"></i>Anomaly score / threshold</span><span><i class="line orange"></i>Alert threshold = 1</span><span><i class="line red"></i>Recorded fault</span><span><i class="missing"></i>No eligible scores</span></div><div id="event-chart" class="chart"></div><p class="axis-help">Time relative to the selected fault · shaded green area is the six-hour warning window</p></div><aside id="event-explanation" class="explanation" aria-live="polite"></aside></div>
+      </section>
+      <section class="panel"><div class="panel-heading"><div><p class="eyebrow">03 / EVERY EVENT COUNTS</p><h2>All recorded faults</h2><p>Insufficient data is kept separate from a missed warning. Select a row to inspect it.</p></div></div><div class="table-scroll"><table><thead><tr><th>Fault · UTC</th><th>Outcome</th><th>Scored coverage</th><th>Alert readings before fault</th><th>First warning lead</th></tr></thead><tbody id="event-table"></tbody></table></div></section>
+      <section class="notes"><article><h3>What this demonstrates</h3><p>The pipeline can score readings, flag unusual behavior and map flags to recorded faults. The event comparison also exposes missed warnings and unavailable history.</p></article><article><h3>What it does not establish</h3><p>This is retrospective development evidence, not a live prediction or an operational accuracy claim. Fault windows can overlap. Normal references were publisher selected, and sensor meanings, timezone and equipment identities remain unverified.</p></article></section>
+      <details class="provenance"><summary>Evidence source and comparison rules</summary><p id="source"></p><p>A fault is adequately scored when at least 80% of expected five-minute slots in its preceding six hours have scores, with a score within ten minutes of the fault. Score gaps over 7.5 minutes break chart lines and alert episodes. A reading exactly at or after the fault is excluded from its warning count. The model and threshold have not been changed for this page.</p><pre id="hashes"></pre></details>
+    </div>
+  </main><footer>HydroPredict · Research evidence, explained one event at a time.</footer>
+</body>
+</html>

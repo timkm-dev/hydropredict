@@ -1,0 +1,15 @@
+{
+  "before_event": [
+    5.0,
+    5.0
+  ],
+  "after_event": [
+    5.0,
+    5.0
+  ],
+  "max_p_not_enforced": [
+    900.0,
+    900.0
+  ],
+  "empty_detection_error": "min() iterable argument is empty"
+}

@@ -1,0 +1,18 @@
+[
+  {
+    "moment": "alarm",
+    "explained": 8,
+    "eligible": 8,
+    "hits": 3,
+    "expected_by_chance": 1.5540043290043286,
+    "p_value": 0.17895318783103226
+  },
+  {
+    "moment": "peak",
+    "explained": 18,
+    "eligible": 18,
+    "hits": 7,
+    "expected_by_chance": 3.2576655052264805,
+    "p_value": 0.0232722013182904
+  }
+]

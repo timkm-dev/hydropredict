@@ -1,93 +1,75 @@
 # HydroPredict dashboard
 
-A responsive, dependency-free frontend for the research project. It provides an
-overview, SVG telemetry charts, a six-channel explorer, illustrative alert review,
-and a model readiness workspace. Python analysis modules remain unchanged.
+## Wind turbine early warning (home page)
 
-From the repository root, start the local CPU LSTM inference server. The Python
-environment must have CPU PyTorch and the project's LSTM extra installed:
+The signed-in home page (`care.html`) replays the CARE wind-farm benchmark through
+the frozen autoencoder early warning model:
+
+- **Fleet**: all 95 monitoring periods, sorted by the highest warning level reached,
+  with the component to inspect first and any recorded fault.
+- **Period replay**: press **Replay history** (or drag the time slider) to step through
+  a period as if live. The chart shows only what was known at the selected time.
+  **Look here first** lists the sensors furthest from expected normal behaviour, and
+  **Actual vs expected** plots a sensor against the model's expectation.
+- **Alerts**: send for inspection, acknowledge, dismiss (a reason is required) or
+  reopen. Decisions are append-only and stored per account in
+  `data/assessments.sqlite3`.
+
+Status rules: **Alarm** when the warning counter reaches 72 (the CARE criticality
+rule), **Watch** from 24 (a display rule only). An alarm stays marked after the
+counter falls until it is reviewed. Sensor component groups are for display only.
+
+The replay data is generated locally and ignored by Git (derived from CC BY-SA 4.0
+data). Build it once after the CARE models exist (about 15 minutes on a laptop):
 
 ```powershell
-.venv/Scripts/python.exe -m hydropredict.dashboard --port 8766
+.venv/Scripts/python.exe -m scripts.build_care_app_data "C:\path\to\CARE_To_Compare" --scores .local/care-autoencoder-v1-all --models .local/care-autoencoder-v1-scores .local/care-autoencoder-v1-C-colab/scores --results docs/results/care-autoencoder-v1 --output frontend/care-data
 ```
 
-Open **http://127.0.0.1:8766** in a browser. Stop the server with Ctrl+C.
-Only frontend assets and inference endpoints are served, not datasets or models.
-The default bundle is the local checksum-verified copy at
-`models/lstm-diagnostics-2026-10-15-v1/frozen_bundle_copy`. Model files are ignored
-by Git. Supply a trusted exported bundle on another machine:
+The earlier hydro plant, bearing and evaluation pages remain under **Research**.
+
+**Bearing assessment** (`/bearing.html`, under Research).
+The page opens with ten held-out recordings preloaded and the first selected.
+Select **Assess selected recording**; no upload or sample-rate confirmation is
+needed for these known files. Saved results remain in the history selector.
+Alternatively, expand **Upload a different recording** to import a 48 kHz CWRU drive-end `.mat` file (up to
+20 MB). Keep original numeric filenames for files with multiple DE arrays.
+Predictions, feature contributions and benchmark limitations are displayed;
+assessment history is stored per account. See [CWRU results](../docs/cwru-results.md).
+
+**Hydro plant monitoring** (`/shp.html`): import an SHP CSV (`t,V1`–`V6`), run the
+frozen LSTM, inspect scores and measurements, and save episode review responses.
+See [the operator workflow](../docs/shp-operator-workflow.md). Unscored readings
+(gaps, steps outside 150–450 seconds, sequence warm-up) never mean normal equipment.
+
+**Hydro evaluation evidence** (`/evidence.html`) compares the nine development
+fault timestamps with frozen LSTM scores. Generate its local data once with
+`.venv/Scripts/python.exe scripts/map_anomalies_to_faults.py`; the output
+`frontend/evidence-data.json` stays outside Git. See
+[experiment and interpretation](../docs/anomaly-fault-mapping.md).
+
+## Start the server
+
+From the repository root (CPU PyTorch and the LSTM extra installed):
 
 ```powershell
-.venv/Scripts/python.exe -m hydropredict.dashboard --bundle models/my-run/bundle --port 8766
+.venv/Scripts/python.exe -m hydropredict.dashboard --local-accounts --port 8766
 ```
 
-Missing or incompatible bundles produce a startup error; no model is trained or
-silently substituted. A static-only preview remains available using
-`python -m http.server 8765 --bind 127.0.0.1 --directory frontend`, with inference
-explicitly offline. The inference server is intended for local research use and
-binds to loopback only.
-
-## Run an LSTM assessment
-
-1. Open port 8766 and confirm the displayed model version and fixed threshold.
-2. Import source telemetry with the same V1–V6 semantics as the training dataset.
-   Arbitrary measurements are not scientifically meaningful inputs to this model.
-3. Select **Run LSTM assessment**. Data is sent to Python on your own computer;
-   neither telemetry nor results are persisted by the service.
-4. Inspect anomaly scores, the saved threshold, and scored/unscored counts.
-5. Review flagged episodes and per-channel errors at each episode's peak.
-
-The full import is scored before display-period filtering. With the default
-seven-reading model, the first six readings per eligible segment are unscored.
-Steps outside 150–450 seconds reset sequence history. Short inputs may produce
-zero scores. Missing scores never mean normal equipment.
-
-Consecutive positive decisions form display episodes. A normal decision, gap,
-or segment change ends an episode; the frozen `score > threshold` rule is not
-modified. Detail panels show up to 20 episodes and tables up to 50: narrow the
-review period for large results. Episodes overlapping the period retain their
-full start time and peak evidence. Reconstruction error does not identify causes
-or confirmed faults. A successful reassessment resets episode review state.
-
-## Data and controls
-
-- The overview starts with three example generating units, each with its own
-  288-observation six-channel series. Two illustrative events flag Unit 01 / V1
-  and Unit 02 / V4. Unit 03 has no events in the demo. These equipment identities
-  and assignments are fictional, not inferred from the research dataset.
-- Select an equipment card to inspect its signals. Cards show anomaly status
-  separately from review status. "Mark reviewed" never resolves an anomaly or
-  changes the equipment status to healthy. "View unit" selects the affected
-  equipment and signal; orange dashed chart lines mark demo event times.
-- Select V1–V6 and a time window. Windows are relative to the dataset's latest
-  timestamp, not the computer clock. Charts break at observed gaps over 10 minutes.
-- Import a CSV with `t,V1,V2,V3,V4,V5,V6`. Columns may be reordered; extra columns
-  are ignored. ISO timestamps without a timezone are interpreted as UTC, matching
-  the current Python contract. Measurements must be finite. Duplicate timestamps,
-  malformed records, and invalid dates reject the entire import without replacing
-  the current dataset. Limit: 25 MB and 100,000 records.
-- Imports clear previous results and show "Unassigned equipment / Not assessed"
-  until inference runs. Equipment stays unassigned after inference because the
-  CSV has no verified equipment identity. Refreshing restores the demo.
-- Export downloads all six channels of the selected equipment for the chosen
-  time window as CSV; the filename includes its equipment ID.
-- Mark reviewed marks an illustrative event as reviewed for the current session.
-  Filter by status on the alert review page; Reset demo restores initial state.
-- Channel physical units remain unverified. No physical labels or health claims
-  are inferred from their numerical values.
+Open **http://127.0.0.1:8766** and sign in. The server binds to loopback only and
+serves frontend assets and inference endpoints, not datasets. The hydro page uses
+the checksum-verified bundle at `models/lstm-diagnostics-2026-10-15-v1/frozen_bundle_copy`
+(ignored by Git); pass `--bundle PATH` for another trusted bundle. Missing or
+incompatible bundles stop startup; no model is trained or silently substituted.
 
 ## Verification
 
-Node.js is only required for the data validation tests, not for serving the app:
-
 ```powershell
 node --test frontend/tests/*.test.js
-node --check frontend/app.js
 ```
 
-The UI uses native HTML controls, accessible chart titles, focus indicators, and
-responsive layouts. Optional Google Fonts use local sans-serif fallbacks when
-offline. No JavaScript dependencies or build step are required.
+No JavaScript dependencies or build step are required. Pages use native controls,
+accessible chart labels, focus indicators and responsive layouts.
 
 ## Integration boundary
 
@@ -99,8 +81,7 @@ unordered timestamps and cross-origin inference requests are rejected.
 
 The completed LSTM detected 1 of 3 adequately covered development faults; this
 does not establish operational reliability. See `docs/lstm-baseline-diagnostics.md`.
-Live telemetry, chronological replay, durable analysis records, role permissions, equipment
-mapping and drift monitoring remain future work.
+Live telemetry, role permissions and drift monitoring remain future work.
 
 ## Accounts and profiles
 

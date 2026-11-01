@@ -1,0 +1,19 @@
+{
+  "candidate": "eif",
+  "fold": "primary",
+  "boundaries": [
+    "2018-08-01T00:00:00+00:00",
+    "2019-01-01T00:00:00+00:00",
+    "2019-02-01T00:00:00+00:00",
+    "2019-05-01T00:00:00+00:00"
+  ],
+  "threshold": 0.5660929780920173,
+  "fitting_rows": 23872,
+  "calibration_rows": 7602,
+  "calibration_nominal_rows": 6863,
+  "persistence": 3,
+  "seed": 42,
+  "ntrees": 500,
+  "sample_size": 2048,
+  "regression": null
+}

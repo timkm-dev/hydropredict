@@ -11,7 +11,7 @@ from contextlib import suppress
 from datetime import datetime
 from functools import partial
 from http.cookies import SimpleCookie
-from http.server import HTTPServer, SimpleHTTPRequestHandler
+from http.server import HTTPServer, SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, urlencode, urlsplit
@@ -20,6 +20,7 @@ import pandas as pd
 import torch
 from dotenv import load_dotenv
 
+from hydropredict.assessment_store import AssessmentStore
 from hydropredict.auth import SESSION_SECONDS, AuthStore
 from hydropredict.data.schema import MEASUREMENT_COLUMNS
 from hydropredict.google_login import GoogleLogin
@@ -27,6 +28,7 @@ from hydropredict.models.lstm import SHPLSTMAutoencoder
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_BUNDLE = ROOT / "models/lstm-diagnostics-2026-10-15-v1/frozen_bundle_copy"
+CARE_DATA = ROOT / "frontend/care-data"
 MAX_BYTES = 25 * 1024 * 1024
 MAX_ROWS = 100_000
 
@@ -101,11 +103,17 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         service: InferenceService,
         auth: AuthStore | None = None,
         google: GoogleLogin | None = None,
+        assessments: AssessmentStore | None = None,
+        bearing: Any = None,
+        care_data: Path = CARE_DATA,
         **kwargs: Any,
     ) -> None:
         self.service = service
         self.auth = auth
         self.google = google
+        self.assessments = assessments
+        self.bearing = bearing
+        self.care_data = care_data
         self.session_cookie: str | None = None
         super().__init__(*args, directory=str(ROOT / "frontend"), **kwargs)
 
@@ -116,6 +124,14 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             return cookie[name].value if name in cookie else ""
         except Exception:
             return ""
+
+    def care_alerts(self) -> set[str]:
+        """Alert ids in the generated replay data; reviews must name one of them."""
+        try:
+            fleet = json.loads((self.care_data / "fleet.json").read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return set()
+        return {a["id"] for period in fleet.get("periods", []) for a in period.get("alerts", [])}
 
     def respond(self, status: int, payload: dict[str, Any]) -> None:
         body = json.dumps(payload, allow_nan=False).encode()
@@ -145,16 +161,61 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             if self.path.startswith("/api/") and user is None:
                 self.respond(401, {"error": "Please sign in to continue."})
                 return
-            if self.path in ("/", "/index.html") and (not user or not user["username"]):
+            if path.startswith("/care-data/") and (not user or not user["username"]):
+                self.respond(401, {"error": "Please sign in to continue."})
+                return
+            pages = ("/", "/index.html", "/shp.html", "/care.html")
+            if path in pages and (not user or not user["username"]):
                 self.send_response(302)
                 self.send_header("Location", "/auth.html")
                 self.end_headers()
                 return
-        if self.path == "/api/model":
+        if path.startswith("/api/bearing/"):
+            user = self.auth.user(self.token()) if self.auth else None
+            if not user:
+                self.respond(401, {"error": "Sign in to assess bearing recordings."})
+                return
+            if self.bearing is None:
+                self.respond(503, {"error": "The bearing model is not available yet."})
+                return
+            try:
+                if path == "/api/bearing/info":
+                    self.respond(200, self.bearing.info())
+                elif path == "/api/bearing/runs":
+                    self.respond(200, {"runs": self.bearing.store.list(str(user["id"]))})
+                elif path == "/api/bearing/run":
+                    run_id = parse_qs(urlsplit(self.path).query).get("id", [""])[0]
+                    self.respond(200, self.bearing.store.get(str(user["id"]), run_id))
+                else:
+                    self.respond(404, {"error": "Unknown bearing endpoint."})
+            except ValueError as error:
+                self.respond(404, {"error": str(error)})
+        elif path in {"/api/runs", "/api/run"}:
+            user = self.auth.user(self.token()) if self.auth else None
+            if not user or self.assessments is None:
+                self.respond(401, {"error": "Sign in to access saved assessments."})
+                return
+            try:
+                if path == "/api/runs":
+                    self.respond(200, {"runs": self.assessments.list(str(user["id"]))})
+                else:
+                    run_id = parse_qs(urlsplit(self.path).query).get("id", [""])[0]
+                    self.respond(200, self.assessments.get(str(user["id"]), run_id))
+            except ValueError as error:
+                self.respond(404, {"error": str(error)})
+        elif path == "/api/care/reviews":
+            user = self.auth.user(self.token()) if self.auth else None
+            if not user or self.assessments is None:
+                self.respond(401, {"error": "Sign in to see alert reviews."})
+                return
+            self.respond(200, {"reviews": self.assessments.care_reviews(str(user["id"]))})
+        elif self.path == "/api/model":
             self.respond(200, self.service.info())
         elif self.path.startswith("/api/"):
             self.respond(404, {"error": "Unknown endpoint."})
         else:
+            if path in {"/", "/index.html"}:
+                self.path = "/care.html"
             super().do_GET()
 
     def redirect(self, location: str, cookies: tuple[str, ...] = ()) -> None:
@@ -229,6 +290,10 @@ class DashboardHandler(SimpleHTTPRequestHandler):
     def do_POST(self) -> None:
         if self.path not in {
             "/api/score",
+            "/api/assess",
+            "/api/review",
+            "/api/care/review",
+            "/api/bearing/assess",
             "/api/auth/register",
             "/api/auth/login",
             "/api/auth/logout",
@@ -247,8 +312,12 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             return
         try:
             length = int(self.headers.get("Content-Length", "0"))
-            if not 0 < length <= MAX_BYTES:
-                self.respond(413, {"error": "Request must be nonempty and at most 25 MB."})
+            limit = 28 * 1024 * 1024 if self.path == "/api/bearing/assess" else MAX_BYTES
+            if not 0 < length <= limit:
+                self.respond(
+                    413,
+                    {"error": f"Request must be nonempty and at most {limit // (1024 * 1024)} MB."},
+                )
                 return
             payload = json.loads(self.rfile.read(length))
             if not isinstance(payload, dict):
@@ -256,6 +325,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             if self.path.startswith("/api/auth/"):
                 self.handle_auth(payload)
                 return
+            user = None
             if self.auth is not None:
                 user = self.auth.user(self.token())
                 if not user:
@@ -264,7 +334,39 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 if not user["username"]:
                     self.respond(403, {"error": "Complete your profile first."})
                     return
+            if self.path == "/api/care/review":
+                if user is None or self.assessments is None:
+                    self.respond(401, {"error": "Sign in to review alerts."})
+                    return
+                self.assessments.care_review(str(user["id"]), payload, self.care_alerts())
+                self.respond(200, {"reviews": self.assessments.care_reviews(str(user["id"]))})
+                return
+            if self.path == "/api/bearing/assess":
+                if not user:
+                    self.respond(401, {"error": "Sign in to assess bearing recordings."})
+                    return
+                if self.bearing is None:
+                    self.respond(503, {"error": "The bearing model is not available yet."})
+                    return
+                self.respond(200, self.bearing.assess(str(user["id"]), payload))
+                return
+            if self.path in {"/api/assess", "/api/review"}:
+                if user is None or self.assessments is None:
+                    self.respond(401, {"error": "Sign in to save assessments."})
+                    return
+                if self.path == "/api/review":
+                    self.assessments.review(str(user["id"]), payload)
+                    self.respond(200, {"saved": True})
+                    return
+                if not isinstance(payload.get("name"), str) or not payload["name"].strip():
+                    raise ValueError("An assessment name is required.")
             result = self.service.score(payload)
+            if self.path == "/api/assess" and self.assessments is not None and user is not None:
+                run_id = self.assessments.save(
+                    str(user["id"]), payload["name"], payload["records"], result
+                )
+                self.respond(200, self.assessments.get(str(user["id"]), run_id))
+                return
         except (ValueError, KeyError, OverflowError) as error:
             self.respond(400, {"error": str(error)})
             return
@@ -306,6 +408,11 @@ def main() -> None:
     parser.add_argument("--bundle", type=Path, default=DEFAULT_BUNDLE)
     parser.add_argument("--port", type=int, default=8766)
     parser.add_argument("--auth-db", type=Path, default=ROOT / "data/accounts.sqlite3")
+    parser.add_argument(
+        "--local-accounts",
+        action="store_true",
+        help="Use the local account database without PostgreSQL.",
+    )
     args = parser.parse_args()
     torch.set_num_threads(1)
     try:
@@ -323,13 +430,21 @@ def main() -> None:
                 "GOOGLE_REDIRECT_URI", f"http://127.0.0.1:{args.port}/api/auth/google/callback"
             ),
         )
+    bearing = None
+    if (ROOT / "models/cwru-xgb-v1/metadata.json").exists():
+        from hydropredict.bearing_workflow import BearingWorkflow
+
+        bearing = BearingWorkflow(ROOT)
     handler = partial(
         DashboardHandler,
         service=service,
-        auth=AuthStore(database_url or args.auth_db),
+        auth=AuthStore(args.auth_db if args.local_accounts else database_url or args.auth_db),
         google=google,
+        assessments=AssessmentStore(ROOT / "data/assessments.sqlite3"),
+        bearing=bearing,
     )
-    with HTTPServer(("127.0.0.1", args.port), handler) as server:
+    # Threads stop one idle browser connection (e.g. a preconnect) blocking every request.
+    with ThreadingHTTPServer(("127.0.0.1", args.port), handler) as server:
         print(f"HydroPredict: http://127.0.0.1:{args.port} · {service.model.version}", flush=True)
         with suppress(KeyboardInterrupt):
             server.serve_forever()

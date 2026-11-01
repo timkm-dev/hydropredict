@@ -1,0 +1,28 @@
+{
+  "candidate": "conditional",
+  "fold": "december",
+  "boundaries": [
+    "2018-08-01T00:00:00+00:00",
+    "2018-11-01T00:00:00+00:00",
+    "2018-12-01T00:00:00+00:00",
+    "2019-01-01T00:00:00+00:00"
+  ],
+  "threshold": 1.6955034603683912,
+  "fitting_rows": 14439,
+  "calibration_rows": 5019,
+  "calibration_nominal_rows": 4578,
+  "persistence": 3,
+  "seed": 42,
+  "ntrees": null,
+  "sample_size": null,
+  "regression": {
+    "learning_rate": 0.05,
+    "max_iter": 100,
+    "max_leaf_nodes": 15,
+    "max_depth": 4,
+    "min_samples_leaf": 30,
+    "l2_regularization": 1,
+    "early_stopping": false,
+    "random_state": 42
+  }
+}

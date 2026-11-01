@@ -1,0 +1,32 @@
+{
+  "november": {
+    "observed": 2,
+    "eligible": 3,
+    "segment_shift_mean": 1.641,
+    "segment_shift_fraction_at_least_observed": 0.641,
+    "iid_nominal_rate_expected": 2.294544381580736,
+    "repeats": 2000,
+    "method": "Independent circular shift per observed 150\u2013450-second cadence segment; local alarm counts retained",
+    "caveat": "Post-selection diagnostic, not a confirmatory p-value; short segments and local fault enrichment constrain shifts"
+  },
+  "december": {
+    "observed": 5,
+    "eligible": 5,
+    "segment_shift_mean": 4.286,
+    "segment_shift_fraction_at_least_observed": 0.4395,
+    "iid_nominal_rate_expected": 4.3258021233339905,
+    "repeats": 2000,
+    "method": "Independent circular shift per observed 150\u2013450-second cadence segment; local alarm counts retained",
+    "caveat": "Post-selection diagnostic, not a confirmatory p-value; short segments and local fault enrichment constrain shifts"
+  },
+  "primary": {
+    "observed": 3,
+    "eligible": 3,
+    "segment_shift_mean": 2.092,
+    "segment_shift_fraction_at_least_observed": 0.3025,
+    "iid_nominal_rate_expected": 2.511405274408774,
+    "repeats": 2000,
+    "method": "Independent circular shift per observed 150\u2013450-second cadence segment; local alarm counts retained",
+    "caveat": "Post-selection diagnostic, not a confirmatory p-value; short segments and local fault enrichment constrain shifts"
+  }
+}

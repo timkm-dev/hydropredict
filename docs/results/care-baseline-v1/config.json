@@ -1,0 +1,14 @@
+{
+  "protocol_sha256": "76bfc72d53f2854cc405722ae4d5cbb53e43881b70a1a0a53ef03dd300bb7edf",
+  "script_sha256": "c1405818251e775134cddc511297aca0dbbaa37f64a5127bb10d9a55863a0794",
+  "sklearn": "1.9.1",
+  "numpy": "2.5.3",
+  "pandas": "3.0.6",
+  "seed": 42,
+  "model": "IsolationForest",
+  "trees": 100,
+  "max_samples": 256,
+  "calibration_quantile": 0.99,
+  "persistence_readings": 6,
+  "elapsed_seconds": 90.2957702000001
+}

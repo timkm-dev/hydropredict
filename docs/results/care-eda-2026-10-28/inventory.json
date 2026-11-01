@@ -1,0 +1,3970 @@
+[
+  {
+    "farm": "Wind Farm A",
+    "event_id": 0,
+    "label": "anomaly",
+    "bytes": 36891572,
+    "columns": 86,
+    "avg_features": 46,
+    "rows": 54986,
+    "bad_steps": 18,
+    "duplicate_times": 0,
+    "event_rows": 2012,
+    "normal_train_rows": 47252,
+    "assets": [
+      0
+    ],
+    "split_counts": {
+      "train": 52148,
+      "prediction": 2838
+    },
+    "status_counts": {
+      "4": 6239,
+      "0": 47540,
+      "3": 1207
+    },
+    "split_bounds": {
+      "train": [
+        "2022-08-04 06:10:00",
+        "2023-08-04 06:00:00"
+      ],
+      "prediction": [
+        "2023-08-04 06:10:00",
+        "2023-08-24 06:10:00"
+      ]
+    },
+    "event_start": "2023-08-06 06:10:00",
+    "event_end": "2023-08-20 06:10:00",
+    "event_duration_days": 14.0,
+    "avg_missing_fraction": 7.907151069284039e-07,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm A",
+    "event_id": 3,
+    "label": "normal",
+    "bytes": 37088823,
+    "columns": 86,
+    "avg_features": 46,
+    "rows": 55487,
+    "bad_steps": 41,
+    "duplicate_times": 0,
+    "event_rows": 3014,
+    "normal_train_rows": 41635,
+    "assets": [
+      10
+    ],
+    "split_counts": {
+      "train": 52185,
+      "prediction": 3302
+    },
+    "status_counts": {
+      "0": 44937,
+      "4": 8827,
+      "3": 1723
+    },
+    "split_bounds": {
+      "train": [
+        "2022-04-27 03:00:00",
+        "2023-04-27 02:50:00"
+      ],
+      "prediction": [
+        "2023-04-27 03:00:00",
+        "2023-05-20 01:10:00"
+      ]
+    },
+    "event_start": "2023-04-27 03:00:00",
+    "event_end": "2023-05-18 01:10:00",
+    "event_duration_days": 20.92361111111111,
+    "avg_missing_fraction": 1.5671512559541952e-06,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm A",
+    "event_id": 10,
+    "label": "anomaly",
+    "bytes": 35826430,
+    "columns": 86,
+    "avg_features": 46,
+    "rows": 53592,
+    "bad_steps": 31,
+    "duplicate_times": 0,
+    "event_rows": 981,
+    "normal_train_rows": 45171,
+    "assets": [
+      10
+    ],
+    "split_counts": {
+      "train": 52323,
+      "prediction": 1269
+    },
+    "status_counts": {
+      "0": 45171,
+      "4": 7129,
+      "3": 1292
+    },
+    "split_bounds": {
+      "train": [
+        "2022-10-09 08:40:00",
+        "2023-10-09 08:30:00"
+      ],
+      "prediction": [
+        "2023-10-09 08:40:00",
+        "2023-10-18 08:40:00"
+      ]
+    },
+    "event_start": "2023-10-11 08:40:00",
+    "event_end": "2023-10-18 08:40:00",
+    "event_duration_days": 7.0,
+    "avg_missing_fraction": 2.4338480110594055e-06,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm A",
+    "event_id": 13,
+    "label": "normal",
+    "bytes": 36217983,
+    "columns": 86,
+    "avg_features": 46,
+    "rows": 54010,
+    "bad_steps": 34,
+    "duplicate_times": 0,
+    "event_rows": 3007,
+    "normal_train_rows": 40642,
+    "assets": [
+      21
+    ],
+    "split_counts": {
+      "train": 50427,
+      "prediction": 3583
+    },
+    "status_counts": {
+      "0": 44225,
+      "4": 8175,
+      "3": 1610
+    },
+    "split_bounds": {
+      "train": [
+        "2022-04-30 13:20:00",
+        "2023-04-30 13:10:00"
+      ],
+      "prediction": [
+        "2023-04-30 13:20:00",
+        "2023-05-25 10:20:00"
+      ]
+    },
+    "event_start": "2023-05-03 13:20:00",
+    "event_end": "2023-05-24 10:20:00",
+    "event_duration_days": 20.875,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm A",
+    "event_id": 14,
+    "label": "normal",
+    "bytes": 36614003,
+    "columns": 86,
+    "avg_features": 46,
+    "rows": 54197,
+    "bad_steps": 15,
+    "duplicate_times": 0,
+    "event_rows": 1037,
+    "normal_train_rows": 49422,
+    "assets": [
+      13
+    ],
+    "split_counts": {
+      "train": 52296,
+      "prediction": 1901
+    },
+    "status_counts": {
+      "0": 51323,
+      "3": 864,
+      "4": 2010
+    },
+    "split_bounds": {
+      "train": [
+        "2022-03-03 14:00:00",
+        "2023-03-03 13:50:00"
+      ],
+      "prediction": [
+        "2023-03-03 14:00:00",
+        "2023-03-16 18:40:00"
+      ]
+    },
+    "event_start": "2023-03-05 14:00:00",
+    "event_end": "2023-03-12 18:40:00",
+    "event_duration_days": 7.194444444444445,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm A",
+    "event_id": 17,
+    "label": "normal",
+    "bytes": 36850928,
+    "columns": 86,
+    "avg_features": 46,
+    "rows": 55090,
+    "bad_steps": 29,
+    "duplicate_times": 0,
+    "event_rows": 1917,
+    "normal_train_rows": 45031,
+    "assets": [
+      10
+    ],
+    "split_counts": {
+      "train": 52309,
+      "prediction": 2781
+    },
+    "status_counts": {
+      "0": 47812,
+      "4": 5987,
+      "3": 1291
+    },
+    "split_bounds": {
+      "train": [
+        "2022-10-31 15:20:00",
+        "2023-10-31 15:10:00"
+      ],
+      "prediction": [
+        "2023-10-31 15:20:00",
+        "2023-11-20 00:40:00"
+      ]
+    },
+    "event_start": "2023-11-02 15:20:00",
+    "event_end": "2023-11-16 00:40:00",
+    "event_duration_days": 13.38888888888889,
+    "avg_missing_fraction": 2.367667137569353e-06,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm A",
+    "event_id": 22,
+    "label": "anomaly",
+    "bytes": 35472117,
+    "columns": 86,
+    "avg_features": 46,
+    "rows": 53036,
+    "bad_steps": 24,
+    "duplicate_times": 0,
+    "event_rows": 1005,
+    "normal_train_rows": 43803,
+    "assets": [
+      21
+    ],
+    "split_counts": {
+      "train": 51888,
+      "prediction": 1148
+    },
+    "status_counts": {
+      "4": 7910,
+      "0": 43803,
+      "3": 1323
+    },
+    "split_bounds": {
+      "train": [
+        "2022-08-12 09:50:00",
+        "2023-08-12 09:40:00"
+      ],
+      "prediction": [
+        "2023-08-12 09:50:00",
+        "2023-08-20 09:50:00"
+      ]
+    },
+    "event_start": "2023-08-12 09:50:00",
+    "event_end": "2023-08-19 10:00:00",
+    "event_duration_days": 7.006944444444445,
+    "avg_missing_fraction": 8.197877077751946e-07,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm A",
+    "event_id": 24,
+    "label": "normal",
+    "bytes": 36979351,
+    "columns": 86,
+    "avg_features": 46,
+    "rows": 55003,
+    "bad_steps": 11,
+    "duplicate_times": 0,
+    "event_rows": 1995,
+    "normal_train_rows": 46110,
+    "assets": [
+      0
+    ],
+    "split_counts": {
+      "train": 52289,
+      "prediction": 2714
+    },
+    "status_counts": {
+      "0": 48824,
+      "4": 4882,
+      "3": 1297
+    },
+    "split_bounds": {
+      "train": [
+        "2022-04-24 15:00:00",
+        "2023-04-24 14:50:00"
+      ],
+      "prediction": [
+        "2023-04-24 15:00:00",
+        "2023-05-13 11:20:00"
+      ]
+    },
+    "event_start": "2023-04-27 15:00:00",
+    "event_end": "2023-05-11 11:20:00",
+    "event_duration_days": 13.847222222222221,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm A",
+    "event_id": 25,
+    "label": "normal",
+    "bytes": 36624095,
+    "columns": 86,
+    "avg_features": 46,
+    "rows": 54712,
+    "bad_steps": 12,
+    "duplicate_times": 0,
+    "event_rows": 1847,
+    "normal_train_rows": 49844,
+    "assets": [
+      11
+    ],
+    "split_counts": {
+      "train": 52289,
+      "prediction": 2423
+    },
+    "status_counts": {
+      "0": 52267,
+      "4": 2016,
+      "3": 429
+    },
+    "split_bounds": {
+      "train": [
+        "2022-05-23 06:50:00",
+        "2023-05-23 06:40:00"
+      ],
+      "prediction": [
+        "2023-05-23 06:50:00",
+        "2023-06-09 02:30:00"
+      ]
+    },
+    "event_start": "2023-05-23 06:50:00",
+    "event_end": "2023-06-05 02:30:00",
+    "event_duration_days": 12.819444444444445,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm A",
+    "event_id": 26,
+    "label": "anomaly",
+    "bytes": 36068832,
+    "columns": 86,
+    "avg_features": 46,
+    "rows": 53702,
+    "bad_steps": 19,
+    "duplicate_times": 0,
+    "event_rows": 1009,
+    "normal_train_rows": 46204,
+    "assets": [
+      0
+    ],
+    "split_counts": {
+      "train": 52261,
+      "prediction": 1441
+    },
+    "status_counts": {
+      "0": 46205,
+      "4": 6239,
+      "3": 1258
+    },
+    "split_bounds": {
+      "train": [
+        "2022-10-12 10:20:00",
+        "2023-10-12 10:10:00"
+      ],
+      "prediction": [
+        "2023-10-12 10:20:00",
+        "2023-10-22 10:20:00"
+      ]
+    },
+    "event_start": "2023-10-12 10:20:00",
+    "event_end": "2023-10-19 10:20:00",
+    "event_duration_days": 7.0,
+    "avg_missing_fraction": 8.096208869234892e-07,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm A",
+    "event_id": 38,
+    "label": "normal",
+    "bytes": 37275500,
+    "columns": 86,
+    "avg_features": 46,
+    "rows": 54835,
+    "bad_steps": 15,
+    "duplicate_times": 0,
+    "event_rows": 1824,
+    "normal_train_rows": 47430,
+    "assets": [
+      13
+    ],
+    "split_counts": {
+      "train": 52291,
+      "prediction": 2544
+    },
+    "status_counts": {
+      "0": 49974,
+      "4": 3997,
+      "3": 864
+    },
+    "split_bounds": {
+      "train": [
+        "2022-06-28 15:40:00",
+        "2023-06-28 15:30:00"
+      ],
+      "prediction": [
+        "2023-06-28 15:40:00",
+        "2023-07-17 07:40:00"
+      ]
+    },
+    "event_start": "2023-07-01 15:40:00",
+    "event_end": "2023-07-15 07:40:00",
+    "event_duration_days": 13.666666666666666,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm A",
+    "event_id": 40,
+    "label": "anomaly",
+    "bytes": 37308306,
+    "columns": 86,
+    "avg_features": 46,
+    "rows": 56158,
+    "bad_steps": 41,
+    "duplicate_times": 0,
+    "event_rows": 4508,
+    "normal_train_rows": 43081,
+    "assets": [
+      10
+    ],
+    "split_counts": {
+      "train": 51219,
+      "prediction": 4939
+    },
+    "status_counts": {
+      "0": 45747,
+      "4": 8827,
+      "3": 1584
+    },
+    "split_bounds": {
+      "train": [
+        "2022-01-01 00:00:00",
+        "2022-12-24 23:50:00"
+      ],
+      "prediction": [
+        "2022-12-25 00:00:00",
+        "2023-01-28 13:00:00"
+      ]
+    },
+    "event_start": "2022-12-26 00:00:00",
+    "event_end": "2023-01-26 13:00:00",
+    "event_duration_days": 31.541666666666668,
+    "avg_missing_fraction": 1.5484262569737248e-06,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm A",
+    "event_id": 42,
+    "label": "anomaly",
+    "bytes": 35944110,
+    "columns": 86,
+    "avg_features": 46,
+    "rows": 53886,
+    "bad_steps": 31,
+    "duplicate_times": 0,
+    "event_rows": 1007,
+    "normal_train_rows": 45600,
+    "assets": [
+      10
+    ],
+    "split_counts": {
+      "train": 52303,
+      "prediction": 1583
+    },
+    "status_counts": {
+      "0": 45745,
+      "4": 6850,
+      "3": 1291
+    },
+    "split_bounds": {
+      "train": [
+        "2022-09-09 15:50:00",
+        "2023-09-09 15:40:00"
+      ],
+      "prediction": [
+        "2023-09-09 15:50:00",
+        "2023-09-20 15:50:00"
+      ]
+    },
+    "event_start": "2023-09-09 15:50:00",
+    "event_end": "2023-09-16 15:50:00",
+    "event_duration_days": 7.0,
+    "avg_missing_fraction": 2.4205690273669535e-06,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm A",
+    "event_id": 45,
+    "label": "anomaly",
+    "bytes": 36479816,
+    "columns": 86,
+    "avg_features": 46,
+    "rows": 53739,
+    "bad_steps": 14,
+    "duplicate_times": 0,
+    "event_rows": 1008,
+    "normal_train_rows": 49309,
+    "assets": [
+      13
+    ],
+    "split_counts": {
+      "train": 52299,
+      "prediction": 1440
+    },
+    "status_counts": {
+      "0": 49309,
+      "4": 3997,
+      "3": 433
+    },
+    "split_bounds": {
+      "train": [
+        "2022-04-16 18:10:00",
+        "2023-04-16 18:00:00"
+      ],
+      "prediction": [
+        "2023-04-16 18:10:00",
+        "2023-04-26 18:10:00"
+      ]
+    },
+    "event_start": "2023-04-19 18:10:00",
+    "event_end": "2023-04-26 18:10:00",
+    "event_duration_days": 7.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm A",
+    "event_id": 51,
+    "label": "anomaly",
+    "bytes": 36496359,
+    "columns": 86,
+    "avg_features": 46,
+    "rows": 54436,
+    "bad_steps": 25,
+    "duplicate_times": 0,
+    "event_rows": 1673,
+    "normal_train_rows": 46912,
+    "assets": [
+      21
+    ],
+    "split_counts": {
+      "train": 52043,
+      "prediction": 2393
+    },
+    "status_counts": {
+      "4": 6044,
+      "0": 46958,
+      "3": 1434
+    },
+    "split_bounds": {
+      "train": [
+        "2022-10-04 01:30:00",
+        "2023-10-04 01:20:00"
+      ],
+      "prediction": [
+        "2023-10-04 01:30:00",
+        "2023-10-20 16:10:00"
+      ]
+    },
+    "event_start": "2023-10-06 01:30:00",
+    "event_end": "2023-10-17 16:10:00",
+    "event_duration_days": 11.61111111111111,
+    "avg_missing_fraction": 7.987041823345803e-07,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm A",
+    "event_id": 68,
+    "label": "anomaly",
+    "bytes": 36380960,
+    "columns": 86,
+    "avg_features": 46,
+    "rows": 54358,
+    "bad_steps": 15,
+    "duplicate_times": 0,
+    "event_rows": 2014,
+    "normal_train_rows": 52063,
+    "assets": [
+      11
+    ],
+    "split_counts": {
+      "train": 52063,
+      "prediction": 2295
+    },
+    "status_counts": {
+      "0": 52063,
+      "4": 2014,
+      "3": 281
+    },
+    "split_bounds": {
+      "train": [
+        "2022-07-28 13:20:00",
+        "2023-07-28 13:10:00"
+      ],
+      "prediction": [
+        "2023-07-28 13:20:00",
+        "2023-08-13 13:20:00"
+      ]
+    },
+    "event_start": "2023-07-28 13:20:00",
+    "event_end": "2023-08-11 13:10:00",
+    "event_duration_days": 13.993055555555555,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm A",
+    "event_id": 69,
+    "label": "normal",
+    "bytes": 36686027,
+    "columns": 86,
+    "avg_features": 46,
+    "rows": 54813,
+    "bad_steps": 14,
+    "duplicate_times": 0,
+    "event_rows": 2017,
+    "normal_train_rows": 49782,
+    "assets": [
+      11
+    ],
+    "split_counts": {
+      "train": 52220,
+      "prediction": 2593
+    },
+    "status_counts": {
+      "0": 52375,
+      "4": 2014,
+      "3": 424
+    },
+    "split_bounds": {
+      "train": [
+        "2022-09-03 00:50:00",
+        "2023-09-03 00:40:00"
+      ],
+      "prediction": [
+        "2023-09-03 00:50:00",
+        "2023-09-21 00:50:00"
+      ]
+    },
+    "event_start": "2023-09-04 00:50:00",
+    "event_end": "2023-09-18 00:50:00",
+    "event_duration_days": 14.0,
+    "avg_missing_fraction": 7.932107505439442e-07,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm A",
+    "event_id": 71,
+    "label": "normal",
+    "bytes": 36547342,
+    "columns": 86,
+    "avg_features": 46,
+    "rows": 54744,
+    "bad_steps": 10,
+    "duplicate_times": 0,
+    "event_rows": 2017,
+    "normal_train_rows": 44950,
+    "assets": [
+      0
+    ],
+    "split_counts": {
+      "train": 52295,
+      "prediction": 2449
+    },
+    "status_counts": {
+      "0": 47399,
+      "4": 6048,
+      "3": 1297
+    },
+    "split_bounds": {
+      "train": [
+        "2022-01-01 00:00:00",
+        "2022-12-31 23:50:00"
+      ],
+      "prediction": [
+        "2023-01-01 00:00:00",
+        "2023-01-18 00:00:00"
+      ]
+    },
+    "event_start": "2023-01-02 00:00:00",
+    "event_end": "2023-01-16 00:00:00",
+    "event_duration_days": 14.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm A",
+    "event_id": 72,
+    "label": "anomaly",
+    "bytes": 36248659,
+    "columns": 86,
+    "avg_features": 46,
+    "rows": 54082,
+    "bad_steps": 24,
+    "duplicate_times": 0,
+    "event_rows": 1009,
+    "normal_train_rows": 46697,
+    "assets": [
+      21
+    ],
+    "split_counts": {
+      "train": 52065,
+      "prediction": 2017
+    },
+    "status_counts": {
+      "4": 6044,
+      "0": 46842,
+      "3": 1196
+    },
+    "split_bounds": {
+      "train": [
+        "2022-10-07 08:40:00",
+        "2023-10-07 08:30:00"
+      ],
+      "prediction": [
+        "2023-10-07 08:40:00",
+        "2023-10-21 08:40:00"
+      ]
+    },
+    "event_start": "2023-10-10 08:40:00",
+    "event_end": "2023-10-17 08:40:00",
+    "event_duration_days": 7.0,
+    "avg_missing_fraction": 8.039321931431015e-07,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm A",
+    "event_id": 73,
+    "label": "anomaly",
+    "bytes": 36314694,
+    "columns": 86,
+    "avg_features": 46,
+    "rows": 54042,
+    "bad_steps": 10,
+    "duplicate_times": 0,
+    "event_rows": 1009,
+    "normal_train_rows": 46841,
+    "assets": [
+      0
+    ],
+    "split_counts": {
+      "train": 52313,
+      "prediction": 1729
+    },
+    "status_counts": {
+      "0": 46841,
+      "4": 6048,
+      "3": 1153
+    },
+    "split_bounds": {
+      "train": [
+        "2022-06-07 11:40:00",
+        "2023-06-07 11:30:00"
+      ],
+      "prediction": [
+        "2023-06-07 11:40:00",
+        "2023-06-19 11:40:00"
+      ]
+    },
+    "event_start": "2023-06-10 11:40:00",
+    "event_end": "2023-06-17 11:40:00",
+    "event_duration_days": 7.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm A",
+    "event_id": 84,
+    "label": "anomaly",
+    "bytes": 36479271,
+    "columns": 86,
+    "avg_features": 46,
+    "rows": 53772,
+    "bad_steps": 15,
+    "duplicate_times": 0,
+    "event_rows": 1005,
+    "normal_train_rows": 46754,
+    "assets": [
+      13
+    ],
+    "split_counts": {
+      "train": 52335,
+      "prediction": 1437
+    },
+    "status_counts": {
+      "0": 46754,
+      "4": 6009,
+      "3": 1009
+    },
+    "split_bounds": {
+      "train": [
+        "2022-09-03 15:30:00",
+        "2023-09-03 15:20:00"
+      ],
+      "prediction": [
+        "2023-09-03 15:30:00",
+        "2023-09-13 15:30:00"
+      ]
+    },
+    "event_start": "2023-09-05 15:30:00",
+    "event_end": "2023-09-12 15:30:00",
+    "event_duration_days": 7.0,
+    "avg_missing_fraction": 8.085669283189247e-07,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm A",
+    "event_id": 92,
+    "label": "normal",
+    "bytes": 36069145,
+    "columns": 86,
+    "avg_features": 46,
+    "rows": 54067,
+    "bad_steps": 12,
+    "duplicate_times": 0,
+    "event_rows": 1342,
+    "normal_train_rows": 49848,
+    "assets": [
+      11
+    ],
+    "split_counts": {
+      "train": 52293,
+      "prediction": 1774
+    },
+    "status_counts": {
+      "0": 51622,
+      "4": 2016,
+      "3": 429
+    },
+    "split_bounds": {
+      "train": [
+        "2022-04-04 02:30:00",
+        "2023-04-04 02:20:00"
+      ],
+      "prediction": [
+        "2023-04-04 02:30:00",
+        "2023-04-16 10:00:00"
+      ]
+    },
+    "event_start": "2023-04-05 02:30:00",
+    "event_end": "2023-04-14 10:00:00",
+    "event_duration_days": 9.3125,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm B",
+    "event_id": 2,
+    "label": "normal",
+    "bytes": 87149492,
+    "columns": 257,
+    "avg_features": 63,
+    "rows": 54774,
+    "bad_steps": 1,
+    "duplicate_times": 0,
+    "event_rows": 1927,
+    "normal_train_rows": 44885,
+    "assets": [
+      13
+    ],
+    "split_counts": {
+      "train": 52559,
+      "prediction": 2215
+    },
+    "status_counts": {
+      "0": 47045,
+      "1": 1886,
+      "5": 5696,
+      "4": 147
+    },
+    "split_bounds": {
+      "train": [
+        "2022-08-08 19:20:00",
+        "2023-08-08 19:10:00"
+      ],
+      "prediction": [
+        "2023-08-08 19:20:00",
+        "2023-08-24 04:20:00"
+      ]
+    },
+    "event_start": "2023-08-09 19:20:00",
+    "event_end": "2023-08-23 04:20:00",
+    "event_duration_days": 13.375,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm B",
+    "event_id": 7,
+    "label": "anomaly",
+    "bytes": 92094858,
+    "columns": 257,
+    "avg_features": 63,
+    "rows": 57888,
+    "bad_steps": 1,
+    "duplicate_times": 0,
+    "event_rows": 4465,
+    "normal_train_rows": 49236,
+    "assets": [
+      13
+    ],
+    "split_counts": {
+      "train": 52559,
+      "prediction": 5329
+    },
+    "status_counts": {
+      "0": 54147,
+      "5": 1435,
+      "1": 2087,
+      "4": 219
+    },
+    "split_bounds": {
+      "train": [
+        "2022-06-30 00:00:00",
+        "2023-06-29 23:50:00"
+      ],
+      "prediction": [
+        "2023-06-30 00:00:00",
+        "2023-08-06 00:00:00"
+      ]
+    },
+    "event_start": "2023-07-01 00:00:00",
+    "event_end": "2023-08-01 00:00:00",
+    "event_duration_days": 31.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm B",
+    "event_id": 19,
+    "label": "anomaly",
+    "bytes": 89680003,
+    "columns": 257,
+    "avg_features": 63,
+    "rows": 56274,
+    "bad_steps": 5,
+    "duplicate_times": 0,
+    "event_rows": 2881,
+    "normal_train_rows": 47951,
+    "assets": [
+      11
+    ],
+    "split_counts": {
+      "train": 52529,
+      "prediction": 3745
+    },
+    "status_counts": {
+      "0": 51647,
+      "1": 2886,
+      "5": 1602,
+      "4": 139
+    },
+    "split_bounds": {
+      "train": [
+        "2022-02-02 00:00:00",
+        "2023-02-01 23:50:00"
+      ],
+      "prediction": [
+        "2023-02-02 00:00:00",
+        "2023-02-28 00:00:00"
+      ]
+    },
+    "event_start": "2023-02-03 00:00:00",
+    "event_end": "2023-02-23 00:00:00",
+    "event_duration_days": 20.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm B",
+    "event_id": 21,
+    "label": "normal",
+    "bytes": 85180339,
+    "columns": 257,
+    "avg_features": 63,
+    "rows": 53514,
+    "bad_steps": 22,
+    "duplicate_times": 0,
+    "event_rows": 1297,
+    "normal_train_rows": 47997,
+    "assets": [
+      0
+    ],
+    "split_counts": {
+      "train": 52217,
+      "prediction": 1297
+    },
+    "status_counts": {
+      "0": 49266,
+      "5": 1864,
+      "1": 1873,
+      "4": 511
+    },
+    "split_bounds": {
+      "train": [
+        "2022-09-22 20:10:00",
+        "2023-09-22 20:00:00"
+      ],
+      "prediction": [
+        "2023-09-22 20:10:00",
+        "2023-10-01 20:10:00"
+      ]
+    },
+    "event_start": "2023-09-22 20:10:00",
+    "event_end": "2023-10-01 20:10:00",
+    "event_duration_days": 9.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm B",
+    "event_id": 23,
+    "label": "normal",
+    "bytes": 86384882,
+    "columns": 257,
+    "avg_features": 63,
+    "rows": 54542,
+    "bad_steps": 1,
+    "duplicate_times": 0,
+    "event_rows": 1407,
+    "normal_train_rows": 46647,
+    "assets": [
+      6
+    ],
+    "split_counts": {
+      "train": 52559,
+      "prediction": 1983
+    },
+    "status_counts": {
+      "0": 48390,
+      "5": 3150,
+      "1": 2831,
+      "4": 171
+    },
+    "split_bounds": {
+      "train": [
+        "2022-09-17 17:30:00",
+        "2023-09-17 17:20:00"
+      ],
+      "prediction": [
+        "2023-09-17 17:30:00",
+        "2023-10-01 11:50:00"
+      ]
+    },
+    "event_start": "2023-09-17 17:30:00",
+    "event_end": "2023-09-27 11:50:00",
+    "event_duration_days": 9.76388888888889,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm B",
+    "event_id": 27,
+    "label": "anomaly",
+    "bytes": 98960870,
+    "columns": 257,
+    "avg_features": 63,
+    "rows": 62268,
+    "bad_steps": 2,
+    "duplicate_times": 0,
+    "event_rows": 8785,
+    "normal_train_rows": 47992,
+    "assets": [
+      7
+    ],
+    "split_counts": {
+      "train": 52331,
+      "prediction": 9937
+    },
+    "status_counts": {
+      "0": 56684,
+      "5": 2005,
+      "1": 3352,
+      "4": 227
+    },
+    "split_bounds": {
+      "train": [
+        "2022-08-30 00:00:00",
+        "2023-08-29 23:50:00"
+      ],
+      "prediction": [
+        "2023-08-30 00:00:00",
+        "2023-11-07 00:00:00"
+      ]
+    },
+    "event_start": "2023-09-01 00:00:00",
+    "event_end": "2023-11-01 00:00:00",
+    "event_duration_days": 61.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm B",
+    "event_id": 34,
+    "label": "anomaly",
+    "bytes": 89434660,
+    "columns": 257,
+    "avg_features": 63,
+    "rows": 56564,
+    "bad_steps": 5,
+    "duplicate_times": 0,
+    "event_rows": 3169,
+    "normal_train_rows": 43971,
+    "assets": [
+      14
+    ],
+    "split_counts": {
+      "train": 52531,
+      "prediction": 4033
+    },
+    "status_counts": {
+      "0": 47860,
+      "5": 1715,
+      "4": 320,
+      "1": 6669
+    },
+    "split_bounds": {
+      "train": [
+        "2022-08-24 00:00:00",
+        "2023-08-23 23:50:00"
+      ],
+      "prediction": [
+        "2023-08-24 00:00:00",
+        "2023-09-21 00:00:00"
+      ]
+    },
+    "event_start": "2023-08-24 00:00:00",
+    "event_end": "2023-09-15 00:00:00",
+    "event_duration_days": 22.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm B",
+    "event_id": 52,
+    "label": "normal",
+    "bytes": 87397671,
+    "columns": 257,
+    "avg_features": 63,
+    "rows": 55268,
+    "bad_steps": 5,
+    "duplicate_times": 0,
+    "event_rows": 2017,
+    "normal_train_rows": 43994,
+    "assets": [
+      14
+    ],
+    "split_counts": {
+      "train": 52531,
+      "prediction": 2737
+    },
+    "status_counts": {
+      "0": 46724,
+      "1": 6659,
+      "5": 1623,
+      "4": 262
+    },
+    "split_bounds": {
+      "train": [
+        "2022-07-13 00:00:00",
+        "2023-07-12 23:50:00"
+      ],
+      "prediction": [
+        "2023-07-13 00:00:00",
+        "2023-08-01 00:00:00"
+      ]
+    },
+    "event_start": "2023-07-14 00:00:00",
+    "event_end": "2023-07-28 00:00:00",
+    "event_duration_days": 14.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm B",
+    "event_id": 53,
+    "label": "anomaly",
+    "bytes": 93271611,
+    "columns": 257,
+    "avg_features": 63,
+    "rows": 58607,
+    "bad_steps": 1,
+    "duplicate_times": 0,
+    "event_rows": 6048,
+    "normal_train_rows": 47849,
+    "assets": [
+      6
+    ],
+    "split_counts": {
+      "train": 52559,
+      "prediction": 6048
+    },
+    "status_counts": {
+      "0": 53560,
+      "1": 2978,
+      "5": 1918,
+      "4": 151
+    },
+    "split_bounds": {
+      "train": [
+        "2022-12-26 16:40:00",
+        "2023-12-26 16:20:00"
+      ],
+      "prediction": [
+        "2023-12-26 16:40:00",
+        "2024-02-06 16:30:00"
+      ]
+    },
+    "event_start": "2023-12-26 16:40:00",
+    "event_end": "2024-02-06 16:30:00",
+    "event_duration_days": 41.99305555555556,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm B",
+    "event_id": 74,
+    "label": "normal",
+    "bytes": 88646969,
+    "columns": 257,
+    "avg_features": 63,
+    "rows": 55602,
+    "bad_steps": 5,
+    "duplicate_times": 0,
+    "event_rows": 1921,
+    "normal_train_rows": 47844,
+    "assets": [
+      11
+    ],
+    "split_counts": {
+      "train": 52529,
+      "prediction": 3073
+    },
+    "status_counts": {
+      "0": 50863,
+      "5": 1640,
+      "1": 2942,
+      "4": 157
+    },
+    "split_bounds": {
+      "train": [
+        "2022-01-01 23:00:00",
+        "2023-01-01 22:50:00"
+      ],
+      "prediction": [
+        "2023-01-01 23:00:00",
+        "2023-01-23 07:00:00"
+      ]
+    },
+    "event_start": "2023-01-03 23:00:00",
+    "event_end": "2023-01-17 07:00:00",
+    "event_duration_days": 13.333333333333334,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm B",
+    "event_id": 77,
+    "label": "anomaly",
+    "bytes": 98677572,
+    "columns": 257,
+    "avg_features": 63,
+    "rows": 61776,
+    "bad_steps": 1,
+    "duplicate_times": 0,
+    "event_rows": 8641,
+    "normal_train_rows": 48931,
+    "assets": [
+      12
+    ],
+    "split_counts": {
+      "train": 52559,
+      "prediction": 9217
+    },
+    "status_counts": {
+      "0": 57154,
+      "5": 1440,
+      "1": 3026,
+      "4": 156
+    },
+    "split_bounds": {
+      "train": [
+        "2022-05-29 00:00:00",
+        "2023-05-28 23:50:00"
+      ],
+      "prediction": [
+        "2023-05-29 00:00:00",
+        "2023-08-01 00:00:00"
+      ]
+    },
+    "event_start": "2023-06-01 00:00:00",
+    "event_end": "2023-07-31 00:00:00",
+    "event_duration_days": 60.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm B",
+    "event_id": 82,
+    "label": "normal",
+    "bytes": 87397445,
+    "columns": 257,
+    "avg_features": 63,
+    "rows": 54992,
+    "bad_steps": 12,
+    "duplicate_times": 0,
+    "event_rows": 1729,
+    "normal_train_rows": 46653,
+    "assets": [
+      5
+    ],
+    "split_counts": {
+      "train": 52543,
+      "prediction": 2449
+    },
+    "status_counts": {
+      "1": 3555,
+      "0": 49040,
+      "5": 2089,
+      "4": 308
+    },
+    "split_bounds": {
+      "train": [
+        "2022-09-23 23:00:00",
+        "2023-09-23 22:50:00"
+      ],
+      "prediction": [
+        "2023-09-23 23:00:00",
+        "2023-10-10 23:00:00"
+      ]
+    },
+    "event_start": "2023-09-26 23:00:00",
+    "event_end": "2023-10-08 23:00:00",
+    "event_duration_days": 12.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm B",
+    "event_id": 83,
+    "label": "normal",
+    "bytes": 105007050,
+    "columns": 257,
+    "avg_features": 63,
+    "rows": 66154,
+    "bad_steps": 23,
+    "duplicate_times": 0,
+    "event_rows": 13105,
+    "normal_train_rows": 45750,
+    "assets": [
+      2
+    ],
+    "split_counts": {
+      "train": 52041,
+      "prediction": 14113
+    },
+    "status_counts": {
+      "0": 58609,
+      "5": 4843,
+      "1": 2234,
+      "4": 468
+    },
+    "split_bounds": {
+      "train": [
+        "2022-06-29 00:00:00",
+        "2023-06-28 23:50:00"
+      ],
+      "prediction": [
+        "2023-06-29 00:00:00",
+        "2023-10-05 00:00:00"
+      ]
+    },
+    "event_start": "2023-07-01 00:00:00",
+    "event_end": "2023-09-30 00:00:00",
+    "event_duration_days": 91.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm B",
+    "event_id": 86,
+    "label": "normal",
+    "bytes": 88573954,
+    "columns": 257,
+    "avg_features": 63,
+    "rows": 55486,
+    "bad_steps": 1,
+    "duplicate_times": 0,
+    "event_rows": 1919,
+    "normal_train_rows": 48844,
+    "assets": [
+      12
+    ],
+    "split_counts": {
+      "train": 52559,
+      "prediction": 2927
+    },
+    "status_counts": {
+      "0": 51700,
+      "5": 1576,
+      "4": 197,
+      "1": 2013
+    },
+    "split_bounds": {
+      "train": [
+        "2022-04-27 17:30:00",
+        "2023-04-27 17:20:00"
+      ],
+      "prediction": [
+        "2023-04-27 17:30:00",
+        "2023-05-18 01:10:00"
+      ]
+    },
+    "event_start": "2023-04-28 17:30:00",
+    "event_end": "2023-05-12 01:10:00",
+    "event_duration_days": 13.319444444444445,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm B",
+    "event_id": 87,
+    "label": "normal",
+    "bytes": 87964022,
+    "columns": 257,
+    "avg_features": 63,
+    "rows": 55356,
+    "bad_steps": 2,
+    "duplicate_times": 0,
+    "event_rows": 2305,
+    "normal_train_rows": 46178,
+    "assets": [
+      7
+    ],
+    "split_counts": {
+      "train": 52331,
+      "prediction": 3025
+    },
+    "status_counts": {
+      "0": 49112,
+      "5": 3673,
+      "1": 2368,
+      "4": 203
+    },
+    "split_bounds": {
+      "train": [
+        "2022-09-13 23:00:00",
+        "2023-09-13 22:50:00"
+      ],
+      "prediction": [
+        "2023-09-13 23:00:00",
+        "2023-10-04 23:00:00"
+      ]
+    },
+    "event_start": "2023-09-14 23:00:00",
+    "event_end": "2023-09-30 23:00:00",
+    "event_duration_days": 16.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 1,
+    "label": "normal",
+    "bytes": 299784529,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 53569,
+    "bad_steps": 2,
+    "duplicate_times": 0,
+    "event_rows": 1585,
+    "normal_train_rows": 45143,
+    "assets": [
+      53
+    ],
+    "split_counts": {
+      "train": 51408,
+      "prediction": 2161
+    },
+    "status_counts": {
+      "0": 47264,
+      "4": 762,
+      "5": 2168,
+      "3": 3375
+    },
+    "split_bounds": {
+      "train": [
+        "2022-10-01 00:00:00",
+        "2023-09-30 23:50:00"
+      ],
+      "prediction": [
+        "2023-10-01 00:00:00",
+        "2023-10-16 00:00:00"
+      ]
+    },
+    "event_start": "2023-10-02 00:00:00",
+    "event_end": "2023-10-13 00:00:00",
+    "event_duration_days": 11.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 2,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 4,
+    "label": "anomaly",
+    "bytes": 315221402,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 56449,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 2737,
+    "normal_train_rows": 46229,
+    "assets": [
+      34
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 3889
+    },
+    "status_counts": {
+      "0": 49760,
+      "3": 6076,
+      "4": 213,
+      "5": 400
+    },
+    "split_bounds": {
+      "train": [
+        "2022-07-28 10:00:00",
+        "2023-07-28 09:50:00"
+      ],
+      "prediction": [
+        "2023-07-28 10:00:00",
+        "2023-08-24 10:00:00"
+      ]
+    },
+    "event_start": "2023-07-31 10:00:00",
+    "event_end": "2023-08-19 10:00:00",
+    "event_duration_days": 19.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 5,
+    "label": "anomaly",
+    "bytes": 295114453,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 52795,
+    "bad_steps": 1,
+    "duplicate_times": 0,
+    "event_rows": 523,
+    "normal_train_rows": 47325,
+    "assets": [
+      32
+    ],
+    "split_counts": {
+      "train": 52128,
+      "prediction": 667
+    },
+    "status_counts": {
+      "0": 47640,
+      "5": 520,
+      "4": 383,
+      "3": 4252
+    },
+    "split_bounds": {
+      "train": [
+        "2022-02-01 00:00:00",
+        "2023-01-31 23:50:00"
+      ],
+      "prediction": [
+        "2023-02-01 00:00:00",
+        "2023-02-05 15:00:00"
+      ]
+    },
+    "event_start": "2023-02-02 00:00:00",
+    "event_end": "2023-02-05 15:00:00",
+    "event_duration_days": 3.625,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 2,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 6,
+    "label": "normal",
+    "bytes": 304985781,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 54865,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 2017,
+    "normal_train_rows": 44217,
+    "assets": [
+      38
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 2305
+    },
+    "status_counts": {
+      "0": 46335,
+      "3": 6445,
+      "5": 1646,
+      "4": 439
+    },
+    "split_bounds": {
+      "train": [
+        "2022-12-01 22:50:00",
+        "2023-12-01 22:40:00"
+      ],
+      "prediction": [
+        "2023-12-01 22:50:00",
+        "2023-12-17 22:50:00"
+      ]
+    },
+    "event_start": "2023-12-01 22:50:00",
+    "event_end": "2023-12-15 22:50:00",
+    "event_duration_days": 14.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 2,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 8,
+    "label": "normal",
+    "bytes": 307847655,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 54802,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 1954,
+    "normal_train_rows": 49256,
+    "assets": [
+      50
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 2242
+    },
+    "status_counts": {
+      "0": 51472,
+      "5": 456,
+      "3": 2806,
+      "4": 68
+    },
+    "split_bounds": {
+      "train": [
+        "2022-08-23 17:00:00",
+        "2023-08-23 16:50:00"
+      ],
+      "prediction": [
+        "2023-08-23 17:00:00",
+        "2023-09-08 06:30:00"
+      ]
+    },
+    "event_start": "2023-08-23 17:00:00",
+    "event_end": "2023-09-06 06:30:00",
+    "event_duration_days": 13.5625,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 9,
+    "label": "anomaly",
+    "bytes": 314336070,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 56029,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 3037,
+    "normal_train_rows": 48003,
+    "assets": [
+      55
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 3469
+    },
+    "status_counts": {
+      "0": 51238,
+      "3": 4083,
+      "4": 211,
+      "5": 497
+    },
+    "split_bounds": {
+      "train": [
+        "2022-08-02 07:30:00",
+        "2023-08-02 07:20:00"
+      ],
+      "prediction": [
+        "2023-08-02 07:30:00",
+        "2023-08-26 09:30:00"
+      ]
+    },
+    "event_start": "2023-08-05 07:30:00",
+    "event_end": "2023-08-26 09:30:00",
+    "event_duration_days": 21.083333333333332,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 11,
+    "label": "anomaly",
+    "bytes": 314674941,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 56437,
+    "bad_steps": 1,
+    "duplicate_times": 0,
+    "event_rows": 3157,
+    "normal_train_rows": 43921,
+    "assets": [
+      43
+    ],
+    "split_counts": {
+      "train": 52416,
+      "prediction": 4021
+    },
+    "status_counts": {
+      "0": 46022,
+      "3": 5504,
+      "5": 3957,
+      "4": 954
+    },
+    "split_bounds": {
+      "train": [
+        "2022-10-17 12:30:00",
+        "2023-10-17 12:20:00"
+      ],
+      "prediction": [
+        "2023-10-17 12:30:00",
+        "2023-11-14 10:30:00"
+      ]
+    },
+    "event_start": "2023-10-17 12:30:00",
+    "event_end": "2023-11-08 10:30:00",
+    "event_duration_days": 21.916666666666668,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 12,
+    "label": "anomaly",
+    "bytes": 314764359,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 56107,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 3259,
+    "normal_train_rows": 49585,
+    "assets": [
+      2
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 3547
+    },
+    "status_counts": {
+      "0": 52818,
+      "3": 2545,
+      "5": 476,
+      "4": 268
+    },
+    "split_bounds": {
+      "train": [
+        "2022-06-27 00:00:00",
+        "2023-06-26 23:50:00"
+      ],
+      "prediction": [
+        "2023-06-27 00:00:00",
+        "2023-07-21 15:00:00"
+      ]
+    },
+    "event_start": "2023-06-27 00:00:00",
+    "event_end": "2023-07-19 15:00:00",
+    "event_duration_days": 22.625,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 15,
+    "label": "anomaly",
+    "bytes": 300987880,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 54433,
+    "bad_steps": 2,
+    "duplicate_times": 0,
+    "event_rows": 2449,
+    "normal_train_rows": 45598,
+    "assets": [
+      12
+    ],
+    "split_counts": {
+      "train": 51696,
+      "prediction": 2737
+    },
+    "status_counts": {
+      "0": 48307,
+      "3": 4328,
+      "5": 1642,
+      "4": 156
+    },
+    "split_bounds": {
+      "train": [
+        "2022-02-04 00:00:00",
+        "2023-02-03 23:50:00"
+      ],
+      "prediction": [
+        "2023-02-04 00:00:00",
+        "2023-02-23 00:00:00"
+      ]
+    },
+    "event_start": "2023-02-06 00:00:00",
+    "event_end": "2023-02-23 00:00:00",
+    "event_duration_days": 17.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 4,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 16,
+    "label": "anomaly",
+    "bytes": 298753935,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 53568,
+    "bad_steps": 3,
+    "duplicate_times": 0,
+    "event_rows": 2160,
+    "normal_train_rows": 44775,
+    "assets": [
+      53
+    ],
+    "split_counts": {
+      "train": 51264,
+      "prediction": 2304
+    },
+    "status_counts": {
+      "0": 45220,
+      "4": 719,
+      "5": 2189,
+      "3": 5440
+    },
+    "split_bounds": {
+      "train": [
+        "2022-12-23 00:00:00",
+        "2023-12-22 23:50:00"
+      ],
+      "prediction": [
+        "2023-12-23 00:00:00",
+        "2024-01-07 23:50:00"
+      ]
+    },
+    "event_start": "2023-12-23 00:00:00",
+    "event_end": "2024-01-06 23:50:00",
+    "event_duration_days": 14.993055555555555,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 2,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 18,
+    "label": "anomaly",
+    "bytes": 294703160,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 52848,
+    "bad_steps": 1,
+    "duplicate_times": 0,
+    "event_rows": 576,
+    "normal_train_rows": 47202,
+    "assets": [
+      34
+    ],
+    "split_counts": {
+      "train": 51120,
+      "prediction": 1728
+    },
+    "status_counts": {
+      "0": 48111,
+      "5": 472,
+      "4": 229,
+      "3": 4036
+    },
+    "split_bounds": {
+      "train": [
+        "2022-09-11 00:00:00",
+        "2023-09-10 23:50:00"
+      ],
+      "prediction": [
+        "2023-09-11 00:00:00",
+        "2023-09-22 23:50:00"
+      ]
+    },
+    "event_start": "2023-09-13 00:00:00",
+    "event_end": "2023-09-16 23:50:00",
+    "event_duration_days": 3.9930555555555554,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 2,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 20,
+    "label": "normal",
+    "bytes": 302666495,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 54001,
+    "bad_steps": 2,
+    "duplicate_times": 0,
+    "event_rows": 1441,
+    "normal_train_rows": 47269,
+    "assets": [
+      53
+    ],
+    "split_counts": {
+      "train": 51408,
+      "prediction": 2593
+    },
+    "status_counts": {
+      "0": 49761,
+      "4": 1148,
+      "3": 2036,
+      "5": 1056
+    },
+    "split_bounds": {
+      "train": [
+        "2022-07-12 01:10:00",
+        "2023-07-12 01:00:00"
+      ],
+      "prediction": [
+        "2023-07-12 01:10:00",
+        "2023-07-30 01:10:00"
+      ]
+    },
+    "event_start": "2023-07-14 01:10:00",
+    "event_end": "2023-07-24 01:10:00",
+    "event_duration_days": 10.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 2,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 28,
+    "label": "anomaly",
+    "bytes": 310643463,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 55918,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 2926,
+    "normal_train_rows": 45121,
+    "assets": [
+      52
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 3358
+    },
+    "status_counts": {
+      "0": 47804,
+      "3": 7159,
+      "4": 484,
+      "5": 471
+    },
+    "split_bounds": {
+      "train": [
+        "2022-05-27 13:00:00",
+        "2023-05-27 12:50:00"
+      ],
+      "prediction": [
+        "2023-05-27 13:00:00",
+        "2023-06-19 20:30:00"
+      ]
+    },
+    "event_start": "2023-05-28 13:00:00",
+    "event_end": "2023-06-17 20:30:00",
+    "event_duration_days": 20.3125,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 5,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 29,
+    "label": "normal",
+    "bytes": 303107037,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 54865,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 2017,
+    "normal_train_rows": 40816,
+    "assets": [
+      13
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 2305
+    },
+    "status_counts": {
+      "0": 43098,
+      "5": 553,
+      "3": 10692,
+      "4": 522
+    },
+    "split_bounds": {
+      "train": [
+        "2022-03-08 02:00:00",
+        "2023-03-08 01:50:00"
+      ],
+      "prediction": [
+        "2023-03-08 02:00:00",
+        "2023-03-24 02:00:00"
+      ]
+    },
+    "event_start": "2023-03-09 02:00:00",
+    "event_end": "2023-03-23 02:00:00",
+    "event_duration_days": 14.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 5,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 30,
+    "label": "anomaly",
+    "bytes": 311747245,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 56111,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 3263,
+    "normal_train_rows": 49561,
+    "assets": [
+      16
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 3551
+    },
+    "status_counts": {
+      "0": 50278,
+      "5": 641,
+      "4": 293,
+      "3": 4899
+    },
+    "split_bounds": {
+      "train": [
+        "2022-12-15 00:00:00",
+        "2023-12-14 23:50:00"
+      ],
+      "prediction": [
+        "2023-12-15 00:00:00",
+        "2024-01-08 15:40:00"
+      ]
+    },
+    "event_start": "2023-12-15 00:00:00",
+    "event_end": "2024-01-06 15:40:00",
+    "event_duration_days": 22.65277777777778,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 2,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 31,
+    "label": "anomaly",
+    "bytes": 305882491,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 54589,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 1021,
+    "normal_train_rows": 48368,
+    "assets": [
+      35
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 2029
+    },
+    "status_counts": {
+      "0": 49591,
+      "5": 719,
+      "4": 292,
+      "3": 3987
+    },
+    "split_bounds": {
+      "train": [
+        "2022-01-16 00:00:00",
+        "2023-01-15 23:50:00"
+      ],
+      "prediction": [
+        "2023-01-16 00:00:00",
+        "2023-01-30 02:00:00"
+      ]
+    },
+    "event_start": "2023-01-18 00:00:00",
+    "event_end": "2023-01-25 02:00:00",
+    "event_duration_days": 7.083333333333333,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 2,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 32,
+    "label": "normal",
+    "bytes": 309545484,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 55009,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 1873,
+    "normal_train_rows": 47037,
+    "assets": [
+      42
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 2449
+    },
+    "status_counts": {
+      "0": 49461,
+      "5": 544,
+      "3": 4732,
+      "4": 272
+    },
+    "split_bounds": {
+      "train": [
+        "2022-09-29 05:20:00",
+        "2023-09-29 05:10:00"
+      ],
+      "prediction": [
+        "2023-09-29 05:20:00",
+        "2023-10-16 05:20:00"
+      ]
+    },
+    "event_start": "2023-09-29 05:20:00",
+    "event_end": "2023-10-12 05:20:00",
+    "event_duration_days": 13.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 33,
+    "label": "anomaly",
+    "bytes": 313179051,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 55873,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 2881,
+    "normal_train_rows": 47492,
+    "assets": [
+      43
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 3313
+    },
+    "status_counts": {
+      "0": 49613,
+      "3": 4727,
+      "5": 619,
+      "4": 914
+    },
+    "split_bounds": {
+      "train": [
+        "2022-08-24 13:00:00",
+        "2023-08-24 12:50:00"
+      ],
+      "prediction": [
+        "2023-08-24 13:00:00",
+        "2023-09-16 13:00:00"
+      ]
+    },
+    "event_start": "2023-08-26 13:00:00",
+    "event_end": "2023-09-15 13:00:00",
+    "event_duration_days": 20.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 2,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 35,
+    "label": "anomaly",
+    "bytes": 294337537,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 52615,
+    "bad_steps": 2,
+    "duplicate_times": 0,
+    "event_rows": 919,
+    "normal_train_rows": 46232,
+    "assets": [
+      53
+    ],
+    "split_counts": {
+      "train": 51408,
+      "prediction": 1207
+    },
+    "status_counts": {
+      "0": 47176,
+      "4": 788,
+      "5": 1262,
+      "3": 3389
+    },
+    "split_bounds": {
+      "train": [
+        "2022-09-22 00:00:00",
+        "2023-09-21 23:50:00"
+      ],
+      "prediction": [
+        "2023-09-22 00:00:00",
+        "2023-09-30 09:00:00"
+      ]
+    },
+    "event_start": "2023-09-24 00:00:00",
+    "event_end": "2023-09-30 09:00:00",
+    "event_duration_days": 6.375,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 2,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 36,
+    "label": "normal",
+    "bytes": 310249395,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 55448,
+    "bad_steps": 1,
+    "duplicate_times": 0,
+    "event_rows": 1736,
+    "normal_train_rows": 46894,
+    "assets": [
+      2
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 2888
+    },
+    "status_counts": {
+      "0": 49741,
+      "5": 3717,
+      "4": 218,
+      "3": 1772
+    },
+    "split_bounds": {
+      "train": [
+        "2022-08-15 19:50:00",
+        "2023-08-15 19:40:00"
+      ],
+      "prediction": [
+        "2023-08-15 19:50:00",
+        "2023-09-05 21:00:00"
+      ]
+    },
+    "event_start": "2023-08-16 19:50:00",
+    "event_end": "2023-08-29 21:00:00",
+    "event_duration_days": 13.04861111111111,
+    "avg_missing_fraction": 0.003328199697134661,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 37,
+    "label": "normal",
+    "bytes": 300367686,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 53713,
+    "bad_steps": 1,
+    "duplicate_times": 0,
+    "event_rows": 1729,
+    "normal_train_rows": 43576,
+    "assets": [
+      23
+    ],
+    "split_counts": {
+      "train": 51264,
+      "prediction": 2449
+    },
+    "status_counts": {
+      "0": 45997,
+      "5": 851,
+      "4": 560,
+      "3": 6305
+    },
+    "split_bounds": {
+      "train": [
+        "2022-02-26 18:00:00",
+        "2023-02-26 17:50:00"
+      ],
+      "prediction": [
+        "2023-02-26 18:00:00",
+        "2023-03-15 18:00:00"
+      ]
+    },
+    "event_start": "2023-02-28 18:00:00",
+    "event_end": "2023-03-12 18:00:00",
+    "event_duration_days": 12.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 2,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 39,
+    "label": "anomaly",
+    "bytes": 298512034,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 53727,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 735,
+    "normal_train_rows": 43432,
+    "assets": [
+      52
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 1167
+    },
+    "status_counts": {
+      "0": 44090,
+      "3": 5941,
+      "4": 280,
+      "5": 3416
+    },
+    "split_bounds": {
+      "train": [
+        "2022-10-17 13:00:00",
+        "2023-10-17 12:50:00"
+      ],
+      "prediction": [
+        "2023-10-17 13:00:00",
+        "2023-10-25 15:20:00"
+      ]
+    },
+    "event_start": "2023-10-19 13:00:00",
+    "event_end": "2023-10-24 15:20:00",
+    "event_duration_days": 5.097222222222222,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 5,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 41,
+    "label": "normal",
+    "bytes": 309227112,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 55666,
+    "bad_steps": 3,
+    "duplicate_times": 0,
+    "event_rows": 3970,
+    "normal_train_rows": 46528,
+    "assets": [
+      33
+    ],
+    "split_counts": {
+      "train": 51408,
+      "prediction": 4258
+    },
+    "status_counts": {
+      "0": 50718,
+      "5": 2638,
+      "3": 2193,
+      "4": 117
+    },
+    "split_bounds": {
+      "train": [
+        "2022-01-15 05:00:00",
+        "2023-01-15 04:50:00"
+      ],
+      "prediction": [
+        "2023-01-15 05:00:00",
+        "2023-02-13 18:30:00"
+      ]
+    },
+    "event_start": "2023-01-16 05:00:00",
+    "event_end": "2023-02-12 18:30:00",
+    "event_duration_days": 27.5625,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 4,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 43,
+    "label": "normal",
+    "bytes": 306504483,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 55153,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 1873,
+    "normal_train_rows": 42613,
+    "assets": [
+      52
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 2593
+    },
+    "status_counts": {
+      "0": 45160,
+      "3": 6348,
+      "4": 268,
+      "5": 3377
+    },
+    "split_bounds": {
+      "train": [
+        "2022-08-14 03:10:00",
+        "2023-08-14 03:00:00"
+      ],
+      "prediction": [
+        "2023-08-14 03:10:00",
+        "2023-09-01 03:10:00"
+      ]
+    },
+    "event_start": "2023-08-17 03:10:00",
+    "event_end": "2023-08-30 03:10:00",
+    "event_duration_days": 13.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 5,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 44,
+    "label": "anomaly",
+    "bytes": 354063087,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 63003,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 9435,
+    "normal_train_rows": 48952,
+    "assets": [
+      44
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 10443
+    },
+    "status_counts": {
+      "0": 58410,
+      "3": 3719,
+      "4": 187,
+      "5": 687
+    },
+    "split_bounds": {
+      "train": [
+        "2022-08-02 14:00:00",
+        "2023-08-02 13:50:00"
+      ],
+      "prediction": [
+        "2023-08-02 14:00:00",
+        "2023-10-14 02:20:00"
+      ]
+    },
+    "event_start": "2023-08-03 14:00:00",
+    "event_end": "2023-10-08 02:20:00",
+    "event_duration_days": 65.51388888888889,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 1,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 46,
+    "label": "normal",
+    "bytes": 311140504,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 55133,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 1997,
+    "normal_train_rows": 49895,
+    "assets": [
+      16
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 2573
+    },
+    "status_counts": {
+      "0": 52449,
+      "3": 2052,
+      "4": 235,
+      "5": 397
+    },
+    "split_bounds": {
+      "train": [
+        "2022-05-11 06:50:00",
+        "2023-05-11 06:40:00"
+      ],
+      "prediction": [
+        "2023-05-11 06:50:00",
+        "2023-05-29 03:30:00"
+      ]
+    },
+    "event_start": "2023-05-11 06:50:00",
+    "event_end": "2023-05-25 03:30:00",
+    "event_duration_days": 13.86111111111111,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 47,
+    "label": "anomaly",
+    "bytes": 301857392,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 53993,
+    "bad_steps": 1,
+    "duplicate_times": 0,
+    "event_rows": 713,
+    "normal_train_rows": 47881,
+    "assets": [
+      21
+    ],
+    "split_counts": {
+      "train": 52416,
+      "prediction": 1577
+    },
+    "status_counts": {
+      "0": 49400,
+      "5": 590,
+      "4": 175,
+      "3": 3828
+    },
+    "split_bounds": {
+      "train": [
+        "2022-12-22 15:00:00",
+        "2023-12-22 14:50:00"
+      ],
+      "prediction": [
+        "2023-12-22 15:00:00",
+        "2024-01-02 13:40:00"
+      ]
+    },
+    "event_start": "2023-12-22 15:00:00",
+    "event_end": "2023-12-27 13:40:00",
+    "event_duration_days": 4.944444444444445,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 2,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 48,
+    "label": "normal",
+    "bytes": 310077065,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 55297,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 1873,
+    "normal_train_rows": 39103,
+    "assets": [
+      35
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 2737
+    },
+    "status_counts": {
+      "0": 41804,
+      "3": 3437,
+      "5": 9825,
+      "4": 231
+    },
+    "split_bounds": {
+      "train": [
+        "2022-04-23 12:00:00",
+        "2023-04-23 11:50:00"
+      ],
+      "prediction": [
+        "2023-04-23 12:00:00",
+        "2023-05-12 12:00:00"
+      ]
+    },
+    "event_start": "2023-04-25 12:00:00",
+    "event_end": "2023-05-08 12:00:00",
+    "event_duration_days": 13.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 2,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 49,
+    "label": "anomaly",
+    "bytes": 294017886,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 53014,
+    "bad_steps": 3,
+    "duplicate_times": 0,
+    "event_rows": 598,
+    "normal_train_rows": 46522,
+    "assets": [
+      33
+    ],
+    "split_counts": {
+      "train": 51408,
+      "prediction": 1606
+    },
+    "status_counts": {
+      "0": 47624,
+      "5": 2588,
+      "3": 2673,
+      "4": 129
+    },
+    "split_bounds": {
+      "train": [
+        "2022-03-29 00:00:00",
+        "2023-03-28 23:50:00"
+      ],
+      "prediction": [
+        "2023-03-29 00:00:00",
+        "2023-04-09 03:30:00"
+      ]
+    },
+    "event_start": "2023-04-01 00:00:00",
+    "event_end": "2023-04-05 03:30:00",
+    "event_duration_days": 4.145833333333333,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 4,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 50,
+    "label": "normal",
+    "bytes": 305973953,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 55153,
+    "bad_steps": 2,
+    "duplicate_times": 0,
+    "event_rows": 2017,
+    "normal_train_rows": 47483,
+    "assets": [
+      12
+    ],
+    "split_counts": {
+      "train": 51696,
+      "prediction": 3457
+    },
+    "status_counts": {
+      "0": 50893,
+      "4": 313,
+      "5": 738,
+      "3": 3209
+    },
+    "split_bounds": {
+      "train": [
+        "2022-11-02 00:00:00",
+        "2023-11-01 23:50:00"
+      ],
+      "prediction": [
+        "2023-11-02 00:00:00",
+        "2023-11-26 00:00:00"
+      ]
+    },
+    "event_start": "2023-11-05 00:00:00",
+    "event_end": "2023-11-19 00:00:00",
+    "event_duration_days": 14.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 4,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 54,
+    "label": "normal",
+    "bytes": 308675860,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 55585,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 1585,
+    "normal_train_rows": 44760,
+    "assets": [
+      52
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 3025
+    },
+    "status_counts": {
+      "0": 47718,
+      "3": 6818,
+      "5": 521,
+      "4": 528
+    },
+    "split_bounds": {
+      "train": [
+        "2022-01-31 09:20:00",
+        "2023-01-31 09:10:00"
+      ],
+      "prediction": [
+        "2023-01-31 09:20:00",
+        "2023-02-21 09:20:00"
+      ]
+    },
+    "event_start": "2023-02-03 09:20:00",
+    "event_end": "2023-02-14 09:20:00",
+    "event_duration_days": 11.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 7,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 55,
+    "label": "anomaly",
+    "bytes": 312651912,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 55753,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 2473,
+    "normal_train_rows": 48856,
+    "assets": [
+      50
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 3193
+    },
+    "status_counts": {
+      "0": 51942,
+      "3": 3204,
+      "5": 501,
+      "4": 106
+    },
+    "split_bounds": {
+      "train": [
+        "2022-10-27 11:30:00",
+        "2023-10-27 11:20:00"
+      ],
+      "prediction": [
+        "2023-10-27 11:30:00",
+        "2023-11-18 15:30:00"
+      ]
+    },
+    "event_start": "2023-10-29 11:30:00",
+    "event_end": "2023-11-15 15:30:00",
+    "event_duration_days": 17.166666666666668,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 56,
+    "label": "normal",
+    "bytes": 298406675,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 53416,
+    "bad_steps": 1,
+    "duplicate_times": 0,
+    "event_rows": 2008,
+    "normal_train_rows": 47318,
+    "assets": [
+      34
+    ],
+    "split_counts": {
+      "train": 51120,
+      "prediction": 2296
+    },
+    "status_counts": {
+      "0": 49460,
+      "3": 3275,
+      "5": 469,
+      "4": 212
+    },
+    "split_bounds": {
+      "train": [
+        "2022-07-28 05:50:00",
+        "2023-07-28 05:40:00"
+      ],
+      "prediction": [
+        "2023-07-28 05:50:00",
+        "2023-08-13 04:20:00"
+      ]
+    },
+    "event_start": "2023-07-28 05:50:00",
+    "event_end": "2023-08-11 04:20:00",
+    "event_duration_days": 13.9375,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 2,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 57,
+    "label": "normal",
+    "bytes": 309037783,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 55009,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 1729,
+    "normal_train_rows": 49742,
+    "assets": [
+      55
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 2449
+    },
+    "status_counts": {
+      "0": 52144,
+      "3": 2142,
+      "5": 578,
+      "4": 145
+    },
+    "split_bounds": {
+      "train": [
+        "2022-04-26 05:40:00",
+        "2023-04-26 05:30:00"
+      ],
+      "prediction": [
+        "2023-04-26 05:40:00",
+        "2023-05-13 05:40:00"
+      ]
+    },
+    "event_start": "2023-04-29 05:40:00",
+    "event_end": "2023-05-11 05:40:00",
+    "event_duration_days": 12.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 3,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 58,
+    "label": "normal",
+    "bytes": 306322566,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 54433,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 1441,
+    "normal_train_rows": 48444,
+    "assets": [
+      35
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 1873
+    },
+    "status_counts": {
+      "0": 50301,
+      "3": 3475,
+      "5": 443,
+      "4": 214
+    },
+    "split_bounds": {
+      "train": [
+        "2022-10-12 08:40:00",
+        "2023-10-12 08:30:00"
+      ],
+      "prediction": [
+        "2023-10-12 08:40:00",
+        "2023-10-25 08:40:00"
+      ]
+    },
+    "event_start": "2023-10-15 08:40:00",
+    "event_end": "2023-10-25 08:40:00",
+    "event_duration_days": 10.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 59,
+    "label": "normal",
+    "bytes": 306753215,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 54865,
+    "bad_steps": 1,
+    "duplicate_times": 0,
+    "event_rows": 2017,
+    "normal_train_rows": 46661,
+    "assets": [
+      32
+    ],
+    "split_counts": {
+      "train": 52128,
+      "prediction": 2737
+    },
+    "status_counts": {
+      "0": 49377,
+      "5": 1064,
+      "4": 294,
+      "3": 4130
+    },
+    "split_bounds": {
+      "train": [
+        "2022-02-16 00:00:00",
+        "2023-02-15 23:50:00"
+      ],
+      "prediction": [
+        "2023-02-16 00:00:00",
+        "2023-03-07 00:00:00"
+      ]
+    },
+    "event_start": "2023-02-16 00:00:00",
+    "event_end": "2023-03-02 00:00:00",
+    "event_duration_days": 14.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 2,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 60,
+    "label": "normal",
+    "bytes": 301805533,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 54433,
+    "bad_steps": 1,
+    "duplicate_times": 0,
+    "event_rows": 1585,
+    "normal_train_rows": 41278,
+    "assets": [
+      53
+    ],
+    "split_counts": {
+      "train": 51984,
+      "prediction": 2449
+    },
+    "status_counts": {
+      "0": 43654,
+      "5": 892,
+      "4": 825,
+      "3": 9062
+    },
+    "split_bounds": {
+      "train": [
+        "2022-02-14 05:30:00",
+        "2023-02-14 05:20:00"
+      ],
+      "prediction": [
+        "2023-02-14 05:30:00",
+        "2023-03-03 05:30:00"
+      ]
+    },
+    "event_start": "2023-02-17 05:30:00",
+    "event_end": "2023-02-28 05:30:00",
+    "event_duration_days": 11.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 2,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 61,
+    "label": "normal",
+    "bytes": 312639582,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 55585,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 2017,
+    "normal_train_rows": 47227,
+    "assets": [
+      43
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 3025
+    },
+    "status_counts": {
+      "0": 50146,
+      "3": 4527,
+      "5": 740,
+      "4": 172
+    },
+    "split_bounds": {
+      "train": [
+        "2022-05-05 00:00:00",
+        "2023-05-04 23:50:00"
+      ],
+      "prediction": [
+        "2023-05-05 00:00:00",
+        "2023-05-26 00:00:00"
+      ]
+    },
+    "event_start": "2023-05-08 00:00:00",
+    "event_end": "2023-05-22 00:00:00",
+    "event_duration_days": 14.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 2,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 62,
+    "label": "normal",
+    "bytes": 298891736,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 53448,
+    "bad_steps": 1,
+    "duplicate_times": 0,
+    "event_rows": 1032,
+    "normal_train_rows": 47935,
+    "assets": [
+      21
+    ],
+    "split_counts": {
+      "train": 52416,
+      "prediction": 1032
+    },
+    "status_counts": {
+      "0": 48961,
+      "5": 569,
+      "3": 3749,
+      "4": 169
+    },
+    "split_bounds": {
+      "train": [
+        "2022-11-06 11:00:00",
+        "2023-11-06 10:50:00"
+      ],
+      "prediction": [
+        "2023-11-06 11:00:00",
+        "2023-11-13 14:50:00"
+      ]
+    },
+    "event_start": "2023-11-06 11:00:00",
+    "event_end": "2023-11-13 14:50:00",
+    "event_duration_days": 7.159722222222222,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 4,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 63,
+    "label": "normal",
+    "bytes": 307228572,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 54865,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 1441,
+    "normal_train_rows": 47811,
+    "assets": [
+      56
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 2305
+    },
+    "status_counts": {
+      "0": 50097,
+      "3": 3780,
+      "5": 606,
+      "4": 382
+    },
+    "split_bounds": {
+      "train": [
+        "2022-07-05 23:10:00",
+        "2023-07-05 23:00:00"
+      ],
+      "prediction": [
+        "2023-07-05 23:10:00",
+        "2023-07-21 23:10:00"
+      ]
+    },
+    "event_start": "2023-07-06 23:10:00",
+    "event_end": "2023-07-16 23:10:00",
+    "event_duration_days": 10.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 4,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 64,
+    "label": "normal",
+    "bytes": 307374415,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 54433,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 1441,
+    "normal_train_rows": 50135,
+    "assets": [
+      15
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 1873
+    },
+    "status_counts": {
+      "0": 51981,
+      "3": 1251,
+      "5": 1103,
+      "4": 98
+    },
+    "split_bounds": {
+      "train": [
+        "2022-09-23 00:30:00",
+        "2023-09-23 00:20:00"
+      ],
+      "prediction": [
+        "2023-09-23 00:30:00",
+        "2023-10-06 00:30:00"
+      ]
+    },
+    "event_start": "2023-09-23 00:30:00",
+    "event_end": "2023-10-03 00:30:00",
+    "event_duration_days": 10.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 2,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 65,
+    "label": "normal",
+    "bytes": 311866781,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 55918,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 2062,
+    "normal_train_rows": 48966,
+    "assets": [
+      16
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 3358
+    },
+    "status_counts": {
+      "0": 52286,
+      "3": 2648,
+      "5": 680,
+      "4": 304
+    },
+    "split_bounds": {
+      "train": [
+        "2022-11-02 04:20:00",
+        "2023-11-02 04:10:00"
+      ],
+      "prediction": [
+        "2023-11-02 04:20:00",
+        "2023-11-25 11:50:00"
+      ]
+    },
+    "event_start": "2023-11-05 04:20:00",
+    "event_end": "2023-11-19 11:50:00",
+    "event_duration_days": 14.3125,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 2,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 66,
+    "label": "anomaly",
+    "bytes": 295779639,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 53503,
+    "bad_steps": 2,
+    "duplicate_times": 0,
+    "event_rows": 943,
+    "normal_train_rows": 46566,
+    "assets": [
+      12
+    ],
+    "split_counts": {
+      "train": 51696,
+      "prediction": 1807
+    },
+    "status_counts": {
+      "0": 47570,
+      "5": 697,
+      "4": 144,
+      "3": 5092
+    },
+    "split_bounds": {
+      "train": [
+        "2022-01-17 00:00:00",
+        "2023-01-16 23:50:00"
+      ],
+      "prediction": [
+        "2023-01-17 00:00:00",
+        "2023-01-29 13:00:00"
+      ]
+    },
+    "event_start": "2023-01-17 00:00:00",
+    "event_end": "2023-01-23 13:00:00",
+    "event_duration_days": 6.541666666666667,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 4,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 67,
+    "label": "anomaly",
+    "bytes": 344830246,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 61489,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 8353,
+    "normal_train_rows": 47362,
+    "assets": [
+      35
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 8929
+    },
+    "status_counts": {
+      "0": 55971,
+      "5": 1793,
+      "4": 301,
+      "3": 3424
+    },
+    "split_bounds": {
+      "train": [
+        "2022-02-01 00:00:00",
+        "2023-01-31 23:50:00"
+      ],
+      "prediction": [
+        "2023-02-01 00:00:00",
+        "2023-04-04 00:00:00"
+      ]
+    },
+    "event_start": "2023-02-02 00:00:00",
+    "event_end": "2023-04-01 00:00:00",
+    "event_duration_days": 58.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 2,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 70,
+    "label": "anomaly",
+    "bytes": 315968484,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 56038,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 2902,
+    "normal_train_rows": 47815,
+    "assets": [
+      23
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 3478
+    },
+    "status_counts": {
+      "0": 51017,
+      "3": 4397,
+      "5": 493,
+      "4": 131
+    },
+    "split_bounds": {
+      "train": [
+        "2022-11-10 14:00:00",
+        "2023-11-10 13:50:00"
+      ],
+      "prediction": [
+        "2023-11-10 14:00:00",
+        "2023-12-04 17:30:00"
+      ]
+    },
+    "event_start": "2023-11-10 14:00:00",
+    "event_end": "2023-11-30 17:30:00",
+    "event_duration_days": 20.145833333333332,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 75,
+    "label": "normal",
+    "bytes": 316452199,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 56161,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 2737,
+    "normal_train_rows": 50221,
+    "assets": [
+      44
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 3601
+    },
+    "status_counts": {
+      "0": 53697,
+      "5": 422,
+      "4": 152,
+      "3": 1890
+    },
+    "split_bounds": {
+      "train": [
+        "2022-05-01 11:10:00",
+        "2023-05-01 11:00:00"
+      ],
+      "prediction": [
+        "2023-05-01 11:10:00",
+        "2023-05-26 11:10:00"
+      ]
+    },
+    "event_start": "2023-05-04 11:10:00",
+    "event_end": "2023-05-23 11:10:00",
+    "event_duration_days": 19.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 76,
+    "label": "anomaly",
+    "bytes": 290309797,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 52086,
+    "bad_steps": 3,
+    "duplicate_times": 0,
+    "event_rows": 246,
+    "normal_train_rows": 42801,
+    "assets": [
+      53
+    ],
+    "split_counts": {
+      "train": 51264,
+      "prediction": 822
+    },
+    "status_counts": {
+      "0": 43469,
+      "4": 701,
+      "5": 4185,
+      "3": 3731
+    },
+    "split_bounds": {
+      "train": [
+        "2022-01-06 00:00:00",
+        "2023-01-05 23:50:00"
+      ],
+      "prediction": [
+        "2023-01-06 00:00:00",
+        "2023-01-11 16:50:00"
+      ]
+    },
+    "event_start": "2023-01-08 00:00:00",
+    "event_end": "2023-01-09 16:50:00",
+    "event_duration_days": 1.7013888888888888,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 2,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 78,
+    "label": "anomaly",
+    "bytes": 297287308,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 53146,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 298,
+    "normal_train_rows": 46045,
+    "assets": [
+      15
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 586
+    },
+    "status_counts": {
+      "0": 46536,
+      "5": 713,
+      "4": 124,
+      "3": 5773
+    },
+    "split_bounds": {
+      "train": [
+        "2022-07-30 13:00:00",
+        "2023-07-30 12:50:00"
+      ],
+      "prediction": [
+        "2023-07-30 13:00:00",
+        "2023-08-03 14:30:00"
+      ]
+    },
+    "event_start": "2023-07-30 13:00:00",
+    "event_end": "2023-08-01 14:30:00",
+    "event_duration_days": 2.0625,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 79,
+    "label": "anomaly",
+    "bytes": 299858364,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 53281,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 289,
+    "normal_train_rows": 49566,
+    "assets": [
+      16
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 721
+    },
+    "status_counts": {
+      "0": 50160,
+      "4": 205,
+      "5": 392,
+      "3": 2524
+    },
+    "split_bounds": {
+      "train": [
+        "2022-07-25 09:00:00",
+        "2023-07-25 08:50:00"
+      ],
+      "prediction": [
+        "2023-07-25 09:00:00",
+        "2023-07-30 09:00:00"
+      ]
+    },
+    "event_start": "2023-07-26 09:00:00",
+    "event_end": "2023-07-28 09:00:00",
+    "event_duration_days": 2.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 80,
+    "label": "normal",
+    "bytes": 309606724,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 54913,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 2065,
+    "normal_train_rows": 47916,
+    "assets": [
+      23
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 2353
+    },
+    "status_counts": {
+      "0": 50244,
+      "5": 476,
+      "4": 118,
+      "3": 4075
+    },
+    "split_bounds": {
+      "train": [
+        "2022-10-07 02:10:00",
+        "2023-10-07 02:00:00"
+      ],
+      "prediction": [
+        "2023-10-07 02:10:00",
+        "2023-10-23 10:10:00"
+      ]
+    },
+    "event_start": "2023-10-07 02:10:00",
+    "event_end": "2023-10-21 10:10:00",
+    "event_duration_days": 14.333333333333334,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 1,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 81,
+    "label": "anomaly",
+    "bytes": 299760683,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 53932,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 364,
+    "normal_train_rows": 44510,
+    "assets": [
+      38
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 1372
+    },
+    "status_counts": {
+      "0": 45698,
+      "3": 6523,
+      "5": 1258,
+      "4": 453
+    },
+    "split_bounds": {
+      "train": [
+        "2022-11-15 01:30:00",
+        "2023-11-15 01:20:00"
+      ],
+      "prediction": [
+        "2023-11-15 01:30:00",
+        "2023-11-24 14:00:00"
+      ]
+    },
+    "event_start": "2023-11-16 01:30:00",
+    "event_end": "2023-11-18 14:00:00",
+    "event_duration_days": 2.5208333333333335,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 2,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 85,
+    "label": "normal",
+    "bytes": 291875901,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 52417,
+    "bad_steps": 3,
+    "duplicate_times": 0,
+    "event_rows": 1441,
+    "normal_train_rows": 44991,
+    "assets": [
+      14
+    ],
+    "split_counts": {
+      "train": 50832,
+      "prediction": 1585
+    },
+    "status_counts": {
+      "0": 46552,
+      "5": 1728,
+      "3": 3787,
+      "4": 350
+    },
+    "split_bounds": {
+      "train": [
+        "2022-01-12 13:10:00",
+        "2023-01-12 13:00:00"
+      ],
+      "prediction": [
+        "2023-01-12 13:10:00",
+        "2023-01-23 13:10:00"
+      ]
+    },
+    "event_start": "2023-01-12 13:10:00",
+    "event_end": "2023-01-22 13:10:00",
+    "event_duration_days": 10.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 2,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 88,
+    "label": "normal",
+    "bytes": 310924172,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 55441,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 2017,
+    "normal_train_rows": 45139,
+    "assets": [
+      55
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 2881
+    },
+    "status_counts": {
+      "0": 47670,
+      "3": 3894,
+      "5": 3706,
+      "4": 171
+    },
+    "split_bounds": {
+      "train": [
+        "2022-10-02 00:00:00",
+        "2023-10-01 23:50:00"
+      ],
+      "prediction": [
+        "2023-10-02 00:00:00",
+        "2023-10-22 00:00:00"
+      ]
+    },
+    "event_start": "2023-10-03 00:00:00",
+    "event_end": "2023-10-17 00:00:00",
+    "event_duration_days": 14.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 89,
+    "label": "normal",
+    "bytes": 305580092,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 54577,
+    "bad_steps": 2,
+    "duplicate_times": 0,
+    "event_rows": 1873,
+    "normal_train_rows": 48111,
+    "assets": [
+      5
+    ],
+    "split_counts": {
+      "train": 51840,
+      "prediction": 2737
+    },
+    "status_counts": {
+      "0": 50819,
+      "5": 837,
+      "4": 134,
+      "3": 2787
+    },
+    "split_bounds": {
+      "train": [
+        "2022-03-06 01:10:00",
+        "2023-03-06 01:00:00"
+      ],
+      "prediction": [
+        "2023-03-06 01:10:00",
+        "2023-03-25 01:10:00"
+      ]
+    },
+    "event_start": "2023-03-06 01:10:00",
+    "event_end": "2023-03-19 01:10:00",
+    "event_duration_days": 13.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 2,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 90,
+    "label": "anomaly",
+    "bytes": 307259862,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 54880,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 1744,
+    "normal_train_rows": 48047,
+    "assets": [
+      56
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 2320
+    },
+    "status_counts": {
+      "0": 49981,
+      "3": 4015,
+      "5": 572,
+      "4": 312
+    },
+    "split_bounds": {
+      "train": [
+        "2022-08-08 15:00:00",
+        "2023-08-08 14:50:00"
+      ],
+      "prediction": [
+        "2023-08-08 15:00:00",
+        "2023-08-24 17:30:00"
+      ]
+    },
+    "event_start": "2023-08-10 15:00:00",
+    "event_end": "2023-08-22 17:30:00",
+    "event_duration_days": 12.104166666666666,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 4,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 91,
+    "label": "anomaly",
+    "bytes": 318329877,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 56608,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 2896,
+    "normal_train_rows": 47057,
+    "assets": [
+      42
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 4048
+    },
+    "status_counts": {
+      "0": 50603,
+      "3": 5181,
+      "5": 549,
+      "4": 275
+    },
+    "split_bounds": {
+      "train": [
+        "2022-10-11 09:30:00",
+        "2023-10-11 09:20:00"
+      ],
+      "prediction": [
+        "2023-10-11 09:30:00",
+        "2023-11-08 12:00:00"
+      ]
+    },
+    "event_start": "2023-10-12 09:30:00",
+    "event_end": "2023-11-01 12:00:00",
+    "event_duration_days": 20.104166666666668,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 0,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 93,
+    "label": "normal",
+    "bytes": 313279637,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 55873,
+    "bad_steps": 0,
+    "duplicate_times": 0,
+    "event_rows": 3169,
+    "normal_train_rows": 46643,
+    "assets": [
+      43
+    ],
+    "split_counts": {
+      "train": 52560,
+      "prediction": 3313
+    },
+    "status_counts": {
+      "0": 49880,
+      "3": 4478,
+      "5": 648,
+      "4": 867
+    },
+    "split_bounds": {
+      "train": [
+        "2022-08-01 15:50:00",
+        "2023-08-01 15:40:00"
+      ],
+      "prediction": [
+        "2023-08-01 15:50:00",
+        "2023-08-24 15:50:00"
+      ]
+    },
+    "event_start": "2023-08-02 15:50:00",
+    "event_end": "2023-08-24 15:50:00",
+    "event_duration_days": 22.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 2,
+    "all_missing_avg_features": 0
+  },
+  {
+    "farm": "Wind Farm C",
+    "event_id": 94,
+    "label": "normal",
+    "bytes": 305718534,
+    "columns": 957,
+    "avg_features": 238,
+    "rows": 54865,
+    "bad_steps": 1,
+    "duplicate_times": 0,
+    "event_rows": 1441,
+    "normal_train_rows": 45949,
+    "assets": [
+      34
+    ],
+    "split_counts": {
+      "train": 52128,
+      "prediction": 2737
+    },
+    "status_counts": {
+      "0": 48359,
+      "3": 5144,
+      "4": 321,
+      "5": 1041
+    },
+    "split_bounds": {
+      "train": [
+        "2022-06-10 10:40:00",
+        "2023-06-10 10:30:00"
+      ],
+      "prediction": [
+        "2023-06-10 10:40:00",
+        "2023-06-29 10:40:00"
+      ]
+    },
+    "event_start": "2023-06-12 10:40:00",
+    "event_end": "2023-06-22 10:40:00",
+    "event_duration_days": 10.0,
+    "avg_missing_fraction": 0.0,
+    "constant_avg_features": 2,
+    "all_missing_avg_features": 0
+  }
+]

@@ -8,9 +8,12 @@ from pathlib import Path
 
 import pandas as pd
 import torch
-from compare_validation_models import event_metrics, nominal_metrics
 
-from hydropredict.analysis.readiness import fault_window_coverage
+from hydropredict.analysis.readiness import (
+    event_metrics,
+    fault_window_coverage,
+    nominal_metrics,
+)
 from hydropredict.data.faults import load_fault_log
 from hydropredict.data.partitioning import compute_file_sha256
 from hydropredict.data.preprocessing import load_telemetry_dataframe

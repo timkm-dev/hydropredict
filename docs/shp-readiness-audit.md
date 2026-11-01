@@ -5,6 +5,12 @@ baseline; not yet a validated operational warning system**.
 
 ## Source findings
 
+Update, 24 October 2026: the [author-code review](shp-source-code-review.md)
+establishes V6 as apparent power, V5 as lubrication inflow and V1-V4 as vibration.
+Individual vibration orientations and engineering units remain unresolved. The
+original finding below records the evidence available on 13 October; its blanket
+mapping uncertainty is superseded by this update. Runtime physical limits remain unset.
+
 The source publication describes four vibration measurements, HLU lubrication inflow and
 generator apparent power. It does not establish the code's temperature/active-power labels
 or the exact V1..V6 mapping and engineering units. Physical metadata is therefore unset

@@ -2,6 +2,12 @@
 
 ## Workflow
 
+Track work in [GitHub Issues](https://github.com/timkm-dev/hydropredict/issues).
+Read the relevant issue before implementation, reference its number in commits/PRs,
+and record verification evidence before closing it. Sprint milestones organise the
+remaining review requirements; scope decisions and owner verification are tracked
+explicitly rather than assumed complete. See `AGENTS.md` for agent task tracking.
+
 1. Update `main` and create a focused branch named `feature/...`, `fix/...`, or
    `docs/...`.
 2. Add or update tests with every behavioural change.

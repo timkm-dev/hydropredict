@@ -1,0 +1,8 @@
+{
+  "protocol_sha256": "e7e29c0f538030ea7e2d3be487264d789fcf068084c55a192d8762aea5287828",
+  "script_sha256": "d6412af68648336cce78ffd88f7a9a1a1286a3270d9cf42fd883449f2749212a",
+  "torch": "2.14.1+cpu",
+  "numpy": "2.5.3",
+  "pandas": "3.0.6",
+  "seed": 42
+}

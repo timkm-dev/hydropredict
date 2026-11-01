@@ -1,0 +1,19 @@
+{
+  "candidate": "if",
+  "fold": "december",
+  "boundaries": [
+    "2018-08-01T00:00:00+00:00",
+    "2018-11-01T00:00:00+00:00",
+    "2018-12-01T00:00:00+00:00",
+    "2019-01-01T00:00:00+00:00"
+  ],
+  "threshold": 0.6064243017970425,
+  "fitting_rows": 14439,
+  "calibration_rows": 5019,
+  "calibration_nominal_rows": 4578,
+  "persistence": 3,
+  "seed": 42,
+  "ntrees": 500,
+  "sample_size": 2048,
+  "regression": null
+}

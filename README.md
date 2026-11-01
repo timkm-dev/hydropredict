@@ -23,6 +23,24 @@ The following describes the planned system, not completed model or application f
 
 ## Current Implementation Status
 
+**Wind turbine early warning (CARE benchmark) — the main result.** One small
+autoencoder per turbine learns its normal behaviour; a 6-hour smoothed score and
+the benchmark's alarm counter raise warnings, and each alert names its top
+deviating sensors. Settings were chosen on Farms A and B and confirmed once on
+held-out Farm C: CARE score 0.578 on Farm C and 0.583 on all 95 datasets
+(published autoencoder 0.66, random 0.5). See
+[CARE autoencoder results](docs/care-autoencoder-results.md) and
+[alert explanations](docs/care-explanation-results.md). The signed-in home page
+replays these results: fleet overview, period replay and alert review
+([frontend guide](frontend/README.md)). Farm C was trained on Colab via
+`notebooks/train_care_autoencoder_colab.ipynb`.
+
+CWRU bearing classification is now available locally at `/bearing.html`: a
+fixed XGBoost model, MATLAB import, held-out examples, feature contributions and
+account-scoped saved assessments. It scored 8/10 held-out load recordings and
+5/13 on an unseen-size challenge; use it as a laboratory benchmark, not a validated
+plant diagnostic. See [CWRU results](docs/cwru-results.md). Install `.[bearing]`.
+
 Implemented and tested: SHP validation, chronological partitioning, segmented offline
 preparation, training-scaler fitting and reuse, segment-aware features, fault alignment
 and EDA. Each preparation run records provenance, row accounting and artifact checksums.
@@ -41,17 +59,14 @@ The first Colab GPU run is complete and its frozen CPU scores have been reproduc
 It detected 1 of 3 adequately covered development faults; operational usefulness
 remains unverified. See `docs/lstm-baseline-diagnostics.md` for results and limitations.
 
-Implemented frontend: responsive local dashboard with synthetic preview data, telemetry
-CSV import/export, six-channel trend exploration, temporary illustrative alert review,
-and model readiness. Local LSTM CPU inference now provides score/threshold plots,
-per-channel reconstruction errors, and grouped review episodes for imported telemetry.
-See `frontend/README.md`. Local email/password accounts and profile onboarding are implemented.
-Live telemetry and durable analysis records remain pending.
+Frontend: the wind turbine early warning app is the home page; hydro plant
+monitoring, bearing diagnosis and hydro evaluation evidence sit under **Research**.
+Local email/password and optional Google accounts with profile onboarding are
+implemented; alert and episode reviews persist per account in local SQLite.
 
-Pending: further justified model experiments, CWRU acquisition and XGBoost, sequential replay,
-application-integrated event evaluation, production account recovery and role permissions,
-durable application records, model registry, drift monitoring and deployment.
-Fault-alignment labels are retrospective analysis assumptions, not evaluated predictions.
+Pending: live telemetry, production account recovery and role permissions, model
+registry, drift monitoring and deployment. Fault-alignment labels are retrospective
+analysis assumptions, not evaluated predictions.
 
 ## Planned Execution Environment
 
@@ -80,28 +95,14 @@ Run all development checks (Ruff format, Ruff lint, Mypy strict types, Pytest):
 .\scripts\check.ps1
 ```
 
-## Frontend dashboard
-
-For a portable Colab investigation of preprocessing and missed faults, use
-[`notebooks/investigate_shp_colab.ipynb`](notebooks/investigate_shp_colab.ipynb)
-with its generated input ZIP. See [the Colab walkthrough](docs/colab-investigation.md).
-
-Latest model investigation: four additional normal-only novelty candidates did
-not improve development fault detection. A descriptive six-hour trend analysis
-identified a possible slow-change mechanism for one missed fault, without
-establishing a validated predictor. See [the investigation results](docs/signal-investigation-results.md).
-
-Start the dashboard from the repository root and open http://127.0.0.1:8766:
+## Web app
 
 ```powershell
-.venv/Scripts/python.exe -m hydropredict.dashboard --port 8766
+.venv/Scripts/python.exe -m hydropredict.dashboard --local-accounts --port 8766
 ```
 
-The initial screen uses clearly labeled synthetic data. Import a telemetry CSV
-containing `t,V1,V2,V3,V4,V5,V6`, then select **Run LSTM assessment** for local
-CPU inference using the saved research bundle. The bundle and CPU PyTorch must
-be available; the dashboard shows model connection status and unscored observations.
-See [dashboard instructions](frontend/README.md) for controls and integration limits.
+Open http://127.0.0.1:8766 and sign in. Build the CARE replay data once first;
+see [the frontend guide](frontend/README.md).
 
 ## CLI Workflows
 
@@ -165,22 +166,10 @@ subset; it does not consume the earlier prepared physical features. Source test 
 are fault-selected, so general false-alert frequency remains unverified. Save the reported
 poor initial result rather than repeatedly tuning on the same final test period.
 
-The validation-only temporal feature and threshold comparison is documented in
-`docs/validation-model-comparison.md`. It found a limited temporal signal but substantial
-warm-up coverage loss; no replacement model was promoted. Install `.[analysis]` for the
-optional Matplotlib diagnostics and run `scripts/compare_validation_models.py` as documented.
-
-Observed development context can now be reconstructed from both source files with exact
-timestamp provenance and no synthetic filling. The frozen-model validation check restored
-92 pre-fault temporal score rows, but adequate temporal event coverage remained at two
-events and neither was detected. See `docs/continuous-context-evaluation.md` for the fixed
-experiment, limitations and reproduction command. No default model was changed.
-
-The declared 15/30/120-minute context comparison is complete; see
-`docs/short-context-comparison.md`. Both shorter designs detected one of three adequately
-covered validation faults, versus zero of two for the two-hour model. The 30-minute design
-is retained as a development comparator, with no operational performance claim or default
-replacement. The compact LSTM and Colab notebook are complete; see the LSTM diagnostics for development results.
+Earlier hydro experiments (temporal features, context lengths, signal and
+precursor studies) are summarised in [the docs index](docs/README.md). Their code
+was removed in the 1 November 2026 cleanup and remains at Git tag
+`research-archive-2026-11-01`.
 
 ## Project Layout
 
@@ -188,11 +177,11 @@ replacement. The compact LSTM and Colab notebook are complete; see the LSTM diag
 hydropredict/
 |-- .github/workflows/       Continuous integration
 |-- data/                    Dataset manifest, samples, raw and processed data stages
-|-- docs/                    Architecture decisions and requirement traceability
-|-- frontend/                Responsive local research dashboard and data validation tests
+|-- docs/                    Protocols, results and decisions (start at docs/README.md)
+|-- frontend/                Early warning web app, research pages and frontend tests
 |-- models/                  Trained model bundles and scalers (ignored by Git)
-|-- notebooks/               Planned Colab notebook directory (not implemented)
-|-- scripts/                 Environment setup and verification scripts
+|-- notebooks/               Colab training notebooks (LSTM, CARE autoencoder)
+|-- scripts/                 Data preparation, training, evaluation and setup scripts
 |-- src/hydropredict/        Current data, feature and analysis modules
 |-- tests/                   Automated tests (unit, integration, regression)
 |-- pyproject.toml           Package and tool configuration

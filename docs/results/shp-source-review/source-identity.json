@@ -1,0 +1,23 @@
+{
+  "train": {
+    "matches_pinned_author_blob": true,
+    "rows": 47857,
+    "start": "2018-08-13 13:44:40.130000+00:00",
+    "end": "2019-08-09 09:22:06.073000+00:00",
+    "timestamps_on_or_after_february": 17050
+  },
+  "test": {
+    "matches_pinned_author_blob": true,
+    "rows": 4897,
+    "start": "2018-08-15 13:04:45.567000+00:00",
+    "end": "2019-07-22 10:25:37.983000+00:00",
+    "timestamps_on_or_after_february": 1338
+  },
+  "faults": {
+    "matches_pinned_author_blob": true,
+    "rows": 59,
+    "start": "2018-08-16 01:02:58+00:00",
+    "end": "2019-07-22 10:29:32+00:00",
+    "timestamps_on_or_after_february": 20
+  }
+}

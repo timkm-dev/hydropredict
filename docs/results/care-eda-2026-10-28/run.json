@@ -1,0 +1,31 @@
+{
+  "elapsed_seconds": 291.12608479999994,
+  "chunk_rows": 4096,
+  "scope": "All rows, metadata and average channels only; no model fitting",
+  "farms": [
+    {
+      "farm": "Wind Farm A",
+      "labels": {
+        "anomaly": 12,
+        "normal": 10
+      },
+      "metadata_sha256": "9254667b70d73e8eb23e7143ad56f1c280ba020c8b3d9289ad56fcaa59270aa5"
+    },
+    {
+      "farm": "Wind Farm B",
+      "labels": {
+        "normal": 9,
+        "anomaly": 6
+      },
+      "metadata_sha256": "e27b4de2fc9f87b7c73ca5bc5a0950cb56cf666a26d9749c52c4aff7c473e681"
+    },
+    {
+      "farm": "Wind Farm C",
+      "labels": {
+        "normal": 31,
+        "anomaly": 27
+      },
+      "metadata_sha256": "5c1e35122df6417d836a364ff5055ca4f5311b0c2c59b690733a08c89298ab80"
+    }
+  ]
+}

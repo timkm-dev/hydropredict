@@ -1,0 +1,47 @@
+[
+  {
+    "model": "december-conditional",
+    "rows": 5660,
+    "exact": true
+  },
+  {
+    "model": "december-eif",
+    "rows": 5660,
+    "exact": true
+  },
+  {
+    "model": "december-if",
+    "rows": 5660,
+    "exact": true
+  },
+  {
+    "model": "november-conditional",
+    "rows": 5019,
+    "exact": true
+  },
+  {
+    "model": "november-eif",
+    "rows": 5019,
+    "exact": true
+  },
+  {
+    "model": "november-if",
+    "rows": 5019,
+    "exact": true
+  },
+  {
+    "model": "primary-conditional",
+    "rows": 6742,
+    "exact": true
+  },
+  {
+    "model": "primary-eif",
+    "rows": 6742,
+    "exact": true
+  },
+  {
+    "model": "primary-if",
+    "rows": 6742,
+    "exact": true
+  }
+]
