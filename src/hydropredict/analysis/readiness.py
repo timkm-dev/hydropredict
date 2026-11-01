@@ -52,3 +52,49 @@ def fault_window_coverage(
             }
         )
     return result
+
+
+def event_metrics(scores: pd.DataFrame, coverage: list[dict[str, Any]]) -> dict[str, Any]:
+    """Alerts in the six hours before each fault: detection, lead time and peak score."""
+    alert_times = pd.to_datetime(scores.loc[scores.is_alert, "t"], utc=True)
+    events = []
+    for row in coverage:
+        event = dict(row)
+        fault = pd.Timestamp(event["fault_time"])
+        preceding = alert_times[
+            (alert_times < fault) & (alert_times >= fault - pd.Timedelta(hours=6))
+        ]
+        event["detected"] = bool(len(preceding))
+        event["lead_minutes"] = (
+            (fault - preceding.min()).total_seconds() / 60 if len(preceding) else None
+        )
+        window = scores[(scores.t < fault) & (scores.t >= fault - pd.Timedelta(hours=6))]
+        event["max_score"] = float(window.anomaly_score.max()) if len(window) else None
+        events.append(event)
+    eligible = [e for e in events if e["eligible"]]
+    detected = [e for e in eligible if e["detected"]]
+    return {
+        "eligible_events": len(eligible),
+        "detected_events": len(detected),
+        "recall": len(detected) / len(eligible) if eligible else None,
+        "median_lead_minutes": float(np.median([e["lead_minutes"] for e in detected]))
+        if detected
+        else None,
+        "events": events,
+    }
+
+
+def nominal_metrics(scores: pd.DataFrame) -> dict[str, Any]:
+    """Alert burden on normal-reference readings; gaps over 450 s start new episodes."""
+    gaps = scores.t.diff().dt.total_seconds()
+    new_episode = ~scores.is_alert.shift(fill_value=False) | gaps.gt(450)
+    seconds = float(gaps[(gaps > 0) & (gaps <= 450)].sum())
+    episodes = int((scores.is_alert & new_episode).sum())
+    return {
+        "point_alert_fraction": float(scores.is_alert.mean()),
+        "point_alerts": int(scores.is_alert.sum()),
+        "observations": len(scores),
+        "alert_episodes": episodes,
+        "observed_hours": seconds / 3600,
+        "episodes_per_observed_day": episodes / (seconds / 86400) if seconds else None,
+    }

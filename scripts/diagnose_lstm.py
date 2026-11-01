@@ -16,9 +16,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import torch
-from compare_validation_models import event_metrics, nominal_metrics
 
-from hydropredict.analysis.readiness import fault_window_coverage
+from hydropredict.analysis.readiness import (
+    event_metrics,
+    fault_window_coverage,
+    nominal_metrics,
+)
 from hydropredict.data.partitioning import compute_file_sha256
 from hydropredict.models.isolation_forest import SHPIsolationForest
 from hydropredict.models.lstm import SHPLSTMAutoencoder
