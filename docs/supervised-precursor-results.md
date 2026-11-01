@@ -80,10 +80,14 @@ against the accompanying sidecar, and run:
 ```python
 import hashlib, os, zipfile
 from google.colab import files
+
 uploaded = files.upload()
 assert list(uploaded) == ["hydropredict-supervised-precursor-v1.zip"]
 payload = next(iter(uploaded.values()))
-assert hashlib.sha256(payload).hexdigest() == "7fa4bfb5ff7b1956c97181697a83a224f64de87d440b5a87f6fe02e6b297e910"
+assert (
+    hashlib.sha256(payload).hexdigest()
+    == "7fa4bfb5ff7b1956c97181697a83a224f64de87d440b5a87f6fe02e6b297e910"
+)
 with zipfile.ZipFile("hydropredict-supervised-precursor-v1.zip") as z:
     z.extractall("supervised")
 with zipfile.ZipFile("supervised/package/code.zip") as z:
