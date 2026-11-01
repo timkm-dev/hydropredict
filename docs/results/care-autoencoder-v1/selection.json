@@ -1,0 +1,10 @@
+{
+  "window": 36,
+  "quantile": 0.975,
+  "selected_on": [
+    "Wind Farm A",
+    "Wind Farm B"
+  ],
+  "pooled_care": 0.6064519805747229,
+  "datasets": 37
+}
