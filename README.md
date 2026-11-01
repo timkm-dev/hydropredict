@@ -23,6 +23,12 @@ The following describes the planned system, not completed model or application f
 
 ## Current Implementation Status
 
+CWRU bearing classification is now available locally at `/bearing.html`: a
+fixed XGBoost model, MATLAB import, held-out examples, feature contributions and
+account-scoped saved assessments. It scored 8/10 held-out load recordings and
+5/13 on an unseen-size challenge; use it as a laboratory benchmark, not a validated
+plant diagnostic. See [CWRU results](docs/cwru-results.md). Install `.[bearing]`.
+
 Implemented and tested: SHP validation, chronological partitioning, segmented offline
 preparation, training-scaler fitting and reuse, segment-aware features, fault alignment
 and EDA. Each preparation run records provenance, row accounting and artifact checksums.
@@ -48,7 +54,7 @@ per-channel reconstruction errors, and grouped review episodes for imported tele
 See `frontend/README.md`. Local email/password accounts and profile onboarding are implemented.
 Live telemetry and durable analysis records remain pending.
 
-Pending: further justified model experiments, CWRU acquisition and XGBoost, sequential replay,
+Pending: sequential replay,
 application-integrated event evaluation, production account recovery and role permissions,
 durable application records, model registry, drift monitoring and deployment.
 Fault-alignment labels are retrospective analysis assumptions, not evaluated predictions.
