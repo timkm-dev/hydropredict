@@ -1,5 +1,33 @@
 # HydroPredict dashboard
 
+## Wind turbine early warning (home page)
+
+The signed-in home page (`care.html`) replays the CARE wind-farm benchmark through
+the frozen autoencoder early warning model:
+
+- **Fleet**: all 95 monitoring periods, sorted by the highest warning level reached,
+  with the component to inspect first and any recorded fault.
+- **Period replay**: press **Replay history** (or drag the time slider) to step through
+  a period as if live. The chart shows only what was known at the selected time.
+  **Look here first** lists the sensors furthest from expected normal behaviour, and
+  **Actual vs expected** plots a sensor against the model's expectation.
+- **Alerts**: send for inspection, acknowledge, dismiss (a reason is required) or
+  reopen. Decisions are append-only and stored per account in
+  `data/assessments.sqlite3`.
+
+Status rules: **Alarm** when the warning counter reaches 72 (the CARE criticality
+rule), **Watch** from 24 (a display rule only). An alarm stays marked after the
+counter falls until it is reviewed. Sensor component groups are for display only.
+
+The replay data is generated locally and ignored by Git (derived from CC BY-SA 4.0
+data). Build it once after the CARE models exist (about 15 minutes on a laptop):
+
+```powershell
+.venv/Scripts/python.exe -m scripts.build_care_app_data "C:\path\to\CARE_To_Compare" --scores .local/care-autoencoder-v1-all --models .local/care-autoencoder-v1-scores .local/care-autoencoder-v1-C-colab/scores --results docs/results/care-autoencoder-v1 --output frontend/care-data
+```
+
+The earlier hydro plant, bearing and evaluation pages remain under **Research**.
+
 **Bearing assessment:** open `/bearing.html` or follow the link from SHP monitoring.
 The page opens with ten held-out recordings preloaded and the first selected.
 Select **Assess selected recording**; no upload or sample-rate confirmation is

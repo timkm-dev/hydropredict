@@ -55,3 +55,5 @@ reports/generated/
 
 # Locally generated research score evidence; never commit source-derived records.
 frontend/evidence-data.json
+# CARE replay data derived from CC BY-SA 4.0 source; regenerate with scripts/build_care_app_data.py.
+frontend/care-data/

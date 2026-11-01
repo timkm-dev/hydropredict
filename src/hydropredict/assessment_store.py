@@ -1,7 +1,8 @@
-"""Small owner-scoped SQLite store for local SHP assessments and review history."""
+"""Small owner-scoped SQLite store for local assessments and alert review history."""
 
 from __future__ import annotations
 
+import builtins
 import json
 import sqlite3
 from contextlib import closing
@@ -9,6 +10,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 from uuid import uuid4
+
+CARE_ACTIONS = {"inspect", "acknowledged", "dismissed", "open"}
 
 
 class AssessmentStore:
@@ -22,6 +25,11 @@ class AssessmentStore:
             )
             db.execute(
                 "CREATE TABLE IF NOT EXISTS reviews (run_id TEXT NOT NULL, episode TEXT NOT NULL, "
+                "owner TEXT NOT NULL, created TEXT NOT NULL, action TEXT NOT NULL, "
+                "comment TEXT NOT NULL)"
+            )
+            db.execute(
+                "CREATE TABLE IF NOT EXISTS care_reviews (alert TEXT NOT NULL, "
                 "owner TEXT NOT NULL, created TEXT NOT NULL, action TEXT NOT NULL, "
                 "comment TEXT NOT NULL)"
             )
@@ -88,4 +96,35 @@ class AssessmentStore:
             db.execute(
                 "INSERT INTO reviews VALUES (?,?,?,?,?,?)",
                 (run["id"], episode, owner, datetime.now(UTC).isoformat(), action, comment.strip()),
+            )
+
+    def care_reviews(self, owner: str) -> builtins.list[dict[str, Any]]:
+        """All of an owner's CARE alert decisions, oldest first."""
+        with closing(self.connect()) as db:
+            return [
+                dict(r)
+                for r in db.execute(
+                    "SELECT alert,created,action,comment FROM care_reviews "
+                    "WHERE owner=? ORDER BY rowid",
+                    (owner,),
+                )
+            ]
+
+    def care_review(self, owner: str, payload: dict[str, Any], alerts: set[str]) -> None:
+        """Append a decision on a known CARE alert; earlier decisions are kept."""
+        alert = payload.get("alert")
+        action = payload.get("action")
+        comment = payload.get("comment", "")
+        if not isinstance(alert, str) or alert not in alerts:
+            raise ValueError("Select an alert from the current replay data.")
+        if not isinstance(action, str) or action not in CARE_ACTIONS:
+            raise ValueError("Invalid review action.")
+        if not isinstance(comment, str) or len(comment) > 2000:
+            raise ValueError("Notes must contain at most 2,000 characters.")
+        if action == "dismissed" and not comment.strip():
+            raise ValueError("Add a reason before dismissing an alert.")
+        with closing(self.connect()) as db, db:
+            db.execute(
+                "INSERT INTO care_reviews VALUES (?,?,?,?,?)",
+                (alert, owner, datetime.now(UTC).isoformat(), action, comment.strip()),
             )

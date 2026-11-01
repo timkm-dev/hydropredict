@@ -79,6 +79,10 @@ def test_saved_assessment_http_flow(service: InferenceService, tmp_path: Path) -
             connection.request("GET", "/", headers=headers)
             response = connection.getresponse()
             assert response.status == 200
+            assert b"What needs attention?" in response.read()
+            connection.request("GET", "/shp.html", headers=headers)
+            response = connection.getresponse()
+            assert response.status == 200
             assert b"Review unusual behaviour" in response.read()
             connection.request("GET", "/api/runs")
             response = connection.getresponse()
@@ -210,6 +214,55 @@ def test_authenticated_http_flow(service: InferenceService, tmp_path: Path) -> N
             response = connection.getresponse()
             assert response.status == 401
             response.read()
+        finally:
+            connection.close()
+            server.shutdown()
+            worker.join(timeout=5)
+
+
+def test_care_replay_data_and_alert_reviews(service: InferenceService, tmp_path: Path) -> None:
+    care = tmp_path / "care-data"
+    care.mkdir()
+    fleet = {"periods": [{"key": "C-47", "alerts": [{"id": "C-47-1"}]}]}
+    (care / "fleet.json").write_text(json.dumps(fleet))
+    handler = partial(
+        DashboardHandler,
+        service=service,
+        auth=AuthStore(tmp_path / "accounts.sqlite3"),
+        assessments=AssessmentStore(tmp_path / "assessments.sqlite3"),
+        care_data=care,
+    )
+    with HTTPServer(("127.0.0.1", 0), handler) as server:
+        worker = threading.Thread(target=server.serve_forever, daemon=True)
+        worker.start()
+        connection = http.client.HTTPConnection("127.0.0.1", server.server_port, timeout=10)
+
+        def call(method: str, path: str, body: Any = None, headers: Any = None) -> Any:
+            data = None if body is None else json.dumps(body)
+            connection.request(method, path, data, headers or {})
+            response = connection.getresponse()
+            return response.status, response.getheader("Set-Cookie"), response.read()
+
+        try:
+            assert call("GET", "/care-data/fleet.json")[0] == 401
+            assert call("GET", "/care.html")[0] == 302
+            headers = {"Content-Type": "application/json"}
+            credentials = {"email": "care@example.com", "password": "a long test password"}
+            _, cookie, _ = call("POST", "/api/auth/register", credentials, headers)
+            headers["Cookie"] = cookie.split(";", 1)[0]
+            profile = {"name": "T", "company": "W", "username": "tech", "job_position": "Tech"}
+            assert call("POST", "/api/auth/profile", profile, headers)[0] == 200
+            status, _, body = call("GET", "/", headers=headers)
+            assert status == 200 and b"care.js" in body
+            review = {"alert": "C-47-1", "action": "inspect", "comment": "Check pump A"}
+            status, _, body = call("POST", "/api/care/review", review, headers)
+            assert status == 200 and json.loads(body)["reviews"][0]["action"] == "inspect"
+            missing = {"alert": "C-47-1", "action": "dismissed"}
+            assert call("POST", "/api/care/review", missing, headers)[0] == 400
+            unknown = {"alert": "Z-1-1", "action": "inspect"}
+            assert call("POST", "/api/care/review", unknown, headers)[0] == 400
+            status, _, body = call("GET", "/api/care/reviews", headers=headers)
+            assert [r["alert"] for r in json.loads(body)["reviews"]] == ["C-47-1"]
         finally:
             connection.close()
             server.shutdown()

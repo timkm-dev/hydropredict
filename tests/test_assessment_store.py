@@ -49,3 +49,27 @@ def test_invalid_reviews_are_not_saved(tmp_path):
         with pytest.raises(ValueError):
             store.review("a", payload)
     assert store.get("a", run_id)["reviews"] == []
+
+
+def test_care_reviews_are_owner_scoped_append_only_and_validated(tmp_path):
+    path = tmp_path / "assessments.sqlite3"
+    alerts = {"C-47-1", "A-0-1"}
+    store = AssessmentStore(path)
+    store.care_review(
+        "alice", {"alert": "C-47-1", "action": "inspect", "comment": "Pump A"}, alerts
+    )
+    store.care_review("alice", {"alert": "C-47-1", "action": "open"}, alerts)
+    restored = AssessmentStore(path)
+    reviews = restored.care_reviews("alice")
+    assert [r["action"] for r in reviews] == ["inspect", "open"]
+    assert reviews[0]["comment"] == "Pump A"
+    assert restored.care_reviews("bob") == []
+    for payload in [
+        {"alert": "unknown", "action": "inspect"},
+        {"alert": "A-0-1", "action": "healthy"},
+        {"alert": "A-0-1", "action": "dismissed", "comment": " "},
+        {"alert": "A-0-1", "action": "acknowledged", "comment": "x" * 2001},
+    ]:
+        with pytest.raises(ValueError):
+            restored.care_review("alice", payload, alerts)
+    assert len(restored.care_reviews("alice")) == 2
