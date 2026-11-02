@@ -7,7 +7,7 @@ import re
 import secrets
 import sqlite3
 import time
-from collections.abc import Iterator
+from collections.abc import Iterable, Iterator
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
@@ -32,11 +32,15 @@ class PostgresConnection:
 
 
 SESSION_SECONDS = 8 * 60 * 60
+OPERATOR = "operator"
+ML_ENGINEER = "ml_engineer"
 
 
 class AuthStore:
-    def __init__(self, path: Path | str) -> None:
+    def __init__(self, path: Path | str, ml_engineers: Iterable[str] = ()) -> None:
         self.path = path
+        # Roles come from server configuration only, never from self-entered profile fields.
+        self.ml_engineers = frozenset(e.strip().lower() for e in ml_engineers if e.strip())
         self.postgres = isinstance(path, str) and path.startswith(("postgresql://", "postgres://"))
         if not self.postgres:
             Path(path).parent.mkdir(parents=True, exist_ok=True)
@@ -237,7 +241,11 @@ class AuthStore:
                 "JOIN sessions ON users.id = sessions.user_id WHERE token = ? AND expires > ?",
                 (hashlib.sha256(token.encode()).hexdigest(), time.time()),
             ).fetchone()
-        return dict(row) if row else None
+        if not row:
+            return None
+        user = dict(row)
+        user["role"] = ML_ENGINEER if user["email"] in self.ml_engineers else OPERATOR
+        return user
 
     def logout(self, token: str) -> None:
         with self.connect() as db:

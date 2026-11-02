@@ -41,7 +41,7 @@ def records() -> list[dict[str, Any]]:
 
 
 def test_saved_assessment_http_flow(service: InferenceService, tmp_path: Path) -> None:
-    auth = AuthStore(tmp_path / "accounts.sqlite3")
+    auth = AuthStore(tmp_path / "accounts.sqlite3", ["review@example.com"])
     token = auth.register({"email": "review@example.com", "password": "long test password"})
     user = auth.user(token)
     assert user is not None
@@ -79,7 +79,7 @@ def test_saved_assessment_http_flow(service: InferenceService, tmp_path: Path) -
             connection.request("GET", "/", headers=headers)
             response = connection.getresponse()
             assert response.status == 200
-            assert b"What needs attention?" in response.read()
+            assert b"care.js" in response.read()
             connection.request("GET", "/shp.html", headers=headers)
             response = connection.getresponse()
             assert response.status == 200
@@ -188,7 +188,7 @@ def test_hosted_origin_and_secure_cookie(service: InferenceService, tmp_path: Pa
 
 
 def test_authenticated_http_flow(service: InferenceService, tmp_path: Path) -> None:
-    auth = AuthStore(tmp_path / "accounts.sqlite3")
+    auth = AuthStore(tmp_path / "accounts.sqlite3", ["Test@Example.com "])
     handler = partial(DashboardHandler, service=service, auth=auth)
     with HTTPServer(("127.0.0.1", 0), handler) as server:
         worker = threading.Thread(target=server.serve_forever, daemon=True)
@@ -200,6 +200,10 @@ def test_authenticated_http_flow(service: InferenceService, tmp_path: Path) -> N
             assert response.status == 401
             response.read()
             connection.request("GET", "/")
+            response = connection.getresponse()
+            assert response.status == 200
+            assert b"welcome-illustration.svg" in response.read()
+            connection.request("GET", "/care.html")
             response = connection.getresponse()
             assert response.status == 302
             assert response.getheader("Location") == "/auth.html"
@@ -288,6 +292,58 @@ def test_care_replay_data_and_alert_reviews(service: InferenceService, tmp_path:
             assert call("POST", "/api/care/review", unknown, headers)[0] == 400
             status, _, body = call("GET", "/api/care/reviews", headers=headers)
             assert [r["alert"] for r in json.loads(body)["reviews"]] == ["C-47-1"]
+        finally:
+            connection.close()
+            server.shutdown()
+            worker.join(timeout=5)
+
+
+def test_role_permissions(service: InferenceService, tmp_path: Path) -> None:
+    auth = AuthStore(tmp_path / "accounts.sqlite3", ["ml@example.com"])
+    handler = partial(
+        DashboardHandler,
+        service=service,
+        auth=auth,
+        assessments=AssessmentStore(tmp_path / "assessments.sqlite3"),
+    )
+    with HTTPServer(("127.0.0.1", 0), handler) as server:
+        worker = threading.Thread(target=server.serve_forever, daemon=True)
+        worker.start()
+        connection = http.client.HTTPConnection("127.0.0.1", server.server_port, timeout=10)
+
+        def call(method: str, path: str, body: Any = None, cookie: str = "") -> Any:
+            headers = {"Content-Type": "application/json", "Cookie": cookie}
+            connection.request(method, path, None if body is None else json.dumps(body), headers)
+            response = connection.getresponse()
+            return response.status, response.getheader("Set-Cookie"), response.read()
+
+        def account(email: str, username: str) -> str:
+            credentials = {"email": email, "password": "a long test password"}
+            cookie = call("POST", "/api/auth/register", credentials)[1].split(";", 1)[0]
+            profile = {"name": "N", "company": "C", "username": username, "job_position": "ML"}
+            assert call("POST", "/api/auth/profile", profile, cookie)[0] == 200
+            return cookie
+
+        try:
+            operator = account("operator@example.com", "operator")
+            engineer = account("ml@example.com", "engineer")
+            me = json.loads(call("GET", "/api/auth/me", cookie=operator)[2])["user"]
+            # A self-entered job title of "ML" does not grant the role.
+            assert me["role"] == "operator"
+            assert json.loads(call("GET", "/api/auth/me", cookie=engineer)[2])["user"]["role"] == (
+                "ml_engineer"
+            )
+            for path in ["/care.html", "/api/care/reviews"]:
+                assert call("GET", path, cookie=operator)[0] == 200
+            for path in ["/models.html", "/shp.html", "/evidence-data.json", "/api/model"]:
+                assert call("GET", path, cookie=operator)[0] == 403
+                assert call("GET", path)[0] in {302, 401}
+            assert call("GET", "/api/bearing/info", cookie=operator)[0] == 403
+            assert call("POST", "/api/score", {"records": records()}, operator)[0] == 403
+            for path in ["/models.html", "/shp.html", "/api/model"]:
+                assert call("GET", path, cookie=engineer)[0] == 200
+            assert call("POST", "/api/score", {"records": records()}, engineer)[0] == 200
+            assert call("GET", "/api/runs", cookie=engineer)[0] == 200
         finally:
             connection.close()
             server.shutdown()

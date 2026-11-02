@@ -1,23 +1,51 @@
-# HydroPredict dashboard
+# Early Warning dashboard
 
-## Wind turbine early warning (home page)
+The interface follows the redesign agreed in issue #24: plain language for the
+maintenance operator first, technical detail on the Models page and in `docs/`.
+Shared styles are in `theme.css`; the logo and welcome illustration are
+`logo.svg` and `welcome-illustration.svg`.
 
-The signed-in home page (`care.html`) replays the CARE wind-farm benchmark through
-the frozen autoencoder early warning model:
+## Pages
 
-- **Fleet**: all 95 monitoring periods, sorted by the highest warning level reached,
-  with the component to inspect first and any recorded fault.
-- **Period replay**: press **Replay history** (or drag the time slider) to step through
-  a period as if live. The chart shows only what was known at the selected time.
-  **Look here first** lists the sensors furthest from expected normal behaviour, and
-  **Actual vs expected** plots a sensor against the model's expectation.
-- **Alerts**: send for inspection, acknowledge, dismiss (a reason is required) or
-  reopen. Decisions are append-only and stored per account in
-  `data/assessments.sqlite3`.
+- **Welcome** (`/` when signed out, `welcome.html`): public introduction to the
+  project, how it works, the two user types and the headline results.
+- **What needs attention** (`care.html`, the signed-in home): turbine periods grouped
+  as **Inspect now**, **Keep an eye on** and **Normal**, with the component to check
+  first and the biggest changes in plain words.
+- **Turbine page**: a headline sentence, **What we noticed** (now vs normal for the
+  sensors furthest from normal), an actual-vs-normal chart and the decision buttons.
+  **How was this decided?** holds the warning build-up, the score chart and the
+  replay controls. For periods with a recorded fault, a demo-only box says what
+  happened next and whether the first alarm came before or after it.
+- **Alerts**: **Send a technician**, **Seen it, keep watching** or **Not a problem**
+  (a reason is required), and **Reopen**. Decisions are append-only and stored per
+  account in `data/assessments.sqlite3`.
+- **How well it works**: the benchmark results and every recorded fault with the
+  timing of its first alarm.
+- **Models** (`models.html`, ML Engineers only): what each model does, its data,
+  frozen settings and results.
 
-Status rules: **Alarm** when the warning counter reaches 72 (the CARE criticality
-rule), **Watch** from 24 (a display rule only). An alarm stays marked after the
-counter falls until it is reviewed. Sensor component groups are for display only.
+Status rules: **Inspect now** when the warning counter reaches 72 (the CARE
+criticality rule, about 12 hours of unusual readings), **Keep an eye on** from 24 (a
+display rule only). Sensor component groups are for display only; the autoencoder
+detects unusual behaviour but does not classify faults.
+
+## Roles (issue #14)
+
+| Action | Maintenance Operator | ML Engineer |
+|---|---|---|
+| Welcome, sign in, profile | yes | yes |
+| What needs attention, turbine, alerts, how well it works | yes | yes |
+| Record alert decisions | yes | yes |
+| Models page | no | yes |
+| Research pages, `evidence-data.json` and model-scoring APIs | no | yes |
+
+Every account is a Maintenance Operator unless its email is listed in the
+`ML_ENGINEER_EMAILS` setting (comma-separated, in the environment or `.env`). The
+role is decided on the server for every request; profile fields such as job
+position never grant it. Change the list and restart the server to change roles.
+Email addresses are not verified for password accounts, so only list addresses
+whose accounts already exist, or that sign in with Google.
 
 The replay data is generated locally and ignored by Git (derived from CC BY-SA 4.0
 data). Build it once after the CARE models exist (about 15 minutes on a laptop); the dataset
@@ -27,7 +55,8 @@ location comes from `CARE_DATA_DIR` in `.env`:
 .venv/Scripts/python.exe -m scripts.build_care_app_data --scores .local/care-autoencoder-v1-all --models .local/care-autoencoder-v1-scores .local/care-autoencoder-v1-C-colab/scores --results docs/results/care-autoencoder-v1 --output frontend/care-data
 ```
 
-The earlier hydro plant, bearing and evaluation pages remain under **Research**.
+The earlier hydro plant, bearing and evaluation pages remain under **Research**
+(ML Engineers only).
 
 **Bearing assessment** (`/bearing.html`, under Research).
 The page opens with ten held-out recordings preloaded and the first selected.
@@ -82,7 +111,7 @@ unordered timestamps and cross-origin inference requests are rejected.
 
 The completed LSTM detected 1 of 3 adequately covered development faults; this
 does not establish operational reliability. See `docs/lstm-baseline-diagnostics.md`.
-Live telemetry, role permissions and drift monitoring remain future work.
+Live telemetry and drift monitoring remain future work.
 
 ## Accounts and profiles
 
@@ -126,7 +155,7 @@ Inference requires an authenticated account with a completed profile. Company an
 job position are profile information; they do not grant permissions.
 
 These accounts support the loopback-only local server. Public deployment, email
-verification, password recovery, and role permissions are not implemented. A static
+verification and password recovery are not implemented; roles are described above. A static
 preview cannot create accounts or sign in; use the Python dashboard server.
 
 ## PostgreSQL setup

@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  awaitingReview, fleetCounts, formatHours, indexAt, latestReview, linePath, statusOf, upperBound,
+  awaitingReview, cleanUnit, describeDeviation, describeLead, fleetCounts, formatDate, formatHours,
+  formatValue, indexAt, latestReview, linePath, STATUS_LABEL, statusOf, upperBound, warningLead,
 } from '../care-model.js';
 
 test('status follows the warning counter', () => {
@@ -59,4 +60,38 @@ test('chart bound keeps the threshold visible and ignores rare spikes', () => {
 test('durations read naturally', () => {
   assert.equal(formatHours(5), '5 h');
   assert.equal(formatHours(103), '4 days');
+});
+
+test('statuses use plain language', () => {
+  assert.equal(STATUS_LABEL[statusOf(80)], 'Inspect now');
+  assert.equal(STATUS_LABEL[statusOf(30)], 'Keep an eye on');
+});
+
+test('units and values are shown cleanly', () => {
+  assert.equal(cleanUnit('�C'), '°C');
+  assert.equal(cleanUnit('Celsius'), '°C');
+  assert.equal(cleanUnit('ï¿½C'), '°C');
+  assert.equal(cleanUnit('kWh'), 'kWh');
+  assert.equal(cleanUnit('A'), 'A');
+  assert.equal(formatValue(87.04, 'Celsius'), '87 °C');
+  assert.equal(formatValue(7.797, 'A'), '7.8 A');
+});
+
+test('deviations are described against normal', () => {
+  assert.equal(describeDeviation(87, 63.76, '�C'), 'About 23 °C higher than normal.');
+  assert.equal(describeDeviation(89.17, 108, 'Celsius'), 'About 19 °C lower than normal.');
+  assert.equal(describeDeviation(12, 10, 'A'), 'About 20% higher than normal.');
+  assert.equal(describeDeviation(10.1, 10, 'A'), 'Close to normal right now.');
+  assert.equal(describeDeviation(null, 10, 'A'), 'Differs from its normal pattern.');
+});
+
+test('warning timing is honest about alarms after the fault started', () => {
+  const fault = { start: '2023-08-06T06:10:00' };
+  assert.equal(warningLead([], fault), null);
+  const early = warningLead([{ start: '2023-08-04T18:10:00' }], fault);
+  assert.equal(early, 36);
+  assert.equal(describeLead(early), 'Flagged 36 h before the recorded fault started.');
+  assert.equal(describeLead(-45), 'Flagged 45 h after the recorded fault started.');
+  assert.equal(describeLead(null), 'No alarm was raised in this period.');
+  assert.equal(formatDate('2023-08-04T18:00:00'), '4 Aug 2023');
 });

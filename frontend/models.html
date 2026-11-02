@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Early Warning · Models</title>
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="theme.css">
+  <script type="module" src="site.js"></script>
+  <style>
+    .flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 10px; }
+    .flow .card { flex: 1 1 200px; display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; }
+    .flow .card.detect { background: var(--sky); border-color: var(--sky); color: #FFFFFF; }
+    .flow .card.diagnose { border-style: dashed; border-color: var(--sky); }
+    .flow .arrow { display: flex; align-items: center; color: var(--sky); font-size: 22px; }
+    .flow small { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+    .model dl { margin: 0; display: grid; grid-template-columns: 96px 1fr; gap: 6px 12px; font-size: 14px; }
+    .model dt { color: var(--muted); }
+    .model dd { margin: 0; }
+    .bars { display: flex; flex-direction: column; gap: 12px; }
+    .bars div { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; font-size: 14px; }
+    .bars .name { flex: 0 0 240px; }
+    .bars .track { flex: 1 1 300px; height: 22px; background: var(--line-soft); border-radius: 4px; }
+    .bars .track i { display: block; height: 100%; border-radius: 4px; background: #94A3B8; }
+    .bars .ours .track i { background: var(--sky); }
+    .bars .ours { font-weight: 700; }
+    .bars .value { flex: 0 0 52px; text-align: right; font-family: 'IBM Plex Mono', monospace; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="inner">
+      <a class="brand" href="/welcome.html"><img src="logo.svg" alt="">Early Warning</a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="care.html#/">Needs attention</a>
+        <a href="care.html#/alerts">Alerts</a>
+        <a href="care.html#/results">How well it works</a>
+        <a href="models.html" aria-current="page">Models</a>
+        <details class="menu"><summary>Research</summary><div>
+          <a href="shp.html">Hydro plant monitoring</a><a href="bearing.html">Bearing diagnosis</a><a href="evidence.html">Hydro evaluation evidence</a>
+        </div></details>
+      </nav>
+      <div class="account"><span class="role" id="role"></span><a href="auth.html?profile">Account</a><button type="button" id="logout">Sign out</button></div>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="intro">
+      <p class="eyebrow">ML Engineer view</p>
+      <h1>Models</h1>
+      <p>What each model does, which data it was tested on, and how well it performed. All numbers come from frozen evaluation runs documented in the repository.</p>
+    </div>
+
+    <section class="section" aria-labelledby="flow-title">
+      <h2 id="flow-title">How the models fit together</h2>
+      <div class="flow">
+        <div class="card"><small style="color: var(--muted)">Input</small><strong>Turbine data</strong><span class="caption">10-minute averages, 42 to about 220 sensors</span></div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="card detect"><small>Step 1 · Detect</small><strong>CARE autoencoder</strong><span>Is this turbine behaving unusually, and which sensors are furthest from normal?</span></div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="card diagnose"><small style="color: var(--sky)">Step 2 · Diagnose (optional)</small><strong>CWRU bearing classifier</strong><span class="caption">Only if a vibration recording is taken at the flagged bearing. Names the fault type.</span></div>
+      </div>
+      <p class="caption">The autoencoder does not classify faults. Its "check first" hint ranks sensors by deviation and maps them to display-only component groups. The classifier needs 48 kHz vibration recordings, which the turbine data does not contain, so the two are not connected automatically.</p>
+    </section>
+
+    <section class="grid" style="--min: 300px" aria-label="Model registry">
+      <article class="card model section" style="gap: 12px">
+        <div class="section-head"><span class="pill alarm">In use</span><code>care-autoencoder-v1</code></div>
+        <div><strong style="font-size: 19px">CARE autoencoder</strong><p class="caption">Detects unusual turbine behaviour and ranks the sensors behind it.</p></div>
+        <dl><dt>Data</dt><dd>CARE wind benchmark, 3 farms, 95 datasets</dd><dt>Method</dt><dd>One autoencoder per turbine, trained on its own normal data</dd><dt>Result</dt><dd><strong>CARE 0.583 (0.578 held out)</strong></dd></dl>
+      </article>
+      <article class="card model section" style="gap: 12px">
+        <div class="section-head"><span class="pill watch">Second step</span><code>cwru-v1</code></div>
+        <div><strong style="font-size: 19px">CWRU bearing classifier</strong><p class="caption">Names the bearing fault type from a vibration recording.</p></div>
+        <dl><dt>Data</dt><dd>40 lab recordings, 48 kHz drive-end vibration</dd><dt>Method</dt><dd>XGBoost on time and frequency features</dd><dt>Result</dt><dd><strong>8/10 held out, 5/13 unseen sizes</strong></dd></dl>
+      </article>
+      <article class="card model section" style="gap: 12px">
+        <div class="section-head"><span class="pill normal">Research only</span><code>lstm-diagnostics-2026-10-15-v1</code></div>
+        <div><strong style="font-size: 19px">Hydro plant LSTM</strong><p class="caption">Anomaly detection on six-channel hydro plant data.</p></div>
+        <dl><dt>Data</dt><dd>Small hydro plant, 5-minute readings</dd><dt>Method</dt><dd>LSTM autoencoder, normal-only training</dd><dt>Result</dt><dd><strong>1 of 3 covered faults detected</strong></dd></dl>
+      </article>
+    </section>
+
+    <section class="section" aria-labelledby="care-title">
+      <h2 id="care-title">CARE autoencoder: benchmark score</h2>
+      <div class="card section">
+        <div class="bars">
+          <div><span class="name">Published autoencoder</span><span class="track"><i style="width: 66%"></i></span><span class="value">0.66</span></div>
+          <div class="ours"><span class="name">Ours, all 95 datasets</span><span class="track"><i style="width: 58.3%"></i></span><span class="value">0.583</span></div>
+          <div class="ours"><span class="name">Ours, held-out Farm C</span><span class="track"><i style="width: 57.8%; background: #5B9BD5"></i></span><span class="value">0.578</span></div>
+          <div><span class="name">Random detector</span><span class="track"><i style="width: 50%"></i></span><span class="value">0.50</span></div>
+          <div><span class="name">Our earlier models (A+B)</span><span class="track"><i style="width: 48%; background: #CBD5E1"></i></span><span class="value">≈0.48</span></div>
+        </div>
+        <p class="caption">CARE score, 0 to 1. 0.5 equals a random detector. Published values from the benchmark paper, Section 4.2.3.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Farms</th><th class="text">Role</th><th>Datasets</th><th>CARE</th><th>Faults alarmed</th><th>Normal alarmed</th><th>Coverage</th><th>Earliness</th><th>Reliability</th><th>Accuracy</th></tr></thead>
+          <tbody>
+            <tr><td>A</td><td class="text">Development</td><td>22</td><td>0.620</td><td>5/12</td><td>0/10</td><td>0.247</td><td>0.104</td><td>0.781</td><td>0.984</td></tr>
+            <tr><td>B</td><td class="text">Development</td><td>15</td><td>0.580</td><td>3/6</td><td>0/9</td><td>0.090</td><td>0.026</td><td>0.833</td><td>0.975</td></tr>
+            <tr><td>A+B</td><td class="text">Selection</td><td>37</td><td>0.606</td><td>8/18</td><td>0/19</td><td>0.195</td><td>0.078</td><td>0.800</td><td>0.980</td></tr>
+            <tr class="highlight"><td><strong>C</strong></td><td class="text"><strong>Held out</strong></td><td>58</td><td><strong>0.578</strong></td><td>9/27</td><td>10/31</td><td>0.341</td><td>0.394</td><td>0.437</td><td>0.858</td></tr>
+            <tr><td>All</td><td class="text">Benchmark</td><td>95</td><td>0.583</td><td>17/45</td><td>10/50</td><td>0.283</td><td>0.267</td><td>0.556</td><td>0.905</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid" style="--min: 260px">
+        <div class="card section" style="gap: 6px"><strong>Frozen settings</strong><span class="caption">6-hour smoothing · threshold at the 97.5th percentile of held-back normal error · alarm when the counter reaches 72 (about 12 h), watch from 24. Chosen from 24 settings on Farms A and B only.</span></div>
+        <div class="card section" style="gap: 6px"><strong>Where-to-look hint</strong><span class="caption">The top 3 sensors included the failed component in 7 of 18 faults, against 3.3 expected by chance.</span></div>
+        <div class="quiet-box"><strong>Known issue: Farm C false alarms</strong><span>All 10 alarmed normal datasets are in Farm C; 3 were flagged almost throughout, suggesting behaviour shifted after the training year.</span></div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="cwru-title">
+      <h2 id="cwru-title">CWRU bearing classifier: held-out recordings</h2>
+      <div class="split">
+        <div class="main table-wrap" style="gap: 0">
+          <table>
+            <thead><tr><th>Recording</th><th class="text">Reference</th><th class="text">Prediction</th></tr></thead>
+            <tbody>
+              <tr><td><code>100.mat</code></td><td class="text">Healthy</td><td class="text">Healthy</td></tr>
+              <tr><td><code>112.mat</code></td><td class="text">Inner race fault</td><td class="text">Inner race fault</td></tr>
+              <tr><td><code>125.mat</code></td><td class="text">Rolling element fault</td><td class="text">Rolling element fault</td></tr>
+              <tr><td><code>138.mat</code></td><td class="text">Outer race fault</td><td class="text">Outer race fault</td></tr>
+              <tr><td><code>177.mat</code></td><td class="text">Inner race fault</td><td class="text">Inner race fault</td></tr>
+              <tr><td><code>192.mat</code></td><td class="text">Rolling element fault</td><td class="text">Rolling element fault</td></tr>
+              <tr class="highlight"><td><code>204.mat</code></td><td class="text">Outer race fault</td><td class="text"><strong>Rolling element fault (wrong)</strong></td></tr>
+              <tr class="highlight"><td><code>217.mat</code></td><td class="text">Inner race fault</td><td class="text"><strong>Rolling element fault (wrong)</strong></td></tr>
+              <tr><td><code>229.mat</code></td><td class="text">Rolling element fault</td><td class="text">Rolling element fault</td></tr>
+              <tr><td><code>241.mat</code></td><td class="text">Outer race fault</td><td class="text">Outer race fault</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="side">
+          <div class="card stat"><strong>8 of 10</strong><span>held-out load recordings correct · macro-F1 0.84</span></div>
+          <div class="quiet-box"><strong style="font-size: 28px">5 of 13</strong><span>on unseen fault sizes · macro-F1 0.375. All twelve 14-mil faults were called rolling element.</span></div>
+          <p class="caption">Laboratory benchmark. Not validated on turbine or hydro plant bearings.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="ops-title">
+      <h2 id="ops-title">Still to build</h2>
+      <div class="grid" style="--min: 240px">
+        <div class="card section" style="gap: 6px"><strong>Feedback summary</strong><span class="caption">Operators' "not a problem" reasons show which alerts waste time. A summary across accounts is not built yet.</span></div>
+        <div class="card section" style="gap: 6px"><strong>Drift monitoring</strong><span class="caption">Not built yet. Farm C's false alarms suggest it is needed.</span></div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

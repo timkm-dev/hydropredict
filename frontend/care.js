@@ -1,11 +1,14 @@
 import {
-  ACTION_LABEL, STATUS_LABEL, WATCH, awaitingReview, fleetCounts, formatHours, formatTime,
-  indexAt, latestReview, linePath, statusOf, upperBound,
+  ACTION_LABEL, DISMISS_REASONS, STATUS_LABEL, WATCH, awaitingReview, cleanUnit, describeDeviation,
+  describeLead, fleetCounts, formatDate, formatMoment, formatValue, indexAt, latestReview, linePath,
+  statusOf, upperBound, warningLead,
 } from './care-model.js';
 
 const $ = id => document.getElementById(id);
 const SVG = 'http://www.w3.org/2000/svg';
+const SHOWN = 6;
 let fleet = null, reviews = [], period = null, cursor = 0, timer = null, sensor = null;
+let showAllInspect = false, showAllWatch = false, showAllAlerts = false;
 const cache = new Map();
 
 function el(tag, props = {}, ...children) {
@@ -27,6 +30,11 @@ function svg(tag, attrs = {}, text) {
 }
 function message(text, error = false) { $('message').textContent = text; $('message').classList.toggle('error', error); }
 function pill(status, label = STATUS_LABEL[status]) { return el('span', { class: `pill ${status}` }, label); }
+function turbineName(p) { return `Turbine ${p.asset} · ${p.farm}`; }
+function span(p) { return `${formatDate(p.start)} to ${formatDate(p.end)}`; }
+function listText(items) {
+  return items.length < 2 ? items.join('') : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`;
+}
 
 async function api(path, body) {
   const response = await fetch(path, body === undefined
@@ -50,142 +58,226 @@ function updateCount() {
   $('nav-count').textContent = waiting;
 }
 
-// ---------- Fleet ----------
-function renderFleet() {
-  const counts = fleetCounts(fleet.periods, reviews);
-  for (const key of ['alarm', 'watch', 'normal', 'awaiting']) $(`count-${key}`).textContent = counts[key];
-  const farm = $('filter-farm').value, status = $('filter-status').value;
-  const rows = fleet.periods.filter(p => (!farm || p.farm === farm) && (!status || statusOf(p.max_crit) === status));
-  $('fleet-rows').replaceChildren(...rows.map(p => {
-    const first = p.alerts[0];
-    const row = el('tr', { class: 'link', tabIndex: 0, onclick: () => { location.hash = `#/period/${p.key}`; },
-      onkeydown: e => { if (e.key === 'Enter') location.hash = `#/period/${p.key}`; } },
-      el('td', {}, el('strong', {}, p.key), el('small', {}, `${p.farm} · turbine ${p.asset}`)),
-      el('td', {}, pill(statusOf(p.max_crit))),
-      el('td', {}, p.look_first || '—'),
-      el('td', {}, first ? formatTime(first.start) : '—'),
-      el('td', {}, String(p.alerts.length)),
-      el('td', {}, p.recorded_fault ? el('span', { title: p.recorded_fault.description }, shorten(p.recorded_fault.description)) : 'None recorded'));
-    return row;
-  }));
+// ---------- Decisions (shared by the turbine page and the alerts inbox) ----------
+function decisionControls(alert, done) {
+  const last = latestReview(reviews, alert.id);
+  const box = el('div', { class: 'section', style: 'gap: 10px' });
+  const error = el('p', { class: 'error-text', role: 'status' });
+  const save = async (action, comment = '') => {
+    try {
+      reviews = (await api('/api/care/review', { alert: alert.id, action, comment })).reviews;
+      updateCount();
+      message(`${turbineName(alert.period)}: ${ACTION_LABEL[action].toLowerCase()}.`);
+      done();
+    } catch (e) { error.textContent = e.message; }
+  };
+  if (last && last.action !== 'open') {
+    box.append(
+      el('p', {}, pill('done', ACTION_LABEL[last.action]), ` on ${formatMoment(last.created)}`),
+      last.comment ? el('p', { class: 'caption' }, `“${last.comment}”`) : null,
+      el('div', { class: 'actions' }, el('button', { type: 'button', class: 'btn plain', onclick: () => save('open') }, 'Reopen')),
+      error);
+    return box;
+  }
+  const reasonSelect = el('select', {}, el('option', { value: '' }, 'Choose a reason'),
+    ...DISMISS_REASONS.map(r => el('option', { value: r }, r)));
+  const note = el('textarea', { rows: 2, maxLength: 2000, placeholder: 'Add a note (optional)', 'aria-label': 'Note' });
+  const reason = el('div', { class: 'reason', hidden: true },
+    el('label', { class: 'field' }, 'Why is this not a problem?', reasonSelect),
+    note,
+    el('button', { type: 'button', class: 'btn', onclick: () => {
+      if (!reasonSelect.value) { error.textContent = 'Choose a reason first.'; reasonSelect.focus(); return; }
+      save('dismissed', [reasonSelect.value, note.value.trim()].filter(Boolean).join(': '));
+    } }, 'Save decision'),
+    el('button', { type: 'button', class: 'btn plain', onclick: () => { reason.hidden = true; buttons.hidden = false; } }, 'Cancel'));
+  const buttons = el('div', { class: 'actions' },
+    el('button', { type: 'button', class: 'btn', onclick: () => save('inspect') }, 'Send a technician'),
+    el('button', { type: 'button', class: 'btn secondary', onclick: () => save('acknowledged') }, 'Seen it, keep watching'),
+    el('button', { type: 'button', class: 'btn plain', onclick: () => { buttons.hidden = true; reason.hidden = false; reasonSelect.focus(); } }, 'Not a problem…'));
+  box.append(buttons, reason, error);
+  return box;
 }
-function shorten(text, n = 48) { return text.length > n ? `${text.slice(0, n - 1)}…` : text; }
 
-// ---------- Period ----------
+// ---------- Fleet ----------
+function finding(p) {
+  const alert = p.alerts[0];
+  if (!alert || !alert.top?.length) return 'Several small changes, nothing stands out yet.';
+  return `Biggest changes: ${listText(alert.top.slice(0, 3))}.`;
+}
+function renderFleet() {
+  const farm = $('filter-farm').value;
+  const periods = fleet.periods.filter(p => !farm || p.farm === farm);
+  const counts = fleetCounts(periods, reviews);
+  for (const key of ['alarm', 'watch', 'normal']) $(`count-${key}`).textContent = counts[key];
+  $('count-total').textContent = periods.length;
+  const by = status => periods.filter(p => statusOf(p.max_crit) === status);
+  const waiting = p => p.alerts.some(a => awaitingReview(reviews, a.id));
+  const urgent = by('alarm').sort((a, b) => waiting(b) - waiting(a) || b.max_crit - a.max_crit);
+  const shown = showAllInspect ? urgent : urgent.slice(0, SHOWN);
+  $('inspect-cards').replaceChildren(...shown.map(p => el('a', { class: 'card turbine-card', href: `#/period/${p.key}` },
+    el('div', { class: 'top' }, pill('alarm'), el('span', {}, p.alerts[0] ? `Since ${formatMoment(p.alerts[0].start)}` : span(p))),
+    el('div', { class: 'name' }, turbineName(p)),
+    el('div', { class: 'finding' }, finding(p)),
+    el('div', { class: 'foot' },
+      el('span', {}, el('span', { class: 'caption' }, 'Check first: '), el('strong', {}, p.look_first || 'see details')),
+      el('span', { class: 'open' }, waiting(p) ? 'Decide' : 'Open')))));
+  $('inspect-more').hidden = urgent.length <= SHOWN;
+  $('inspect-more').textContent = showAllInspect ? 'Show fewer' : `Show all ${urgent.length}`;
+  const row = p => el('a', { class: 'row', href: `#/period/${p.key}` },
+    pill(statusOf(p.max_crit)), el('strong', {}, turbineName(p)),
+    el('span', { class: 'text' }, statusOf(p.max_crit) === 'watch' ? `Small changes building · ${span(p)}` : span(p)));
+  const watch = by('watch').sort((a, b) => b.max_crit - a.max_crit);
+  const watchShown = showAllWatch ? watch : watch.slice(0, SHOWN);
+  $('watch-rows').replaceChildren(...(watch.length ? watchShown.map(row) : [el('p', { class: 'row caption' }, 'Nothing to keep an eye on.')]),
+    watch.length > SHOWN ? el('button', { type: 'button', class: 'more', onclick: () => { showAllWatch = !showAllWatch; renderFleet(); } },
+      showAllWatch ? 'Show fewer' : `Show all ${watch.length}`) : null);
+  const normal = by('normal');
+  $('normal-summary').textContent = `${normal.length} periods stayed normal`;
+  $('normal-rows').replaceChildren(...normal.map(row));
+}
+
+// ---------- Turbine period ----------
+function peakIndex(crit) {
+  let best = 0;
+  for (let i = 1; i < crit.length; i++) if (crit[i] > crit[best]) best = i;
+  return best;
+}
 async function showPeriod(key) {
   stop();
   const summary = fleet.periods.find(p => p.key === key);
-  if (!summary) { message('That monitoring period is not in the replay data.', true); location.hash = '#/'; return; }
-  message('Loading period…');
+  if (!summary) { message('That turbine period is not in the replay data.', true); location.hash = '#/'; return; }
+  message('Loading turbine…');
   period = await periodData(key);
+  period.summary = summary;
   period.times = period.hours.map(Date.parse);
   message('');
-  $('period-eyebrow').textContent = `${period.farm.toUpperCase()} · TURBINE ${period.asset}`;
-  $('period-title').textContent = `Monitoring period ${period.key}`;
-  const fault = period.fault;
-  $('period-summary').textContent = fault
-    ? `Recorded fault: ${fault.description} (period ${formatTime(fault.start)} to ${formatTime(fault.end)}).`
-    : 'No fault recorded in this period.';
+  $('period-eyebrow').textContent = `${turbineName(period)} · ${span(summary)}`;
   const keys = Object.keys(period.series);
   $('sensor').replaceChildren(...keys.map(i => el('option', { value: i }, period.sensors[i].description)));
-  sensor = keys[0] ?? null;
   $('cursor').max = period.hours.length - 1;
-  setCursor(period.hours.length - 1);
-  renderPeriodAlerts();
+  $('how-decided').open = false;
+  const peak = peakIndex(period.crit);
+  // Chart the strongest finding first, falling back to any sensor with a series.
+  sensor = String((period.top[peak] || []).map(([i]) => i).find(i => period.series[i]) ?? keys[0] ?? '') || null;
+  if (sensor) $('sensor').value = sensor;
+  setCursor(peak);
+  renderWhatNext();
+}
+function raisedAt(index) {
+  return period.alerts.filter(a => Date.parse(a.start) <= period.times[index]).at(-1) ?? null;
 }
 function setCursor(index) {
   cursor = Math.max(0, Math.min(index, period.hours.length - 1));
   $('cursor').value = cursor;
   const crit = period.crit[cursor], status = statusOf(crit, period.alarm_level);
-  $('clock').textContent = `Showing ${formatTime(period.hours[cursor])} UTC`;
+  $('clock').textContent = `Showing ${formatMoment(period.hours[cursor])} UTC`;
   $('crit-value').textContent = `${Math.min(crit, period.alarm_level)} / ${period.alarm_level}`;
   $('crit-bar').style.width = `${Math.min(100, crit / period.alarm_level * 100)}%`;
-  $('crit-bar').className = status;
-  $('period-status').replaceWith(Object.assign(pill(status), { id: 'period-status' }));
-  // Alarms stay visible after the counter falls, as in plant alarm systems, until reviewed.
-  const raised = period.alerts.filter(a => Date.parse(a.start) <= period.times[cursor]).at(-1);
-  const open = raised && awaitingReview(reviews, raised.id);
-  $('period-latch').hidden = !raised || status === 'alarm';
-  if (raised) $('period-latch').textContent = `Alarm raised ${formatTime(raised.start)}${open ? ' · awaiting review' : ''}`;
+  $('period-status').replaceChildren(pill(status));
+  const top = (period.top[cursor] || []).map(([index]) => period.sensors[index]);
+  const component = top.find(s => s.component !== 'Operating conditions')?.component;
+  const raised = raisedAt(cursor);
+  $('period-title').textContent = status === 'normal'
+    ? 'Behaving normally at this time'
+    : status === 'watch' ? 'Small changes are building' : `${component ?? 'Several'} readings differ from normal`;
+  $('period-summary').textContent = raised
+    ? `Unusual since ${formatMoment(raised.start)}. Showing ${formatMoment(period.hours[cursor])}.`
+    : `Showing ${formatMoment(period.hours[cursor])}.`;
+  renderFindings();
   renderScoreChart();
-  renderLookFirst();
   renderSensorChart();
+  renderDecision();
 }
-function frame(width, height) {
-  return svg('svg', { viewBox: `0 0 ${width} ${height}`, role: 'img' });
+function renderFindings() {
+  const top = (period.top[cursor] || []).slice(0, 3);
+  $('noticed-note').textContent = period.crit[cursor] < WATCH
+    ? 'No warning at this time. These are the largest small differences.'
+    : 'The sensors furthest from what is normal for this turbine.';
+  $('findings').replaceChildren(...top.map(([index]) => {
+    const info = period.sensors[index];
+    const series = period.series[index];
+    const actual = series?.actual[cursor], expected = series?.expected[cursor];
+    const context = info.component === 'Operating conditions';
+    const selected = String(index) === sensor;
+    return el('div', { class: `card${selected ? ' selected' : ''}`, style: 'padding: 16px 20px' },
+      el('button', { type: 'button', class: 'finding-row', 'aria-pressed': String(selected),
+        onclick: () => { if (series) { sensor = String(index); $('sensor').value = sensor; renderFindings(); renderSensorChart(); } } },
+        el('span', { class: 'what' }, el('strong', {}, info.description),
+          el('span', {}, describeDeviation(actual, expected, info.unit)),
+          el('small', {}, context ? 'Operating conditions: context, not equipment health' : info.component)),
+        Number.isFinite(actual) && Number.isFinite(expected)
+          ? el('span', { class: 'nums' },
+            el('div', {}, el('span', {}, 'Now'), el('strong', { class: 'now' }, formatValue(actual, info.unit))),
+            el('div', {}, el('span', {}, 'Normal'), el('strong', {}, formatValue(expected, info.unit))))
+          : null));
+  }));
+}
+function renderDecision() {
+  const alert = raisedAt(cursor) ?? period.alerts[0];
+  if (!alert) {
+    $('period-decision').replaceChildren(el('p', { class: 'caption' }, 'No alert was raised in this period, so there is nothing to decide.'));
+    return;
+  }
+  const full = { ...period.summary.alerts.find(a => a.id === alert.id), period: period.summary };
+  $('period-decision').replaceChildren(
+    el('p', { class: 'caption' }, `Alert raised ${formatMoment(alert.start)}`),
+    decisionControls(full, () => { renderDecision(); }));
+}
+function renderWhatNext() {
+  const fault = period.fault;
+  $('what-next').hidden = !fault;
+  if (fault) {
+    $('what-next-text').textContent = `This is historical data, so we know a fault was recorded: ${fault.description} (from ${formatMoment(fault.start)}). ${describeLead(warningLead(period.alerts, fault))}`;
+  }
+}
+function frame(width, height, label) {
+  return svg('svg', { viewBox: `0 0 ${width} ${height}`, role: 'img', 'aria-label': label });
 }
 function renderScoreChart() {
-  const W = 960, H = 230, L = 50, R = 16, T = 14, B = 30;
+  const W = 640, H = 200, L = 12, R = 12, T = 10, B = 26;
   const t0 = period.times[0], t1 = period.times.at(-1);
   const high = upperBound(period.score, period.threshold);
   const x = t => L + (t - t0) / (t1 - t0 || 1) * (W - L - R);
   const y = v => T + (1 - Math.min(v, high) / high) * (H - T - B);
-  const chart = frame(W, H);
-  chart.setAttribute('aria-label', 'Warning score over time with threshold, recorded fault period and alarms');
+  const chart = frame(W, H, 'Unusualness over time with the threshold and recorded fault period');
   if (period.fault) {
     const a = x(Math.max(t0, Date.parse(period.fault.start))), b = x(Math.min(t1, Date.parse(period.fault.end)));
-    if (b > a) chart.append(svg('rect', { x: a, y: T, width: b - a, height: H - T - B, fill: '#f3e3c3' }));
+    if (b > a) chart.append(svg('rect', { x: a, y: T, width: b - a, height: H - T - B, fill: '#E3F2FB' }));
   }
-  chart.append(svg('line', { x1: L, x2: W - R, y1: y(period.threshold), y2: y(period.threshold), stroke: '#a53328', 'stroke-dasharray': '5 4' }));
+  chart.append(svg('line', { x1: L, x2: W - R, y1: y(period.threshold), y2: y(period.threshold), stroke: '#01507F', 'stroke-dasharray': '5 4' }));
   const shown = period.score.map((v, i) => (i <= cursor ? v : null));
-  chart.append(svg('path', { d: linePath(period.times, shown, x, y), fill: 'none', stroke: '#205c4b', 'stroke-width': 2 }));
-  for (const alert of period.alerts) {
-    const t = Date.parse(alert.start);
-    if (t <= period.times[cursor]) chart.append(svg('line', { x1: x(t), x2: x(t), y1: T, y2: H - B, stroke: '#a53328', 'stroke-width': 2 }));
-  }
-  chart.append(svg('line', { x1: x(period.times[cursor]), x2: x(period.times[cursor]), y1: T, y2: H - B, stroke: '#203b37', 'stroke-dasharray': '2 3' }));
-  chart.append(svg('text', { x: L, y: H - 8 }, formatTime(period.hours[0]).slice(0, 10)));
-  chart.append(svg('text', { x: W - R, y: H - 8, 'text-anchor': 'end' }, formatTime(period.hours.at(-1)).slice(0, 10)));
+  chart.append(svg('path', { d: linePath(period.times, shown, x, y), fill: 'none', stroke: '#0272B8', 'stroke-width': 2 }));
+  chart.append(svg('line', { x1: x(period.times[cursor]), x2: x(period.times[cursor]), y1: T, y2: H - B, stroke: '#0F2133', 'stroke-dasharray': '2 3' }));
+  chart.append(svg('text', { x: L, y: H - 8 }, formatDate(period.hours[0])));
+  chart.append(svg('text', { x: W - R, y: H - 8, 'text-anchor': 'end' }, formatDate(period.hours.at(-1))));
   $('score-chart').replaceChildren(chart);
-}
-function renderLookFirst() {
-  const top = period.top[cursor] || [];
-  if (period.crit[cursor] < WATCH) {
-    $('look-first').replaceChildren(el('li', { class: 'caption' }, 'No warning at this time. The list appears when the warning counter reaches watch level; the strongest deviations are still shown below.'));
-  } else $('look-first').replaceChildren();
-  const max = Math.max(...top.map(([, s]) => s), 0.01);
-  $('look-first').append(...top.map(([index, share]) => {
-    const info = period.sensors[index];
-    const context = info.component === 'Operating conditions';
-    const button = el('button', { type: 'button', 'aria-pressed': String(String(index) === sensor),
-      onclick: () => { if (period.series[index]) { sensor = String(index); $('sensor').value = sensor; renderSensorChart(); renderLookFirst(); } } },
-      el('span', { class: context ? 'context' : '' }, info.description, el('small', {}, context ? 'Operating conditions · context, not component health' : info.component)),
-      el('span', { class: 'bar' }, el('i', { style: `width:${share / max * 100}%` })),
-      el('span', {}, `${Math.round(share * 100)}%`));
-    return el('li', {}, button);
-  }));
 }
 function renderSensorChart() {
   if (sensor === null || !period.series[sensor]) { $('sensor-chart').replaceChildren(el('p', { class: 'caption' }, 'Choose a sensor.')); return; }
+  const info = period.sensors[sensor];
+  $('sensor-title').textContent = info.description;
   const { actual, expected } = period.series[sensor];
-  const W = 640, H = 220, L = 54, R = 12, T = 12, B = 28;
+  const W = 720, H = 240, L = 64, R = 12, T = 14, B = 28;
   const values = [...actual, ...expected].filter(Number.isFinite);
   let low = Math.min(...values), high = Math.max(...values);
   const pad = (high - low) * 0.1 || 1; low -= pad; high += pad;
   const t0 = period.times[0], t1 = period.times.at(-1);
   const x = t => L + (t - t0) / (t1 - t0 || 1) * (W - L - R);
   const y = v => T + (high - v) / (high - low) * (H - T - B);
-  const chart = frame(W, H);
-  chart.setAttribute('aria-label', `${period.sensors[sensor].description}: actual and expected values`);
-  const upto = arr => arr.map((v, i) => (i <= cursor ? v : null));
-  chart.append(svg('path', { d: linePath(period.times, upto(expected), x, y), fill: 'none', stroke: '#7d8f86', 'stroke-dasharray': '5 4', 'stroke-width': 1.5 }));
-  chart.append(svg('path', { d: linePath(period.times, upto(actual), x, y), fill: 'none', stroke: '#205c4b', 'stroke-width': 2 }));
-  const unit = period.sensors[sensor].unit;
+  const chart = frame(W, H, `${info.description}: actual reading and normal level`);
+  for (const alert of period.alerts) {
+    const t = Date.parse(alert.start);
+    chart.append(svg('line', { x1: x(t), x2: x(t), y1: T, y2: H - B, stroke: '#0F2133', 'stroke-width': 2 }));
+  }
+  chart.append(svg('line', { x1: x(period.times[cursor]), x2: x(period.times[cursor]), y1: T, y2: H - B, stroke: '#50647A', 'stroke-dasharray': '2 3' }));
+  chart.append(svg('path', { d: linePath(period.times, expected, x, y), fill: 'none', stroke: '#6B7F93', 'stroke-dasharray': '6 4', 'stroke-width': 2 }));
+  chart.append(svg('path', { d: linePath(period.times, actual, x, y), fill: 'none', stroke: '#0272B8', 'stroke-width': 2.5 }));
+  const unit = cleanUnit(info.unit);
   chart.append(svg('text', { x: 4, y: T + 10 }, `${high.toPrecision(3)} ${unit}`));
   chart.append(svg('text', { x: 4, y: H - B }, `${low.toPrecision(3)} ${unit}`));
+  chart.append(svg('text', { x: L, y: H - 8 }, formatDate(period.hours[0])));
+  chart.append(svg('text', { x: W - R, y: H - 8, 'text-anchor': 'end' }, formatDate(period.hours.at(-1))));
   $('sensor-chart').replaceChildren(chart);
-}
-function renderPeriodAlerts() {
-  if (!period.alerts.length) { $('period-alerts').replaceChildren(el('p', { class: 'caption' }, 'No alarm was raised in this period.')); return; }
-  $('period-alerts').replaceChildren(...period.alerts.map(alert => {
-    const last = latestReview(reviews, alert.id);
-    const lead = period.fault ? (Date.parse(period.fault.end) - Date.parse(alert.start)) / 3600e3 : null;
-    return el('div', { class: 'period-alert' },
-      el('span', {}, el('strong', {}, formatTime(alert.start)), ` · ${period.sensors[alert.top[0]?.[0]]?.component ?? 'Other'}`,
-        lead !== null && lead > 0 ? el('small', {}, ` ${formatHours(lead)} before the recorded fault period ended`) : null),
-      el('span', {}, last ? pill('done', ACTION_LABEL[last.action]) : pill('alarm', 'Awaiting review'), ' ',
-        el('a', { href: `#/alerts/${alert.id}` }, 'Review')));
-  }));
 }
 function stop() {
   if (timer) clearInterval(timer);
@@ -206,83 +298,80 @@ function togglePlay() {
 
 // ---------- Alerts ----------
 function renderAlerts(focus) {
-  const filter = $('alert-filter').value;
-  const alerts = allAlerts().filter(a => filter === 'all' || awaitingReview(reviews, a.id) || a.id === focus)
+  $('show-awaiting').setAttribute('aria-pressed', String(!showAllAlerts));
+  $('show-all').setAttribute('aria-pressed', String(showAllAlerts));
+  const alerts = allAlerts().filter(a => showAllAlerts || awaitingReview(reviews, a.id) || a.id === focus)
     .sort((a, b) => b.peak - a.peak);
   $('alerts-empty').hidden = alerts.length > 0;
   $('alert-list').replaceChildren(...alerts.map(alert => alertCard(alert)));
   if (focus) document.getElementById(`alert-${focus}`)?.scrollIntoView({ block: 'center' });
 }
 function alertCard(alert) {
-  const last = latestReview(reviews, alert.id);
-  const notes = el('textarea', { rows: 2, maxLength: 2000, placeholder: 'What did you see or decide?', 'aria-label': `Notes for ${alert.id}` });
-  const error = el('p', { class: 'error', role: 'status' });
-  notes.addEventListener('input', () => { error.textContent = ''; });
-  const decide = action => async event => {
-    event.preventDefault();
-    if (action === 'dismissed' && !notes.value.trim()) { error.textContent = 'Add a reason before dismissing.'; notes.focus(); return; }
-    try {
-      reviews = (await api('/api/care/review', { alert: alert.id, action, comment: notes.value })).reviews;
-      updateCount();
-      message(`${alert.id}: ${ACTION_LABEL[action].toLowerCase()}.`);
-      renderAlerts(alert.id);
-    } catch (e) { error.textContent = e.message; }
-  };
   const history = reviews.filter(r => r.alert === alert.id);
-  const actions = last && last.action !== 'open'
-    ? [el('button', { class: 'quiet', onclick: decide('open') }, 'Reopen for review')]
-    : [el('button', { onclick: decide('inspect') }, 'Send for inspection'),
-      el('button', { class: 'quiet', onclick: decide('acknowledged') }, 'Acknowledge'),
-      el('button', { class: 'quiet', onclick: decide('dismissed') }, 'Dismiss')];
-  return el('article', { class: 'alert-card', id: `alert-${alert.id}` },
-    el('header', {},
-      el('div', {}, el('h3', {}, `${alert.period.key} · alert ${alert.id.split('-').at(-1)} · ${alert.component}`),
-        el('p', { class: 'caption' }, `Raised ${formatTime(alert.start)} UTC · ${alert.period.farm}, turbine ${alert.period.asset} · ${alert.peak >= 1000 ? 'warning counter reached its maximum' : `warning counter peaked at ${alert.peak}`}`)),
-      last ? pill('done', ACTION_LABEL[last.action]) : pill('alarm', 'Awaiting review')),
-    el('p', {}, 'Look here first: ', alert.top.join(', ') || '—'),
-    el('p', {}, el('a', { href: `#/period/${alert.period.key}` }, 'Open the period replay')),
-    el('form', { onsubmit: e => e.preventDefault() }, notes, el('div', { class: 'actions' }, ...actions), error),
-    history.length ? el('div', { class: 'history' }, ...history.map(r => el('div', {},
-      `${formatTime(r.created)} · ${ACTION_LABEL[r.action]}${r.comment ? ` · “${r.comment}”` : ''}`))) : null);
+  const last = latestReview(reviews, alert.id);
+  return el('article', { class: 'card alert-card', id: `alert-${alert.id}` },
+    el('div', { class: 'head' },
+      last && last.action !== 'open' ? pill('done', ACTION_LABEL[last.action]) : pill('alarm'),
+      el('div', { class: 'what' },
+        el('a', { href: `#/period/${alert.period.key}` }, turbineName(alert.period)),
+        el('span', {}, `Check first: ${alert.component}. ${alert.top?.length ? `Biggest changes: ${listText(alert.top)}.` : ''}`)),
+      el('span', { class: 'caption' }, `Since ${formatMoment(alert.start)}`)),
+    decisionControls(alert, () => renderAlerts(alert.id)),
+    history.length > 1 ? el('div', { class: 'history' }, el('strong', {}, 'History'), ...history.map(r =>
+      el('span', {}, `${formatMoment(r.created)} · ${ACTION_LABEL[r.action]}${r.comment ? ` · “${r.comment}”` : ''}`))) : null);
+}
+
+// ---------- Results ----------
+function renderResults() {
+  const cases = fleet.periods.filter(p => p.recorded_fault).map(p => ({ p, lead: warningLead(p.alerts, p.recorded_fault) }))
+    .sort((a, b) => (b.lead ?? -1e9) - (a.lead ?? -1e9));
+  $('case-rows').replaceChildren(...cases.map(({ p, lead }) => el('tr', {},
+    el('td', {}, el('a', { href: `#/period/${p.key}` }, turbineName(p))),
+    el('td', { class: 'text', title: p.recorded_fault.description }, p.recorded_fault.description.length > 56
+      ? `${p.recorded_fault.description.slice(0, 55)}…` : p.recorded_fault.description),
+    el('td', { class: 'text' }, p.alerts[0] ? formatMoment(p.alerts[0].start) : 'None'),
+    el('td', { class: 'text' }, lead === null ? 'No alarm' : describeLead(lead).replace('Flagged ', '').replace(' the recorded fault started.', '')))));
 }
 
 // ---------- Routing ----------
 async function route() {
   const [, view = '', id = ''] = location.hash.split('/');
-  for (const name of ['fleet', 'period', 'alerts']) $(`view-${name}`).hidden = true;
+  for (const name of ['fleet', 'period', 'alerts', 'results']) $(`view-${name}`).hidden = true;
   for (const link of document.querySelectorAll('[data-nav]')) link.removeAttribute('aria-current');
+  const current = name => document.querySelector(`[data-nav=${name}]`)?.setAttribute('aria-current', 'page');
   try {
     if (view === 'period' && id) { $('view-period').hidden = false; await showPeriod(decodeURIComponent(id)); }
     else if (view === 'alerts') {
-      stop();
-      $('view-alerts').hidden = false;
-      document.querySelector('[data-nav=alerts]').setAttribute('aria-current', 'page');
+      stop(); $('view-alerts').hidden = false; current('alerts');
       renderAlerts(id ? decodeURIComponent(id) : null);
+    } else if (view === 'results') {
+      stop(); $('view-results').hidden = false; current('results'); renderResults();
     } else {
-      stop();
-      $('view-fleet').hidden = false;
-      document.querySelector('[data-nav=fleet]').setAttribute('aria-current', 'page');
-      renderFleet();
+      stop(); $('view-fleet').hidden = false; current('fleet'); renderFleet();
     }
-    window.scrollTo(0, 0);
+    if (!id) window.scrollTo(0, 0);
   } catch (error) { message(error.message, true); }
 }
 
 $('filter-farm').onchange = renderFleet;
-$('filter-status').onchange = renderFleet;
-$('alert-filter').onchange = () => renderAlerts();
+$('inspect-more').onclick = () => { showAllInspect = !showAllInspect; renderFleet(); };
+$('show-awaiting').onclick = () => { showAllAlerts = false; renderAlerts(); };
+$('show-all').onclick = () => { showAllAlerts = true; renderAlerts(); };
 $('play').onclick = togglePlay;
 $('cursor').oninput = () => { stop(); setCursor(Number($('cursor').value)); };
-$('sensor').onchange = () => { sensor = $('sensor').value; renderSensorChart(); renderLookFirst(); };
+$('sensor').onchange = () => { sensor = $('sensor').value; renderFindings(); renderSensorChart(); };
 $('logout').onclick = async () => {
   await fetch('/api/auth/logout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
-  location.replace('/auth.html');
+  location.replace('/');
 };
 window.addEventListener('hashchange', route);
 
 try {
   message('Loading replay data…');
-  [fleet, { reviews }] = await Promise.all([api('care-data/fleet.json'), api('/api/care/reviews')]);
+  const [{ user }, data, saved] = await Promise.all([api('/api/auth/me'), api('care-data/fleet.json'), api('/api/care/reviews')]);
+  fleet = data; reviews = saved.reviews;
+  $('role').textContent = user.role === 'ml_engineer' ? 'ML Engineer' : 'Operator';
+  for (const node of document.querySelectorAll('[data-role]')) node.hidden = node.dataset.role !== user.role;
   message('');
   updateCount();
   await route();
