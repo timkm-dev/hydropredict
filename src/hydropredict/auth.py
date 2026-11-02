@@ -7,7 +7,7 @@ import re
 import secrets
 import sqlite3
 import time
-from collections.abc import Iterable, Iterator
+from collections.abc import Iterator
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
@@ -36,11 +36,12 @@ OPERATOR = "operator"
 ML_ENGINEER = "ml_engineer"
 
 
+ROLES = {OPERATOR, ML_ENGINEER}
+
+
 class AuthStore:
-    def __init__(self, path: Path | str, ml_engineers: Iterable[str] = ()) -> None:
+    def __init__(self, path: Path | str) -> None:
         self.path = path
-        # Roles come from server configuration only, never from self-entered profile fields.
-        self.ml_engineers = frozenset(e.strip().lower() for e in ml_engineers if e.strip())
         self.postgres = isinstance(path, str) and path.startswith(("postgresql://", "postgres://"))
         if not self.postgres:
             Path(path).parent.mkdir(parents=True, exist_ok=True)
@@ -76,6 +77,14 @@ class AuthStore:
                     link_user BIGINT REFERENCES users(id), expires DOUBLE PRECISION NOT NULL
                 );
             """)
+            # Prototype roles are self-selected in the profile (issue #14); add to older tables.
+            if self.postgres:
+                db.execute(
+                    "ALTER TABLE users ADD COLUMN IF NOT EXISTS role TEXT NOT NULL "
+                    f"DEFAULT '{OPERATOR}'"
+                )
+            elif "role" not in {row["name"] for row in db.execute("PRAGMA table_info(users)")}:
+                db.execute(f"ALTER TABLE users ADD COLUMN role TEXT NOT NULL DEFAULT '{OPERATOR}'")
 
     @contextmanager
     def connect(self) -> Iterator[Any]:
@@ -235,17 +244,13 @@ class AuthStore:
     def user(self, token: str) -> dict[str, Any] | None:
         with self.connect() as db:
             row = db.execute(
-                "SELECT users.id, email, name, company, username, job_position, "
+                "SELECT users.id, email, name, company, username, job_position, role, "
                 "EXISTS(SELECT 1 FROM external_identities WHERE provider='google' "
                 "AND user_id=users.id) AS google_connected FROM users "
                 "JOIN sessions ON users.id = sessions.user_id WHERE token = ? AND expires > ?",
                 (hashlib.sha256(token.encode()).hexdigest(), time.time()),
             ).fetchone()
-        if not row:
-            return None
-        user = dict(row)
-        user["role"] = ML_ENGINEER if user["email"] in self.ml_engineers else OPERATOR
-        return user
+        return dict(row) if row else None
 
     def logout(self, token: str) -> None:
         with self.connect() as db:
@@ -264,11 +269,15 @@ class AuthStore:
         values[2] = values[2].lower()
         if not re.fullmatch(r"[a-z0-9_]{3,30}", values[2]):
             raise ValueError("Username must be 3–30 letters, numbers, or underscores.")
+        role = data.get("role", OPERATOR)
+        if role not in ROLES:
+            raise ValueError("Choose Maintenance Operator or ML Engineer.")
         try:
             with self.connect() as db:
                 db.execute(
-                    "UPDATE users SET name=?, company=?, username=?, job_position=? WHERE id=?",
-                    (*values, user_id),
+                    "UPDATE users SET name=?, company=?, username=?, job_position=?, role=? "
+                    "WHERE id=?",
+                    (*values, role, user_id),
                 )
         except (sqlite3.IntegrityError, psycopg.IntegrityError) as error:
             raise ValueError("This username is already taken.") from error

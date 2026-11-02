@@ -248,9 +248,10 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             '<link rel="icon" href="/logo.svg" type="image/svg+xml">'
             '<link rel="stylesheet" href="/theme.css"></head><body><main class="page">'
             '<div class="intro"><h1>This page is for ML Engineers</h1>'
-            "<p>Your account is a Maintenance Operator account. Ask the system administrator "
-            "if you need access to the models and research pages.</p></div>"
-            '<p><a class="btn" href="/care.html">Go to what needs attention</a></p>'
+            "<p>Your account is set up as a Maintenance Operator. To see the models and "
+            "research pages, change your role to ML Engineer in your profile.</p></div>"
+            '<p class="actions"><a class="btn" href="/auth.html?profile">Change my role</a>'
+            '<a class="btn secondary" href="/care.html">Go to what needs attention</a></p>'
             "</main></body></html>"
         ).encode()
         self.send_response(403)
@@ -488,10 +489,7 @@ def main() -> None:
     handler = partial(
         DashboardHandler,
         service=service,
-        auth=AuthStore(
-            args.auth_db if args.local_accounts else database_url or args.auth_db,
-            os.environ.get("ML_ENGINEER_EMAILS", "").split(","),
-        ),
+        auth=AuthStore(args.auth_db if args.local_accounts else database_url or args.auth_db),
         google=google,
         assessments=AssessmentStore(ROOT / "data/assessments.sqlite3"),
         bearing=bearing,

@@ -66,8 +66,8 @@ Models page and the hydro plant, bearing and hydro evidence pages under **Resear
 Local email/password and optional Google accounts with profile onboarding are
 implemented; alert and episode reviews persist per account in local SQLite.
 
-Roles: Maintenance Operator and ML Engineer, set by the server-side `ML_ENGINEER_EMAILS`
-setting ([frontend guide](frontend/README.md#roles-issue-14)).
+Roles: Maintenance Operator and ML Engineer, chosen by each user in their profile for this
+prototype and enforced by the server ([frontend guide](frontend/README.md#roles-issue-14)).
 
 Pending: live telemetry, production account recovery, model
 registry, drift monitoring and deployment. Fault-alignment labels are retrospective

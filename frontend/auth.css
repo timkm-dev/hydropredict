@@ -27,3 +27,4 @@
 .secondary{color:#0272B8;border-color:#0272B8}
 .secondary:hover{background:#E3F2FB}
 :is(a,button,input):focus-visible{outline:3px solid #0272B8;outline-offset:2px}
+.auth-card .role-select{box-sizing:border-box;width:100%;min-height:48px;padding:0 12px;background:#fff;border:1px solid #B9D3E6;border-radius:7px;font:inherit;font-size:14px;color:#0F2133}

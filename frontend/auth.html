@@ -7,8 +7,8 @@
   <link rel="icon" href="logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="styles.css?v=google-2">
-  <link rel="stylesheet" href="auth.css?v=theme-1">
-  <script type="module" src="auth.js?v=google-2"></script>
+  <link rel="stylesheet" href="auth.css?v=role-1">
+  <script type="module" src="auth.js?v=role-1"></script>
 </head>
 <body class="auth-page">
   <section class="auth-story">
@@ -46,11 +46,16 @@
         <label for="username">Username</label><input id="username" name="username" autocomplete="username" pattern="[a-zA-Z0-9_]{3,30}" minlength="3" maxlength="30" required>
         <p class="field-help">3–30 letters, numbers, or underscores.</p>
         <label for="job-position">Job position</label><input id="job-position" name="job_position" autocomplete="organization-title" placeholder="e.g. Maintenance engineer" maxlength="100" required>
+        <label for="role">Role in this app</label>
+        <select id="role" name="role" class="role-select">
+          <option value="operator">Maintenance Operator: what to check and alert decisions</option>
+          <option value="ml_engineer">ML Engineer: also models and research pages</option>
+        </select>
         <button class="button primary auth-submit">Save profile &amp; continue</button>
         <button type="button" class="text-button" id="profile-signout">Sign out</button>
       </form>
       <p id="auth-message" role="status" aria-live="polite"></p>
-      <p class="auth-footnote">New accounts start as Maintenance Operators.</p>
+      <p class="auth-footnote">You can change your name, company or role at any time from Account.</p>
     </div>
   </main>
 </body>

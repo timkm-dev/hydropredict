@@ -40,12 +40,11 @@ detects unusual behaviour but does not classify faults.
 | Models page | no | yes |
 | Research pages, `evidence-data.json` and model-scoring APIs | no | yes |
 
-Every account is a Maintenance Operator unless its email is listed in the
-`ML_ENGINEER_EMAILS` setting (comma-separated, in the environment or `.env`). The
-role is decided on the server for every request; profile fields such as job
-position never grant it. Change the list and restart the server to change roles.
-Email addresses are not verified for password accounts, so only list addresses
-whose accounts already exist, or that sign in with Google.
+Each person chooses their role in their profile (**Role in this app**); new accounts
+start as Maintenance Operators. This is deliberately permissive for the prototype:
+anyone can choose ML Engineer. The server still checks the stored role on every
+request, so the pages and APIs above are only reachable after choosing it. A
+production version would need roles assigned by an administrator.
 
 The replay data is generated locally and ignored by Git (derived from CC BY-SA 4.0
 data). Build it once after the CARE models exist (about 15 minutes on a laptop); the dataset

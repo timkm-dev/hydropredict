@@ -41,7 +41,7 @@ def records() -> list[dict[str, Any]]:
 
 
 def test_saved_assessment_http_flow(service: InferenceService, tmp_path: Path) -> None:
-    auth = AuthStore(tmp_path / "accounts.sqlite3", ["review@example.com"])
+    auth = AuthStore(tmp_path / "accounts.sqlite3")
     token = auth.register({"email": "review@example.com", "password": "long test password"})
     user = auth.user(token)
     assert user is not None
@@ -52,6 +52,7 @@ def test_saved_assessment_http_flow(service: InferenceService, tmp_path: Path) -
             "company": "Test",
             "username": "reviewer",
             "job_position": "Engineer",
+            "role": "ml_engineer",
         },
     )
     store = AssessmentStore(tmp_path / "assessments.sqlite3")
@@ -188,7 +189,7 @@ def test_hosted_origin_and_secure_cookie(service: InferenceService, tmp_path: Pa
 
 
 def test_authenticated_http_flow(service: InferenceService, tmp_path: Path) -> None:
-    auth = AuthStore(tmp_path / "accounts.sqlite3", ["Test@Example.com "])
+    auth = AuthStore(tmp_path / "accounts.sqlite3")
     handler = partial(DashboardHandler, service=service, auth=auth)
     with HTTPServer(("127.0.0.1", 0), handler) as server:
         worker = threading.Thread(target=server.serve_forever, daemon=True)
@@ -226,6 +227,7 @@ def test_authenticated_http_flow(service: InferenceService, tmp_path: Path) -> N
                 "company": "Hydro",
                 "username": "tester",
                 "job_position": "Engineer",
+                "role": "ml_engineer",
             }
             connection.request("POST", "/api/auth/profile", json.dumps(profile), headers)
             response = connection.getresponse()
@@ -299,7 +301,7 @@ def test_care_replay_data_and_alert_reviews(service: InferenceService, tmp_path:
 
 
 def test_role_permissions(service: InferenceService, tmp_path: Path) -> None:
-    auth = AuthStore(tmp_path / "accounts.sqlite3", ["ml@example.com"])
+    auth = AuthStore(tmp_path / "accounts.sqlite3")
     handler = partial(
         DashboardHandler,
         service=service,
@@ -317,19 +319,23 @@ def test_role_permissions(service: InferenceService, tmp_path: Path) -> None:
             response = connection.getresponse()
             return response.status, response.getheader("Set-Cookie"), response.read()
 
-        def account(email: str, username: str) -> str:
+        def account(email: str, username: str, role: str | None) -> str:
             credentials = {"email": email, "password": "a long test password"}
             cookie = call("POST", "/api/auth/register", credentials)[1].split(";", 1)[0]
             profile = {"name": "N", "company": "C", "username": username, "job_position": "ML"}
+            if role:
+                profile["role"] = role
             assert call("POST", "/api/auth/profile", profile, cookie)[0] == 200
             return cookie
 
         try:
-            operator = account("operator@example.com", "operator")
-            engineer = account("ml@example.com", "engineer")
+            # Without a chosen role an account is a Maintenance Operator.
+            operator = account("operator@example.com", "operator", None)
+            engineer = account("ml@example.com", "engineer", "ml_engineer")
             me = json.loads(call("GET", "/api/auth/me", cookie=operator)[2])["user"]
-            # A self-entered job title of "ML" does not grant the role.
             assert me["role"] == "operator"
+            bad = {"name": "N", "company": "C", "username": "operator", "job_position": "x"}
+            assert call("POST", "/api/auth/profile", {**bad, "role": "admin"}, operator)[0] == 400
             assert json.loads(call("GET", "/api/auth/me", cookie=engineer)[2])["user"]["role"] == (
                 "ml_engineer"
             )
@@ -344,6 +350,10 @@ def test_role_permissions(service: InferenceService, tmp_path: Path) -> None:
                 assert call("GET", path, cookie=engineer)[0] == 200
             assert call("POST", "/api/score", {"records": records()}, engineer)[0] == 200
             assert call("GET", "/api/runs", cookie=engineer)[0] == 200
+            # Switching role in the profile takes effect on the next request.
+            switch = {**bad, "role": "operator", "username": "engineer"}
+            assert call("POST", "/api/auth/profile", switch, engineer)[0] == 200
+            assert call("GET", "/api/model", cookie=engineer)[0] == 403
         finally:
             connection.close()
             server.shutdown()

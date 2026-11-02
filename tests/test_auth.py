@@ -1,6 +1,7 @@
 """Account persistence, password storage, profile ownership and session boundaries."""
 
 import hashlib
+import sqlite3
 import time
 from pathlib import Path
 
@@ -57,3 +58,19 @@ def test_profile_validation_and_login_limit(tmp_path: Path) -> None:
             store.login({"email": "a@example.com", "password": "bad"})
     with pytest.raises(ValueError, match="Too many"):
         store.login({"email": "a@example.com", "password": "long passphrase here"})
+
+
+def test_existing_accounts_gain_operator_role(tmp_path: Path) -> None:
+    path = tmp_path / "accounts.sqlite3"
+    with sqlite3.connect(path) as db:
+        db.execute(
+            "CREATE TABLE users (id INTEGER PRIMARY KEY, email TEXT UNIQUE NOT NULL, "
+            "password TEXT NOT NULL, name TEXT NOT NULL DEFAULT '', company TEXT NOT NULL "
+            "DEFAULT '', username TEXT UNIQUE, job_position TEXT NOT NULL DEFAULT '')"
+        )
+        db.execute("INSERT INTO users(email, password) VALUES ('old@example.com', '!')")
+    db.close()
+    store = AuthStore(path)
+    AuthStore(path)  # Reopening must not try to add the column twice.
+    with store.connect() as db:
+        assert db.execute("SELECT role FROM users").fetchone()["role"] == "operator"
