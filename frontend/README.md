@@ -20,10 +20,11 @@ rule), **Watch** from 24 (a display rule only). An alarm stays marked after the
 counter falls until it is reviewed. Sensor component groups are for display only.
 
 The replay data is generated locally and ignored by Git (derived from CC BY-SA 4.0
-data). Build it once after the CARE models exist (about 15 minutes on a laptop):
+data). Build it once after the CARE models exist (about 15 minutes on a laptop); the dataset
+location comes from `CARE_DATA_DIR` in `.env`:
 
 ```powershell
-.venv/Scripts/python.exe -m scripts.build_care_app_data "C:\path\to\CARE_To_Compare" --scores .local/care-autoencoder-v1-all --models .local/care-autoencoder-v1-scores .local/care-autoencoder-v1-C-colab/scores --results docs/results/care-autoencoder-v1 --output frontend/care-data
+.venv/Scripts/python.exe -m scripts.build_care_app_data --scores .local/care-autoencoder-v1-all --models .local/care-autoencoder-v1-scores .local/care-autoencoder-v1-C-colab/scores --results docs/results/care-autoencoder-v1 --output frontend/care-data
 ```
 
 The earlier hydro plant, bearing and evaluation pages remain under **Research**.

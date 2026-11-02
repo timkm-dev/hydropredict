@@ -8,6 +8,8 @@
 *.yml text eol=lf
 *.csv text eol=lf
 *.ps1 text eol=crlf
+*.sh text eol=lf
+Dockerfile text eol=lf
 
 *.png binary
 *.jpg binary

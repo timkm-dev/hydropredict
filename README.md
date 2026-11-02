@@ -188,6 +188,26 @@ hydropredict/
 `-- README.md                Project documentation
 ```
 
+## Data locations
+
+The CARE wind farm dataset (19 GB) lives outside the repository, by default in
+`C:\data\CARE_To_Compare`, set by `CARE_DATA_DIR` in `.env`. CARE scripts use that setting
+unless a folder is passed. On a new machine, download and verify it with progress
+bars (resumable; checks the published checksums):
+
+```powershell
+.venv/Scripts/python.exe -m scripts.acquire_care
+```
+
+The trained CARE autoencoders exist only in ignored `.local/` folders. Back them up
+after any retraining and keep the zip somewhere private, such as Google Drive:
+
+```powershell
+.venv/Scripts/python.exe -m scripts.backup_care_models                 # create
+.venv/Scripts/python.exe -m scripts.backup_care_models --verify ZIP    # check
+.venv/Scripts/python.exe -m scripts.backup_care_models --restore ZIP   # put back
+```
+
 ## Data Policy
 
 Raw data in `data/raw/` is immutable. Validation outputs belong in `data/processed/`, while invalid records belong in `data/quarantine/`. These directories are ignored by Git. Dataset checksums, provenance, and licenses are tracked in `data/dataset_manifest.csv`.

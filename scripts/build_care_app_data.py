@@ -15,6 +15,7 @@ import pandas as pd
 
 from hydropredict.analysis.care_explain import contribution_shares, display_component
 from hydropredict.analysis.care_score import criticality
+from hydropredict.data.care import care_root
 from scripts.explain_care_autoencoder import reconstruct
 from scripts.select_care_autoencoder import decide, load
 
@@ -146,7 +147,9 @@ def build(d, root, model_dirs, window, quantile):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("root", type=Path)
+    parser.add_argument(
+        "root", type=Path, nargs="?", help="CARE folder (default: CARE_DATA_DIR in .env)"
+    )
     parser.add_argument("--scores", type=Path, required=True, help="All 95 score files")
     parser.add_argument("--models", type=Path, nargs="+", required=True)
     parser.add_argument("--results", type=Path, required=True)
@@ -154,6 +157,7 @@ def main():
     parser.add_argument("--farms", nargs="+", default=["Wind Farm A", "Wind Farm B", "Wind Farm C"])
     parser.add_argument("--limit", type=int, help="Build only the first N periods (testing)")
     args = parser.parse_args()
+    args.root = care_root(args.root)
     selection = json.loads((args.results / "selection.json").read_text())
     datasets = load(args.root, args.scores, args.farms)[: args.limit]
     for d in datasets:

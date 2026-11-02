@@ -10,6 +10,7 @@ import pandas as pd
 import torch
 from torch import nn
 
+from hydropredict.data.care import care_root
 from scripts.train_care_baseline import digest
 
 NORMAL_STATUS = (0, 2)
@@ -169,13 +170,16 @@ def run_file(path, folder, out_dir, seed=42, device="cpu"):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("root", type=Path)
+    parser.add_argument(
+        "root", type=Path, nargs="?", help="CARE folder (default: CARE_DATA_DIR in .env)"
+    )
     parser.add_argument("--farms", nargs="+", required=True)
     parser.add_argument("--scores", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--device", default="cpu", help="cpu, cuda or auto")
     parser.add_argument("--events", nargs="*", type=int, help="Optional subset of event ids")
     args = parser.parse_args()
+    args.root = care_root(args.root)
     if args.device == "auto":
         args.device = "cuda" if torch.cuda.is_available() else "cpu"
     args.scores.mkdir(parents=True, exist_ok=True)

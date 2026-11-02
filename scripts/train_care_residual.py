@@ -11,6 +11,7 @@ import pandas as pd
 import sklearn
 from sklearn.ensemble import ExtraTreesRegressor
 
+from hydropredict.data.care import care_root
 from scripts.train_care_baseline import digest, episode_starts, persistent_alerts
 
 CONTEXT = {
@@ -102,10 +103,13 @@ def fit_monitor(frame, context, targets):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("root", type=Path)
+    parser.add_argument(
+        "root", type=Path, nargs="?", help="CARE folder (default: CARE_DATA_DIR in .env)"
+    )
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--models", type=Path, required=True)
     args = parser.parse_args()
+    args.root = care_root(args.root)
     args.output.mkdir(parents=True, exist_ok=False)
     args.models.mkdir(parents=True, exist_ok=False)
     started = time.monotonic()

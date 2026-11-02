@@ -13,6 +13,8 @@ import sklearn
 from sklearn.ensemble import IsolationForest
 from sklearn.impute import SimpleImputer
 
+from hydropredict.data.care import care_root
+
 
 def digest(path):
     h = hashlib.sha256()
@@ -136,10 +138,13 @@ def run_file(path, event, features, model_dir):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("root", type=Path)
+    parser.add_argument(
+        "root", type=Path, nargs="?", help="CARE folder (default: CARE_DATA_DIR in .env)"
+    )
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--models", type=Path, required=True)
     args = parser.parse_args()
+    args.root = care_root(args.root)
     args.output.mkdir(parents=True, exist_ok=False)
     args.models.mkdir(parents=True, exist_ok=False)
     started = time.monotonic()
