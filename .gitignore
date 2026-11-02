@@ -60,3 +60,6 @@ frontend/care-data/
 
 # Private mentor reports: shared only between the student and supervisor, never committed.
 docs/reports/
+
+# Hosted runtime package (scripts/package_runtime.py); kept in private Blob Storage.
+runtime.zip

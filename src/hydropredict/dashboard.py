@@ -1,4 +1,4 @@
-"""Loopback-only research dashboard and frozen LSTM CPU inference service."""
+"""Research dashboard and frozen LSTM CPU inference service (loopback unless hosted)."""
 
 from __future__ import annotations
 
@@ -106,6 +106,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         assessments: AssessmentStore | None = None,
         bearing: Any = None,
         care_data: Path = CARE_DATA,
+        public_origin: str | None = None,
         **kwargs: Any,
     ) -> None:
         self.service = service
@@ -114,6 +115,9 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         self.assessments = assessments
         self.bearing = bearing
         self.care_data = care_data
+        # Behind a TLS-terminating host the public origin differs from the bound address.
+        self.public_origin = public_origin
+        self.secure = "; Secure" if public_origin and public_origin.startswith("https://") else ""
         self.session_cookie: str | None = None
         super().__init__(*args, directory=str(ROOT / "frontend"), **kwargs)
 
@@ -141,7 +145,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         self.send_header("Cache-Control", "no-store")
         self.send_header("X-Content-Type-Options", "nosniff")
         if self.session_cookie is not None:
-            self.send_header("Set-Cookie", self.session_cookie)
+            self.send_header("Set-Cookie", self.session_cookie + self.secure)
         self.end_headers()
         self.wfile.write(body)
 
@@ -224,7 +228,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         self.send_header("Cache-Control", "no-store")
         self.send_header("Referrer-Policy", "no-referrer")
         for cookie in cookies:
-            self.send_header("Set-Cookie", cookie)
+            self.send_header("Set-Cookie", cookie + self.secure)
         self.end_headers()
 
     def log_request(self, code: int | str = "-", size: int | str = "-") -> None:
@@ -302,7 +306,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self.respond(404, {"error": "Unknown endpoint."})
             return
         port = self.server.server_port if isinstance(self.server, HTTPServer) else 0
-        origins = {f"http://127.0.0.1:{port}", f"http://localhost:{port}"}
+        origins = {f"http://127.0.0.1:{port}", f"http://localhost:{port}", self.public_origin}
         origin = self.headers.get("Origin")
         if (origin and origin not in origins) or self.headers.get("Sec-Fetch-Site") == "cross-site":
             self.respond(403, {"error": "Use the local dashboard to request inference."})
@@ -407,6 +411,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--bundle", type=Path, default=DEFAULT_BUNDLE)
     parser.add_argument("--port", type=int, default=8766)
+    parser.add_argument(
+        "--host",
+        default="127.0.0.1",
+        help="Bind address; use 0.0.0.0 only inside a container behind an HTTPS host.",
+    )
     parser.add_argument("--auth-db", type=Path, default=ROOT / "data/accounts.sqlite3")
     parser.add_argument(
         "--local-accounts",
@@ -442,10 +451,11 @@ def main() -> None:
         google=google,
         assessments=AssessmentStore(ROOT / "data/assessments.sqlite3"),
         bearing=bearing,
+        public_origin=os.environ.get("PUBLIC_ORIGIN") or None,
     )
     # Threads stop one idle browser connection (e.g. a preconnect) blocking every request.
-    with ThreadingHTTPServer(("127.0.0.1", args.port), handler) as server:
-        print(f"HydroPredict: http://127.0.0.1:{args.port} · {service.model.version}", flush=True)
+    with ThreadingHTTPServer((args.host, args.port), handler) as server:
+        print(f"HydroPredict: http://{args.host}:{args.port} · {service.model.version}", flush=True)
         with suppress(KeyboardInterrupt):
             server.serve_forever()
 

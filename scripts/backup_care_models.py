@@ -30,7 +30,9 @@ def sha256(path):
 
 
 def create(root, sources, output):
-    files = sorted(p for source in sources for p in (root / source).rglob("*") if p.is_file())
+    """Zip each source, a folder (recursively) or a single file, relative to root."""
+    paths = [root / source for source in sources]
+    files = sorted(p for s in paths for p in (s.rglob("*") if s.is_dir() else [s]) if p.is_file())
     if not files:
         raise SystemExit("No model files found to back up.")
     commit = subprocess.run(

@@ -162,6 +162,31 @@ def test_http_boundary_and_model_status(service: InferenceService) -> None:
             worker.join(timeout=5)
 
 
+def test_hosted_origin_and_secure_cookie(service: InferenceService, tmp_path: Path) -> None:
+    origin = "https://hydropredict.example.net"
+    auth = AuthStore(tmp_path / "accounts.sqlite3")
+    handler = partial(DashboardHandler, service=service, auth=auth, public_origin=origin)
+    with HTTPServer(("127.0.0.1", 0), handler) as server:
+        worker = threading.Thread(target=server.serve_forever, daemon=True)
+        worker.start()
+        connection = http.client.HTTPConnection("127.0.0.1", server.server_port, timeout=10)
+        credentials = json.dumps({"email": "host@example.com", "password": "a long test password"})
+        try:
+            for headers_origin, status in [(origin, 200), ("https://example.org", 403)]:
+                headers = {"Content-Type": "application/json", "Origin": headers_origin}
+                connection.request("POST", "/api/auth/register", credentials, headers)
+                response = connection.getresponse()
+                assert response.status == status
+                if status == 200:
+                    cookie = response.getheader("Set-Cookie")
+                    assert cookie and cookie.endswith("; Secure")
+                response.read()
+        finally:
+            connection.close()
+            server.shutdown()
+            worker.join(timeout=5)
+
+
 def test_authenticated_http_flow(service: InferenceService, tmp_path: Path) -> None:
     auth = AuthStore(tmp_path / "accounts.sqlite3")
     handler = partial(DashboardHandler, service=service, auth=auth)
