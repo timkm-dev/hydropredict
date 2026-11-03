@@ -1,124 +1,165 @@
 # HydroPredict
 
-HydroPredict is an AI-driven predictive-maintenance prototype for hydroelectric power-plant equipment, supporting the academic investigation documented in `Munyiri_Timothy_Kimani_166095.docx`.
+### 👉 Try it live: **[hydropredict-tkm26.azurewebsites.net](https://hydropredict-tkm26.azurewebsites.net)**
 
-The target system comprises two distinct analytical workflows sharing common platform services.
-The following describes the planned system, not completed model or application functionality:
+*A machine learning–based early fault warning system for renewable energy equipment.*
 
-1. **Primary Small Hydroelectric Plant (SHP) Workflow (Unsupervised Anomaly Detection)**:
-   - Ingests operational telemetry ($t, V_1, \dots, V_6$) at nominal 5-minute sampling.
-   - Learns normal operating regimes using **Isolation Forest** and **LSTM Autoencoder**.
-   - Replays held-out historical observations chronologically without future lookahead.
-   - Evaluates early-warning alerts against 59 ground-truth fault events (fault-event recall, false-alert frequency, and warning lead time).
-2. **Supplementary Bearing Classification Workflow (Laboratory Benchmark)**:
-   - Ingests Case Western Reserve University (CWRU) vibration recordings in MATLAB format.
-   - Partitions whole recordings before window segmentation.
-   - Extracts time-domain and frequency-domain features.
-   - Classifies 4 bearing health states using **XGBoost** (Healthy, Inner Race Fault, Outer Race Fault, Rolling Element Fault).
-3. **Shared Platform Services**:
-   - Role-based authentication (ML Engineer vs. Maintenance Operator).
-   - Provenance tracking, model versioning, and feature drift monitoring.
-   - Durable persistence for telemetry records, analysis runs, alerts, and operator responses.
-   - Web-based operator dashboard.
+HydroPredict watches the sensor readings from renewable energy equipment, such as
+wind turbines, and raises a warning when a machine starts behaving unlike its normal
+self. Maintenance teams can then decide whether to inspect it before a small problem
+becomes a breakdown.
 
-## Current Implementation Status
+This is a final-year university prototype (ICS Project II). It replays recorded
+historical data; it is not yet connected to live equipment.
 
-**Wind turbine early warning (CARE benchmark) — the main result.** One small
-autoencoder per turbine learns its normal behaviour; a 6-hour smoothed score and
-the benchmark's alarm counter raise warnings, and each alert names its top
-deviating sensors. Settings were chosen on Farms A and B and confirmed once on
-held-out Farm C: CARE score 0.578 on Farm C and 0.583 on all 95 datasets
-(published autoencoder 0.66, random 0.5). See
-[CARE autoencoder results](docs/care-autoencoder-results.md) and
-[alert explanations](docs/care-explanation-results.md). The signed-in home page
-replays these results: fleet overview, period replay and alert review
-([frontend guide](frontend/README.md)). Farm C was trained on Colab via
-`notebooks/train_care_autoencoder_colab.ipynb`.
+---
 
-CWRU bearing classification is now available locally at `/bearing.html`: a
-fixed XGBoost model, MATLAB import, held-out examples, feature contributions and
-account-scoped saved assessments. It scored 8/10 held-out load recordings and
-5/13 on an unseen-size challenge; use it as a laboratory benchmark, not a validated
-plant diagnostic. See [CWRU results](docs/cwru-results.md). Install `.[bearing]`.
+## Using the app
 
-Implemented and tested: SHP validation, chronological partitioning, segmented offline
-preparation, training-scaler fitting and reuse, segment-aware features, fault alignment
-and EDA. Each preparation run records provenance, row accounting and artifact checksums.
+1. Open the [live site](https://hydropredict-tkm26.azurewebsites.net) and create an
+   account with your email and a password.
+2. Finish your profile and choose your **role in this app**:
+   - **Maintenance Operator** (default): see what needs attention and act on alerts.
+   - **ML Engineer**: everything above, plus the models and research pages.
+3. Start on **What needs attention**. Each turbine has a plain-language status:
 
-Also implemented: source-readiness and fault-coverage auditing, an exploratory six-channel
-Isolation Forest, disjoint normal-reference threshold calibration, saved-bundle CPU
-inference and retrospective event evaluation. See `docs/shp-readiness-audit.md` and
-`docs/isolation-forest-baseline.md`. The first baseline detected only 1 of 5 eligible test
-events and is not ready for operational warning use. Physical metadata was withdrawn after
-the source-paper audit; exact channel semantics still need a source data dictionary.
+   | Status | Meaning |
+   | --- | --- |
+   | 🔴 **Inspect now** | Readings are well outside normal. Look at it soon. |
+   | 🟡 **Keep an eye on** | Something is starting to drift. |
+   | 🟢 **Normal** | Behaving as expected. |
 
-Implemented LSTM engineering: gap-safe sequence construction, compact autoencoder,
-normal-only early stopping and calibration, resumable training, CPU model export/loading,
-portable input packaging, separate validation command and a thin Colab notebook.
-The first Colab GPU run is complete and its frozen CPU scores have been reproduced.
-It detected 1 of 3 adequately covered development faults; operational usefulness
-remains unverified. See `docs/lstm-baseline-diagnostics.md` for results and limitations.
+4. Open an alert to see *which sensors* look unusual, then choose
+   **Send a technician**, **Seen it**, or **Not a problem** (with a short reason).
+   Your decisions are saved to your account.
 
-Frontend (redesigned in issue #24): a public Welcome page introduces the project;
-signed-in users land on **What needs attention**, a plain-language early warning app
-with turbine pages, an alerts inbox and a results page. ML Engineers also see a
-Models page and the hydro plant, bearing and hydro evidence pages under **Research**.
-Local email/password and optional Google accounts with profile onboarding are
-implemented; alert and episode reviews persist per account in local SQLite.
+> **Good to know:** the app spots *unusual behaviour*. It does not say exactly which
+> part is failing, and it cannot promise a warning days in advance. Treat a warning
+> as a reason to look, not a diagnosis.
 
-Roles: Maintenance Operator and ML Engineer, chosen by each user in their profile for this
-prototype and enforced by the server ([frontend guide](frontend/README.md#roles-issue-14)).
+---
 
-Pending: live telemetry, production account recovery, model
-registry, drift monitoring and deployment. Fault-alignment labels are retrospective
-analysis assumptions, not evaluated predictions.
+## How well does it work?
 
-## Planned Execution Environment
+The main model is a small **autoencoder per wind turbine**, trained only on normal
+operation from the public [CARE to Compare](https://zenodo.org/records/15846963)
+wind farm benchmark. When a turbine's readings stop matching what the model expects,
+the score rises and, if it stays high, an alert is raised.
 
-- **Local development and inference**: Target laptop is an Intel Core i5-1235U with 16 GB RAM. Data preparation and the Isolation Forest baseline run locally. The initial baseline fit and calibration took about 0.36 seconds; this excludes setup and is not a general performance guarantee.
-- **LSTM training**: Implemented for Google Colab hosted GPU execution through `notebooks/train_lstm_colab.ipynb`. The notebook uploads a committed source/data package, calls repository training code and exports a complete bundle for local CPU inference. The first hosted run is complete; see the development diagnostics above. No live laptop connection or synchronisation service is required.
+| Test | CARE score | For comparison |
+| --- | --- | --- |
+| Held-out Farm C (never used for tuning) | **0.578** | Random guessing: 0.5 |
+| All 95 datasets | **0.583** | Published autoencoder: 0.66 |
 
-## Quick start on Windows
+So it is clearly better than chance but not yet as good as the best published
+result. Details: [autoencoder results](docs/care-autoencoder-results.md) and
+[alert explanations](docs/care-explanation-results.md).
 
-Run the setup script from PowerShell:
+**Bearing check (optional, lab benchmark).** An XGBoost classifier on the CWRU
+bearing vibration dataset can name a likely bearing fault type. It scored 8/10 on
+held-out recordings and 5/13 on an unseen bearing size, so it is a lab
+demonstration, not a validated plant tool. See [CWRU results](docs/cwru-results.md).
+
+---
+
+## Run it on your own computer (Windows)
+
+You need Python 3.11 or newer and Git.
 
 ```powershell
-Set-Location "C:\Users\tmuny\OneDrive\Desktop\NOTES\YEAR 4\4.1\ICS PROJECT II\hydropredict"
+git clone https://github.com/timkm-dev/hydropredict.git
+cd hydropredict
 Set-ExecutionPolicy -Scope Process Bypass
 .\scripts\setup.ps1
 ```
 
-Activate the environment:
-
-```powershell
-.\.venv\Scripts\Activate.ps1
-```
-
-Run all development checks (Ruff format, Ruff lint, Mypy strict types, Pytest):
-
-```powershell
-.\scripts\check.ps1
-```
-
-## Web app
+Start the app:
 
 ```powershell
 .venv/Scripts/python.exe -m hydropredict.dashboard --local-accounts --port 8766
 ```
 
-Open http://127.0.0.1:8766 and sign in. Build the CARE replay data once first;
-see [the frontend guide](frontend/README.md).
+Then open http://127.0.0.1:8766. The first time, build the wind farm replay data;
+the [frontend guide](frontend/README.md) explains how.
 
-## CLI Workflows
+**Optional: Google sign-in.** Copy `.env.example` to `.env` and fill in
+`GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` from a Google Cloud OAuth client.
+
+**Run the checks** (formatting, linting, type checks and tests) before committing:
 
 ```powershell
-# 1. Validate telemetry against canonical schema
+.\scripts\check.ps1
+```
+
+---
+
+## For developers and researchers
+
+### Project layout
+
+```text
+hydropredict/
+|-- frontend/             The web app (pages, styles, frontend tests)
+|-- src/hydropredict/     Python package: web server, accounts, data and models
+|-- scripts/              Setup, data download, training and evaluation scripts
+|-- notebooks/            Google Colab training notebooks
+|-- docs/                 Protocols, results and decisions (start at docs/README.md)
+|-- tests/                Automated tests
+|-- data/                 Dataset manifest and data stages (raw data not in Git)
+|-- models/               Trained models (not in Git)
+|-- Dockerfile            Image used for the Azure deployment
+`-- .github/workflows/    CI checks and the manual Azure deploy
+```
+
+### Data
+
+The CARE wind farm dataset (19 GB) is kept outside the repository, by default in
+`C:\data\CARE_To_Compare` (set `CARE_DATA_DIR` in `.env`). Download and verify it,
+with progress bars and resume support:
+
+```powershell
+.venv/Scripts/python.exe -m scripts.acquire_care
+```
+
+Raw data in `data/raw/` is never edited. Cleaned data goes to `data/processed/` and
+rejected rows to `data/quarantine/`. These folders are ignored by Git; checksums,
+sources and licences are recorded in `data/dataset_manifest.csv`.
+
+### Model training and backups
+
+Heavy training runs on Google Colab (see `notebooks/train_care_autoencoder_colab.ipynb`).
+The trained CARE autoencoders live only in ignored `.local/` folders, so back them up
+after retraining and keep the zip somewhere private:
+
+```powershell
+.venv/Scripts/python.exe -m scripts.backup_care_models                 # create
+.venv/Scripts/python.exe -m scripts.backup_care_models --verify ZIP    # check
+.venv/Scripts/python.exe -m scripts.backup_care_models --restore ZIP   # put back
+```
+
+### Earlier hydroelectric (SHP) research
+
+The project began with a small hydroelectric plant (SHP) dataset. That work built a
+tested data pipeline (validation, chronological splits, scaling, features and fault
+alignment) plus Isolation Forest and LSTM autoencoder baselines. The baselines caught
+only 1 of 5 and 1 of 3 eligible faults, which is why the main focus moved to the larger
+CARE wind farm benchmark. Results and limitations are in the [docs index](docs/README.md),
+[data preparation status](docs/data-preparation-status.md),
+[Isolation Forest baseline](docs/isolation-forest-baseline.md) and
+[LSTM diagnostics](docs/lstm-baseline-diagnostics.md). Older experiment code is kept at
+Git tag `research-archive-2026-11-01`.
+
+<details>
+<summary>SHP command-line workflow</summary>
+
+```powershell
+# 1. Validate telemetry against the canonical schema
 hydropredict validate data\raw\shp_train.csv --accepted-output data\processed\shp_train_accepted.csv --quarantine-output data\quarantine\shp_train_rejected.csv
 
 # 2. Partition telemetry chronologically
 hydropredict partition --train-source data\raw\shp_train.csv --test-source data\raw\shp_test.csv --output-dir data\processed\partitions
 
-# 3. Preprocess and fit scaler on training partition
+# 3. Preprocess and fit the scaler on the training partition
 hydropredict preprocess data\processed\partitions\shp_train.csv --output data\processed\shp_train_preprocessed.csv --fit-scaler data\processed\scaler.json --scaler-type standard
 
 # Export scaled model measurements separately from physical feature inputs
@@ -131,88 +172,34 @@ hydropredict extract-features data\processed\shp_train_preprocessed.csv --output
 hydropredict align-faults data\raw\shp_test.csv data\raw\shp_faults.csv --output data\processed\shp_test_labeled.csv
 ```
 
-For a complete repeatable preparation run, choose a new run directory:
+A complete, repeatable preparation run (refuses to overwrite an existing run):
 
 ```powershell
 python scripts\prepare_shp.py --run-dir data\processed\runs\my-first-run
 ```
 
-This command exports chronological partitions, unscaled prepared data, separately scaled
-measurements, physical features and manifests. It refuses to overwrite an existing run.
-Standard scaling fits only the prepared training measurements and is reused for validation
-and testing. Domain features use engineering-unit measurements, not scaled values.
-Do not pass timestamp or segment identifiers to a future estimator as numeric predictors.
-
-The default cutoffs are 1 February and 1 May 2019. They exclude later training-source
-rows and earlier test-source rows; manifests count these exclusions. Their suitability
-for event coverage still needs evaluation. The optional published split is a comparison
-only and does not satisfy the report's chronological evaluation requirement.
-
-Preparation is currently offline and excludes entire extended outages. A future streaming
-replay must define when bins close, when gaps become ineligible and how warm-up operates;
-passing an offline forward-fill test does not prove full streaming causality.
-Linear interpolation remains available for exploratory use and must not be used for
-causal early-warning training or replay. Timestamp-naive source times are consistently
-interpreted as UTC by the current contract; source timezone evidence remains to be confirmed.
-Sensor descriptions and typical ranges also require a recorded source reference before
-claiming validated physical semantics; range warnings are currently an explicit helper.
-
-See `docs/data-preparation-status.md` for verification and remaining scientific limitations.
-
-Audit and train the initial pointwise baseline using new artifact paths:
+Audit the run and train the pointwise Isolation Forest baseline:
 
 ```powershell
 python scripts\audit_shp.py --preparation-run data\processed\runs\2026-10-13-verified --output data\processed\runs\2026-10-13-verified\readiness_audit.json
 python scripts\train_isolation_forest.py --preparation-run data\processed\runs\2026-10-13-verified --output models\isolation-forest-my-new-run
 ```
 
-The baseline selects only raw V1..V6 and calibrates on a later separate normal-reference
-subset; it does not consume the earlier prepared physical features. Source test excerpts
-are fault-selected, so general false-alert frequency remains unverified. Save the reported
-poor initial result rather than repeatedly tuning on the same final test period.
+Important caveats:
 
-Earlier hydro experiments (temporal features, context lengths, signal and
-precursor studies) are summarised in [the docs index](docs/README.md). Their code
-was removed in the 1 November 2026 cleanup and remains at Git tag
-`research-archive-2026-11-01`.
+- Default cutoffs are 1 February and 1 May 2019; manifests count excluded rows. The
+  optional published split is for comparison only.
+- Scaling is fitted on training data only and reused for validation and testing.
+  Domain features use engineering units, not scaled values. Do not feed timestamps or
+  segment IDs to a model as numeric inputs.
+- Preparation is offline and drops long outages. Linear interpolation is for
+  exploration only, never for causal early-warning training or replay.
+- Timestamps without a timezone are treated as UTC, and sensor meanings still need a
+  source data dictionary.
+- Fault-alignment labels are retrospective analysis assumptions, not predictions.
 
-## Project Layout
+</details>
 
-```text
-hydropredict/
-|-- .github/workflows/       Continuous integration
-|-- data/                    Dataset manifest, samples, raw and processed data stages
-|-- docs/                    Protocols, results and decisions (start at docs/README.md)
-|-- frontend/                Early warning web app, research pages and frontend tests
-|-- models/                  Trained model bundles and scalers (ignored by Git)
-|-- notebooks/               Colab training notebooks (LSTM, CARE autoencoder)
-|-- scripts/                 Data preparation, training, evaluation and setup scripts
-|-- src/hydropredict/        Current data, feature and analysis modules
-|-- tests/                   Automated tests (unit, integration, regression)
-|-- pyproject.toml           Package and tool configuration
-`-- README.md                Project documentation
-```
+### Not done yet
 
-## Data locations
-
-The CARE wind farm dataset (19 GB) lives outside the repository, by default in
-`C:\data\CARE_To_Compare`, set by `CARE_DATA_DIR` in `.env`. CARE scripts use that setting
-unless a folder is passed. On a new machine, download and verify it with progress
-bars (resumable; checks the published checksums):
-
-```powershell
-.venv/Scripts/python.exe -m scripts.acquire_care
-```
-
-The trained CARE autoencoders exist only in ignored `.local/` folders. Back them up
-after any retraining and keep the zip somewhere private, such as Google Drive:
-
-```powershell
-.venv/Scripts/python.exe -m scripts.backup_care_models                 # create
-.venv/Scripts/python.exe -m scripts.backup_care_models --verify ZIP    # check
-.venv/Scripts/python.exe -m scripts.backup_care_models --restore ZIP   # put back
-```
-
-## Data Policy
-
-Raw data in `data/raw/` is immutable. Validation outputs belong in `data/processed/`, while invalid records belong in `data/quarantine/`. These directories are ignored by Git. Dataset checksums, provenance, and licenses are tracked in `data/dataset_manifest.csv`.
+Live telemetry, production account recovery, a model registry and drift monitoring.
