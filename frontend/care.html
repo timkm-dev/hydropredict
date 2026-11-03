@@ -2,82 +2,143 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>HydroPredict · Early warning</title>
-  <link rel="stylesheet" href="shp.css"><link rel="stylesheet" href="care.css">
+  <title>Early Warning · What needs attention</title>
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="theme.css">
   <script type="module" src="care.js"></script>
 </head>
 <body>
-  <header>
-    <a class="brand" href="#/">≋ HydroPredict</a>
-    <nav aria-label="Main">
-      <a href="#/" data-nav="fleet">Fleet</a>
-      <a href="#/alerts" data-nav="alerts">Alerts <span id="nav-count" class="count" hidden></span></a>
-      <details class="menu"><summary>Research</summary><div>
-        <a href="shp.html">Hydro plant monitoring</a><a href="bearing.html">Bearing diagnosis</a><a href="evidence.html">Hydro evaluation evidence</a>
-      </div></details>
-      <a href="auth.html?profile" id="account">Account</a>
-      <button id="logout" class="quiet">Sign out</button>
-    </nav>
+  <header class="site-header">
+    <div class="inner">
+      <a class="brand" href="/welcome.html"><img src="logo.svg" alt="">Early Warning</a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="#/" data-nav="fleet">Needs attention</a>
+        <a href="#/alerts" data-nav="alerts">Alerts <span id="nav-count" class="count" hidden></span></a>
+        <a href="#/results" data-nav="results">How well it works</a>
+        <a href="models.html" data-role="ml_engineer" hidden>Models</a>
+        <details class="menu" data-role="ml_engineer" hidden><summary>Research</summary><div>
+          <a href="shp.html">Hydro plant monitoring</a><a href="bearing.html">Bearing diagnosis</a><a href="evidence.html">Hydro evaluation evidence</a>
+        </div></details>
+      </nav>
+      <div class="account"><span class="role" id="role"></span><a href="auth.html?profile" id="account">Account</a><button type="button" id="logout">Sign out</button></div>
+    </div>
   </header>
-  <main>
+
+  <main class="page">
     <p id="message" role="status" aria-live="polite"></p>
 
-    <section id="view-fleet" hidden aria-labelledby="fleet-title">
-      <div class="heading"><div><p class="eyebrow">WIND FARMS A, B AND C · HISTORICAL REPLAY</p><h1 id="fleet-title">What needs attention?</h1><p>Each row is a turbine monitoring period from the CARE benchmark. Open one to replay it as if live.</p></div></div>
-      <p class="scope">Warnings flag behaviour that differs from a turbine's own normal history. They point to where to look; they don't confirm a fault or say when equipment will fail.</p>
-      <div class="metrics four">
-        <article><span>Reached alarm</span><strong id="count-alarm">—</strong></article>
-        <article><span>Reached watch</span><strong id="count-watch">—</strong></article>
-        <article><span>Stayed normal</span><strong id="count-normal">—</strong></article>
-        <article><span>Alerts awaiting review</span><strong id="count-awaiting">—</strong></article>
+    <section id="view-fleet" hidden aria-labelledby="fleet-title" class="section" style="gap: 28px">
+      <div class="intro">
+        <p class="eyebrow">Demo · replaying historical data from three wind farms</p>
+        <h1 id="fleet-title">What needs attention</h1>
+        <p>Turbines are ranked by how differently they behaved from their own normal history. Start at the top.</p>
       </div>
-      <article class="panel">
-        <div class="section-head"><h2>Monitoring periods</h2>
-          <div class="filters">
-            <label>Farm<select id="filter-farm"><option value="">All</option><option>Wind Farm A</option><option>Wind Farm B</option><option>Wind Farm C</option></select></label>
-            <label>Status<select id="filter-status"><option value="">All</option><option value="alarm">Alarm</option><option value="watch">Watch</option><option value="normal">Normal</option></select></label>
-          </div>
+      <div>
+        <div class="tiles">
+          <a class="tile alarm" href="#inspect"><strong id="count-alarm">—</strong><span class="label">Inspect now</span><span>Clearly unusual, check soon</span></a>
+          <a class="tile watch" href="#watch"><strong id="count-watch">—</strong><span class="label">Keep an eye on</span><span>Changes building, not urgent</span></a>
+          <a class="tile" href="#normal"><strong id="count-normal">—</strong><span class="label">Normal</span><span>Nothing to do</span></a>
         </div>
-        <div class="table-wrap"><table><thead><tr><th>Period</th><th>Peak status</th><th>Look here first</th><th>First alarm</th><th>Alerts</th><th>Recorded fault</th></tr></thead><tbody id="fleet-rows"></tbody></table></div>
-        <p class="caption">Peak status is the highest warning level reached in the period. "Recorded fault" comes from the dataset publisher and is shown for evaluation; the model never sees it.</p>
-      </article>
+        <p class="caption" style="margin-top: 8px">Counts are across <span id="count-total">—</span> historical monitoring periods.</p>
+      </div>
+      <label class="field" style="max-width: 260px">Wind farm<select id="filter-farm"><option value="">All farms</option><option>Wind Farm A</option><option>Wind Farm B</option><option>Wind Farm C</option></select></label>
+      <section id="inspect" class="section" aria-labelledby="inspect-title">
+        <div class="section-head"><h2 id="inspect-title">Inspect now</h2></div>
+        <div id="inspect-cards" class="grid" style="--min: 480px"></div>
+        <button type="button" class="btn secondary" id="inspect-more" hidden></button>
+      </section>
+      <section id="watch" class="section" aria-labelledby="watch-title">
+        <h2 id="watch-title">Keep an eye on</h2>
+        <div class="rows" id="watch-rows"></div>
+      </section>
+      <details id="normal" class="card">
+        <summary id="normal-summary">Normal</summary>
+        <div class="rows" id="normal-rows"></div>
+      </details>
     </section>
 
-    <section id="view-period" hidden aria-labelledby="period-title">
-      <p><a href="#/">← All periods</a></p>
-      <div class="heading"><div><p class="eyebrow" id="period-eyebrow"></p><h1 id="period-title"></h1><p id="period-summary"></p></div><div class="status-stack"><span class="pill" id="period-status">—</span><small id="period-latch" hidden></small></div></div>
-      <article class="panel">
-        <div class="section-head"><h2>Warning build-up</h2><span class="caption" id="clock"></span></div>
-        <div class="replay">
-          <button id="play"><span id="play-label">Replay history</span></button>
-          <label>Speed<select id="speed"><option value="1">1 hour per step</option><option value="6" selected>6 hours per step</option><option value="24">1 day per step</option></select></label>
-          <label class="slider">Time<input id="cursor" type="range" min="0" max="0" step="1" value="0"></label>
+    <section id="view-period" hidden aria-labelledby="period-title" class="section" style="gap: 24px">
+      <p><a href="#/">Back to what needs attention</a></p>
+      <div class="split" style="align-items: flex-start; justify-content: space-between">
+        <div class="intro" style="flex: 1 1 560px">
+          <p class="eyebrow" id="period-eyebrow"></p>
+          <h1 id="period-title"></h1>
+          <p id="period-summary"></p>
         </div>
-        <div class="counter"><span>Warning counter</span><div class="bar" aria-hidden="true"><i id="crit-bar"></i></div><strong id="crit-value">0 / 72</strong></div>
-        <div id="score-chart" class="chart"></div>
-        <p class="caption"><span class="key score"></span>Warning score (6-hour average) <span class="key threshold"></span>Alert threshold <span class="key fault"></span>Recorded fault period <span class="key alarm"></span>Alarm raised. Replay shows only what was known at the selected time.</p>
-      </article>
+        <span id="period-status"></span>
+      </div>
       <div class="split">
-        <article class="panel">
-          <h2>Look here first</h2>
-          <p class="caption">Sensors furthest from the model's expected normal behaviour at the selected time.</p>
-          <ol id="look-first" class="look"></ol>
-          <p class="caption">A starting point for inspection, not a confirmed cause. Operating conditions describe the environment, not component health.</p>
-        </article>
-        <article class="panel">
-          <div class="section-head"><h2>Actual vs expected</h2><label><span class="sr-only">Sensor</span><select id="sensor"></select></label></div>
-          <div id="sensor-chart" class="chart"></div>
-          <p class="caption"><span class="key actual"></span>Actual (hourly mean) <span class="key expected"></span>Expected from normal behaviour</p>
-        </article>
+        <div class="main">
+          <h2>What we noticed</h2>
+          <p class="caption" id="noticed-note"></p>
+          <div id="findings" class="section" style="gap: 12px"></div>
+          <div class="card section">
+            <div class="section-head"><h3 id="sensor-title">Actual vs normal</h3><label><span class="sr-only">Sensor</span><select id="sensor"></select></label></div>
+            <div id="sensor-chart" class="chart"></div>
+            <p class="legend"><span><i class="key"></i>Actual reading</span><span><i class="key expected"></i>Normal for these conditions</span><span><i class="key alarm"></i>Flagged unusual</span><span><i class="key expected" style="border-top-style: dotted"></i>Time shown</span></p>
+          </div>
+          <p class="caption">This is where to start looking, not a confirmed cause. Operating conditions such as wind speed describe the environment, not equipment health.</p>
+        </div>
+        <aside class="side">
+          <div class="card section" aria-labelledby="decide-title">
+            <h2 id="decide-title" style="font-size: 20px">What do you want to do?</h2>
+            <div id="period-decision"></div>
+          </div>
+          <details class="card" id="how-decided">
+            <summary>How was this decided?</summary>
+            <div class="section" style="gap: 12px">
+              <p>The system learned how this turbine normally behaves from its own past data.</p>
+              <p>When readings stay away from that normal pattern for about 12 hours in total, it marks the turbine <strong>Inspect now</strong>. After about 4 hours it shows <strong>Keep an eye on</strong>.</p>
+              <p>It does not confirm a fault or predict when equipment will fail.</p>
+              <div class="counter"><span>Warning build-up</span><div class="bar" aria-hidden="true"><i id="crit-bar"></i></div><strong id="crit-value">0 / 72</strong></div>
+              <div id="score-chart" class="chart"></div>
+              <p class="legend"><span><i class="key"></i>Unusualness (6-hour average)</span><span><i class="key threshold"></i>Threshold</span><span><i class="key fault"></i>Recorded fault</span></p>
+              <div class="replay">
+                <button type="button" class="btn secondary" id="play"><span id="play-label">Replay history</span></button>
+                <label class="field" style="flex-direction: row; align-items: center; font-weight: 500">Speed<select id="speed"><option value="1">1 hour per step</option><option value="6" selected>6 hours per step</option><option value="24">1 day per step</option></select></label>
+                <label class="slider">Time<input id="cursor" type="range" min="0" max="0" step="1" value="0"></label>
+              </div>
+              <p class="caption" id="clock"></p>
+            </div>
+          </details>
+          <div class="soft" id="what-next" hidden>
+            <strong>Demo only: what happened next</strong>
+            <span id="what-next-text"></span>
+          </div>
+        </aside>
       </div>
-      <article class="panel"><h2>Alerts in this period</h2><div id="period-alerts"></div></article>
     </section>
 
-    <section id="view-alerts" hidden aria-labelledby="alerts-title">
-      <div class="heading"><div><p class="eyebrow">REVIEW QUEUE</p><h1 id="alerts-title">Alerts</h1><p>Decide what happens next. Every decision is logged and earlier decisions are kept.</p></div>
-        <label>Show<select id="alert-filter"><option value="awaiting">Awaiting review</option><option value="all">All alerts</option></select></label></div>
-      <div id="alert-list"></div>
-      <p id="alerts-empty" class="caption" hidden>No alerts awaiting review. Switch to all alerts to see earlier decisions.</p>
+    <section id="view-alerts" hidden aria-labelledby="alerts-title" class="section" style="gap: 24px">
+      <div class="intro">
+        <h1 id="alerts-title">Alerts to decide</h1>
+        <p>Each alert needs one decision. Your choice is saved with the time, and earlier decisions are never deleted.</p>
+      </div>
+      <div class="chips" role="group" aria-label="Show">
+        <button type="button" class="chip" id="show-awaiting" aria-pressed="true">To decide</button>
+        <button type="button" class="chip" id="show-all" aria-pressed="false">All alerts</button>
+      </div>
+      <div id="alert-list" class="section" style="gap: 12px"></div>
+      <p id="alerts-empty" class="caption" hidden>Nothing left to decide. Choose All alerts to see earlier decisions.</p>
+    </section>
+
+    <section id="view-results" hidden aria-labelledby="results-title" class="section" style="gap: 28px">
+      <div class="intro">
+        <p class="eyebrow">Looking back with hindsight</p>
+        <h1 id="results-title">How well it works</h1>
+        <p>Because this is historical data, we can compare what the system said at the time with what the wind farms' maintenance records show.</p>
+      </div>
+      <div class="grid" style="--min: 240px">
+        <div class="card stat"><strong>17 of 45</strong><span>recorded faults raised an alarm inside the fault window</span></div>
+        <div class="card stat"><strong>10 of 50</strong><span>fault-free periods still raised an alarm</span></div>
+        <div class="card stat"><strong>0.58</strong><span>benchmark score; random guessing scores 0.50, the published reference 0.66</span></div>
+      </div>
+      <p>This is an early prototype. It helps decide where to look, but it is not reliable enough to replace scheduled inspections.</p>
+      <section class="section" aria-labelledby="cases-title">
+        <h2 id="cases-title">Every recorded fault</h2>
+        <p class="caption">When the first alarm came compared with the start of the recorded fault. The benchmark only counts alarms inside the fault window, so its totals above differ from this list.</p>
+        <div class="table-wrap"><table><thead><tr><th>Turbine</th><th class="text">Recorded fault</th><th class="text">First alarm</th><th class="text">Timing</th></tr></thead><tbody id="case-rows"></tbody></table></div>
+      </section>
     </section>
   </main>
 </body>

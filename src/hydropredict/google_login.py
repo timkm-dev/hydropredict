@@ -23,14 +23,18 @@ class GoogleLogin:
 
     def __post_init__(self) -> None:
         uri = urlsplit(self.redirect_uri)
+        # Plain HTTP only on loopback (Google allows it there); hosted sites need HTTPS.
+        local = uri.hostname in {"127.0.0.1", "localhost"} and uri.scheme == "http"
         if (
-            uri.hostname not in {"127.0.0.1", "localhost"}
-            or uri.scheme != "http"
+            not (local or (uri.scheme == "https" and uri.hostname))
             or uri.path != "/api/auth/google/callback"
             or uri.query
             or uri.fragment
         ):
-            raise ValueError("Google redirect URI must use the local dashboard callback.")
+            raise ValueError(
+                "Google redirect URI must be the dashboard callback over HTTPS, "
+                "or over HTTP on 127.0.0.1/localhost."
+            )
 
     def authorize(self, state: str, nonce: str, verifier: str) -> str:
         challenge = base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest())

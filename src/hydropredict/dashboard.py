@@ -21,7 +21,7 @@ import torch
 from dotenv import load_dotenv
 
 from hydropredict.assessment_store import AssessmentStore
-from hydropredict.auth import SESSION_SECONDS, AuthStore
+from hydropredict.auth import ML_ENGINEER, SESSION_SECONDS, AuthStore
 from hydropredict.data.schema import MEASUREMENT_COLUMNS
 from hydropredict.google_login import GoogleLogin
 from hydropredict.models.lstm import SHPLSTMAutoencoder
@@ -31,6 +31,14 @@ DEFAULT_BUNDLE = ROOT / "models/lstm-diagnostics-2026-10-15-v1/frozen_bundle_cop
 CARE_DATA = ROOT / "frontend/care-data"
 MAX_BYTES = 25 * 1024 * 1024
 MAX_ROWS = 100_000
+# Issue #14 role matrix: research pages, their data and model-scoring APIs are ML Engineer only.
+ML_PAGES = {"/models.html", "/shp.html", "/bearing.html", "/evidence.html", "/evidence-data.json"}
+ML_APIS = {"/api/model", "/api/score", "/api/assess", "/api/review", "/api/runs", "/api/run"}
+SIGNED_IN_PAGES = {"/care.html", *ML_PAGES}
+
+
+def ml_only(path: str) -> bool:
+    return path in ML_PAGES or path in ML_APIS or path.startswith("/api/bearing/")
 
 
 class InferenceService:
@@ -168,11 +176,21 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             if path.startswith("/care-data/") and (not user or not user["username"]):
                 self.respond(401, {"error": "Please sign in to continue."})
                 return
-            pages = ("/", "/index.html", "/shp.html", "/care.html")
-            if path in pages and (not user or not user["username"]):
-                self.send_response(302)
-                self.send_header("Location", "/auth.html")
-                self.end_headers()
+            if path in {"/", "/index.html"} and user is None:
+                # Visitors who are not signed in see the public project introduction.
+                self.path = "/welcome.html"
+                super().do_GET()
+                return
+            if (path in SIGNED_IN_PAGES or path in {"/", "/index.html"}) and (
+                not user or not user["username"]
+            ):
+                self.redirect("/auth.html")
+                return
+            if ml_only(path) and user and user["role"] != ML_ENGINEER:
+                if path.startswith("/api/"):
+                    self.respond(403, {"error": "This area is for ML Engineers."})
+                else:
+                    self.forbidden_page()
                 return
         if path.startswith("/api/bearing/"):
             user = self.auth.user(self.token()) if self.auth else None
@@ -221,6 +239,27 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             if path in {"/", "/index.html"}:
                 self.path = "/care.html"
             super().do_GET()
+
+    def forbidden_page(self) -> None:
+        body = (
+            '<!doctype html><html lang="en"><head><meta charset="utf-8">'
+            '<meta name="viewport" content="width=device-width,initial-scale=1">'
+            "<title>Early Warning · ML Engineers only</title>"
+            '<link rel="icon" href="/logo.svg" type="image/svg+xml">'
+            '<link rel="stylesheet" href="/theme.css"></head><body><main class="page">'
+            '<div class="intro"><h1>This page is for ML Engineers</h1>'
+            "<p>Your account is set up as a Maintenance Operator. To see the models and "
+            "research pages, change your role to ML Engineer in your profile.</p></div>"
+            '<p class="actions"><a class="btn" href="/auth.html?profile">Change my role</a>'
+            '<a class="btn secondary" href="/care.html">Go to what needs attention</a></p>'
+            "</main></body></html>"
+        ).encode()
+        self.send_response(403)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.send_header("Cache-Control", "no-store")
+        self.end_headers()
+        self.wfile.write(body)
 
     def redirect(self, location: str, cookies: tuple[str, ...] = ()) -> None:
         self.send_response(302)
@@ -337,6 +376,9 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                     return
                 if not user["username"]:
                     self.respond(403, {"error": "Complete your profile first."})
+                    return
+                if ml_only(self.path) and user["role"] != ML_ENGINEER:
+                    self.respond(403, {"error": "This action is for ML Engineers."})
                     return
             if self.path == "/api/care/review":
                 if user is None or self.assessments is None:

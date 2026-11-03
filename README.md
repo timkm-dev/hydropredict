@@ -59,12 +59,17 @@ The first Colab GPU run is complete and its frozen CPU scores have been reproduc
 It detected 1 of 3 adequately covered development faults; operational usefulness
 remains unverified. See `docs/lstm-baseline-diagnostics.md` for results and limitations.
 
-Frontend: the wind turbine early warning app is the home page; hydro plant
-monitoring, bearing diagnosis and hydro evaluation evidence sit under **Research**.
+Frontend (redesigned in issue #24): a public Welcome page introduces the project;
+signed-in users land on **What needs attention**, a plain-language early warning app
+with turbine pages, an alerts inbox and a results page. ML Engineers also see a
+Models page and the hydro plant, bearing and hydro evidence pages under **Research**.
 Local email/password and optional Google accounts with profile onboarding are
 implemented; alert and episode reviews persist per account in local SQLite.
 
-Pending: live telemetry, production account recovery and role permissions, model
+Roles: Maintenance Operator and ML Engineer, chosen by each user in their profile for this
+prototype and enforced by the server ([frontend guide](frontend/README.md#roles-issue-14)).
+
+Pending: live telemetry, production account recovery, model
 registry, drift monitoring and deployment. Fault-alignment labels are retrospective
 analysis assumptions, not evaluated predictions.
 

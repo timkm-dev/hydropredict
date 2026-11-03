@@ -3,26 +3,28 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>HydroPredict · Your workspace</title>
+  <title>Early Warning · Sign in</title>
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="styles.css?v=google-2">
-  <link rel="stylesheet" href="auth.css?v=google-2">
-  <script type="module" src="auth.js?v=google-2"></script>
+  <link rel="stylesheet" href="auth.css?v=role-1">
+  <script type="module" src="auth.js?v=role-1"></script>
 </head>
 <body class="auth-page">
   <section class="auth-story">
-    <a class="brand" href="/">≋ HydroPredict<span class="brand-dot">.</span></a>
-    <div><p class="eyebrow">BETTER FORESIGHT. BETTER MAINTENANCE.</p>
-      <h1>Your equipment.<br>Your insights.<br>One workspace.</h1>
-      <p>Explore plant signals, review flagged events, and bring your maintenance work into focus.</p>
-      <div class="auth-waves" aria-hidden="true">≋</div>
+    <a class="brand" href="/"><img src="logo.svg" alt="">Early Warning</a>
+    <div><p class="eyebrow">MACHINE LEARNING FOR RENEWABLE ENERGY</p>
+      <h1>Know which turbine needs attention.</h1>
+      <p>Sign in to see what needs checking, read in plain language what changed, and record what you decided.</p>
+      <img class="auth-art" src="welcome-illustration.svg" alt="">
     </div>
-    <small>Hydroelectric equipment intelligence</small>
+    <small>Early fault warning for renewable energy equipment</small>
   </section>
   <main class="auth-main">
     <div class="auth-card">
       <p class="eyebrow" id="step-label">WELCOME BACK</p>
-      <h1 id="auth-title">Sign in to HydroPredict</h1>
-      <p id="auth-description">Enter your details to open your workspace.</p>
+      <h1 id="auth-title">Sign in to Early Warning</h1>
+      <p id="auth-description">Enter your details to continue.</p>
       <div class="auth-tabs" id="auth-tabs" role="group" aria-label="Account action">
         <button type="button" id="login-tab" aria-pressed="true">Sign in</button>
         <button type="button" id="register-tab" aria-pressed="false">Create account</button>
@@ -44,11 +46,16 @@
         <label for="username">Username</label><input id="username" name="username" autocomplete="username" pattern="[a-zA-Z0-9_]{3,30}" minlength="3" maxlength="30" required>
         <p class="field-help">3–30 letters, numbers, or underscores.</p>
         <label for="job-position">Job position</label><input id="job-position" name="job_position" autocomplete="organization-title" placeholder="e.g. Maintenance engineer" maxlength="100" required>
+        <label for="role">Role in this app</label>
+        <select id="role" name="role" class="role-select">
+          <option value="operator">Maintenance Operator: what to check and alert decisions</option>
+          <option value="ml_engineer">ML Engineer: also models and research pages</option>
+        </select>
         <button class="button primary auth-submit">Save profile &amp; continue</button>
         <button type="button" class="text-button" id="profile-signout">Sign out</button>
       </form>
       <p id="auth-message" role="status" aria-live="polite"></p>
-      <p class="auth-footnote">Your workspace, connected to your account.</p>
+      <p class="auth-footnote">You can change your name, company or role at any time from Account.</p>
     </div>
   </main>
 </body>

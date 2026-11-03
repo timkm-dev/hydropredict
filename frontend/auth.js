@@ -23,6 +23,7 @@ function showProfile(user) {
   $('step-label').textContent = 'MAKE IT YOURS';
   $('auth-title').textContent = 'Complete your profile';
   $('auth-description').textContent = 'Tell us a little about yourself and your organization.';
+  $('profile-form').elements.role.value = user.role || 'operator';
   for (const key of ['name', 'company', 'username', 'job_position']) {
     $('profile-form').elements[key].value = user[key] || '';
   }
@@ -37,7 +38,7 @@ function setMode(next) {
   const register = mode === 'register';
   $('login-tab').setAttribute('aria-pressed', String(!register));
   $('register-tab').setAttribute('aria-pressed', String(register));
-  $('auth-title').textContent = register ? 'Create your account' : 'Sign in to HydroPredict';
+  $('auth-title').textContent = register ? 'Create your account' : 'Sign in to Early Warning';
   $('step-label').textContent = register ? 'GET STARTED' : 'WELCOME BACK';
   $('auth-description').textContent = register ? 'First, set up your email and password.' : 'Enter your details to open your workspace.';
   $('credentials-submit').textContent = register ? 'Create account & continue' : 'Sign in';
@@ -97,5 +98,5 @@ try {
   if (oauthError || new URLSearchParams(location.search).has('profile')) showProfile(user);
   else proceed(user);
 } catch (error) {
-  if (error instanceof TypeError) $('auth-message').textContent = 'Unable to connect. Start the HydroPredict server and try again.';
+  if (error instanceof TypeError) $('auth-message').textContent = 'Unable to connect. Start the Early Warning server and try again.';
 }

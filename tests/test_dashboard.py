@@ -52,6 +52,7 @@ def test_saved_assessment_http_flow(service: InferenceService, tmp_path: Path) -
             "company": "Test",
             "username": "reviewer",
             "job_position": "Engineer",
+            "role": "ml_engineer",
         },
     )
     store = AssessmentStore(tmp_path / "assessments.sqlite3")
@@ -79,7 +80,7 @@ def test_saved_assessment_http_flow(service: InferenceService, tmp_path: Path) -
             connection.request("GET", "/", headers=headers)
             response = connection.getresponse()
             assert response.status == 200
-            assert b"What needs attention?" in response.read()
+            assert b"care.js" in response.read()
             connection.request("GET", "/shp.html", headers=headers)
             response = connection.getresponse()
             assert response.status == 200
@@ -201,6 +202,10 @@ def test_authenticated_http_flow(service: InferenceService, tmp_path: Path) -> N
             response.read()
             connection.request("GET", "/")
             response = connection.getresponse()
+            assert response.status == 200
+            assert b"welcome-illustration.svg" in response.read()
+            connection.request("GET", "/care.html")
+            response = connection.getresponse()
             assert response.status == 302
             assert response.getheader("Location") == "/auth.html"
             response.read()
@@ -222,6 +227,7 @@ def test_authenticated_http_flow(service: InferenceService, tmp_path: Path) -> N
                 "company": "Hydro",
                 "username": "tester",
                 "job_position": "Engineer",
+                "role": "ml_engineer",
             }
             connection.request("POST", "/api/auth/profile", json.dumps(profile), headers)
             response = connection.getresponse()
@@ -288,6 +294,66 @@ def test_care_replay_data_and_alert_reviews(service: InferenceService, tmp_path:
             assert call("POST", "/api/care/review", unknown, headers)[0] == 400
             status, _, body = call("GET", "/api/care/reviews", headers=headers)
             assert [r["alert"] for r in json.loads(body)["reviews"]] == ["C-47-1"]
+        finally:
+            connection.close()
+            server.shutdown()
+            worker.join(timeout=5)
+
+
+def test_role_permissions(service: InferenceService, tmp_path: Path) -> None:
+    auth = AuthStore(tmp_path / "accounts.sqlite3")
+    handler = partial(
+        DashboardHandler,
+        service=service,
+        auth=auth,
+        assessments=AssessmentStore(tmp_path / "assessments.sqlite3"),
+    )
+    with HTTPServer(("127.0.0.1", 0), handler) as server:
+        worker = threading.Thread(target=server.serve_forever, daemon=True)
+        worker.start()
+        connection = http.client.HTTPConnection("127.0.0.1", server.server_port, timeout=10)
+
+        def call(method: str, path: str, body: Any = None, cookie: str = "") -> Any:
+            headers = {"Content-Type": "application/json", "Cookie": cookie}
+            connection.request(method, path, None if body is None else json.dumps(body), headers)
+            response = connection.getresponse()
+            return response.status, response.getheader("Set-Cookie"), response.read()
+
+        def account(email: str, username: str, role: str | None) -> str:
+            credentials = {"email": email, "password": "a long test password"}
+            cookie = call("POST", "/api/auth/register", credentials)[1].split(";", 1)[0]
+            profile = {"name": "N", "company": "C", "username": username, "job_position": "ML"}
+            if role:
+                profile["role"] = role
+            assert call("POST", "/api/auth/profile", profile, cookie)[0] == 200
+            return cookie
+
+        try:
+            # Without a chosen role an account is a Maintenance Operator.
+            operator = account("operator@example.com", "operator", None)
+            engineer = account("ml@example.com", "engineer", "ml_engineer")
+            me = json.loads(call("GET", "/api/auth/me", cookie=operator)[2])["user"]
+            assert me["role"] == "operator"
+            bad = {"name": "N", "company": "C", "username": "operator", "job_position": "x"}
+            assert call("POST", "/api/auth/profile", {**bad, "role": "admin"}, operator)[0] == 400
+            assert json.loads(call("GET", "/api/auth/me", cookie=engineer)[2])["user"]["role"] == (
+                "ml_engineer"
+            )
+            for path in ["/care.html", "/api/care/reviews"]:
+                assert call("GET", path, cookie=operator)[0] == 200
+            for path in ["/models.html", "/shp.html", "/evidence-data.json", "/api/model"]:
+                assert call("GET", path, cookie=operator)[0] == 403
+                assert call("GET", path)[0] in {302, 401}
+            assert call("GET", "/api/bearing/info", cookie=operator)[0] == 403
+            assert call("POST", "/api/score", {"records": records()}, operator)[0] == 403
+            for path in ["/models.html", "/shp.html", "/api/model"]:
+                assert call("GET", path, cookie=engineer)[0] == 200
+            assert call("POST", "/api/score", {"records": records()}, engineer)[0] == 200
+            assert call("GET", "/api/runs", cookie=engineer)[0] == 200
+            # Switching role in the profile takes effect on the next request.
+            switch = {**bad, "role": "operator", "username": "engineer"}
+            assert call("POST", "/api/auth/profile", switch, engineer)[0] == 200
+            assert call("GET", "/api/model", cookie=engineer)[0] == 403
         finally:
             connection.close()
             server.shutdown()

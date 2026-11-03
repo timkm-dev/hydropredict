@@ -1,0 +1,17 @@
+/* Bring the older research pages onto the shared theme (loaded after their own stylesheet). */
+body { background: #FFFFFF; color: var(--ink); font-family: 'IBM Plex Sans', system-ui, sans-serif; }
+header.site-header { all: unset; display: block; background: var(--sky); color: #FFFFFF; }
+header.site-header .brand { font-size: 17px; letter-spacing: 0; color: #FFFFFF; }
+header.site-header nav { display: flex; }
+main a, .panel a { color: var(--sky); }
+h1, h2, h3, .brand { font-family: 'IBM Plex Sans', system-ui, sans-serif; }
+p { color: var(--body); }
+.scope { border-left: 3px solid var(--sky); background: var(--sky-soft); color: var(--sky-dark); }
+.panel, .card { border-color: var(--line); }
+.badge { background: var(--sky-soft); color: var(--sky-dark); }
+main button:not(.quiet):not(.text-button), main .upload { background: var(--sky); color: #FFFFFF; }
+main button:not(.quiet):not(.text-button):hover { background: var(--sky-dark); }
+main .quiet { color: var(--sky-dark); border-color: var(--control); }
+.eyebrow { color: var(--muted); }
+.site-nav .menu { margin: 0; font-size: 16px; }
+.site-nav summary { font-weight: 500; }

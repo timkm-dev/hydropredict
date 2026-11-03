@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Early Warning · Fault warnings for wind turbines</title>
+  <meta name="description" content="A machine learning early fault warning system for renewable energy equipment.">
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="theme.css">
+  <style>
+    .hero { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 40px; padding-top: 56px; padding-bottom: 48px; }
+    .hero .text { flex: 1 1 440px; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+    .hero h1 { font-size: clamp(34px, 5vw, 48px); line-height: 1.1; letter-spacing: -.01em; }
+    .hero .lead { font-size: 19px; line-height: 1.55; color: var(--body); }
+    .hero figure { flex: 1 1 420px; min-width: 0; margin: 0; }
+    .hero figure img { width: 100%; height: auto; display: block; border-radius: 20px; }
+    .band { background: var(--sky-wash); border-top: 1px solid #DCEBF5; border-bottom: 1px solid #DCEBF5; }
+    .band.strong { background: var(--sky); color: #FFFFFF; border: 0; }
+    .band.strong a { color: #FFFFFF; font-weight: 600; }
+    .band h2, .about h2 { font-size: 32px; }
+    .steps { list-style: none; margin: 0; padding: 0; }
+    .steps li { display: flex; flex-direction: column; gap: 10px; border-radius: 16px; padding: 24px; }
+    .steps .n { width: 40px; height: 40px; border-radius: 999px; background: var(--sky); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; }
+    .steps strong, .users strong { font-size: 19px; }
+    .steps span, .users span { line-height: 1.55; color: var(--body); }
+    .users a { display: flex; flex-direction: column; gap: 10px; border-radius: 16px; padding: 24px; text-decoration: none; color: var(--ink); }
+    .users a:hover { border-color: var(--sky); color: var(--ink); }
+    .users .go { font-weight: 600; color: var(--sky); }
+    .results .stat { border: 1px solid #FFFFFF; border-radius: 16px; padding: 20px; }
+    .results .stat strong { font-size: 36px; }
+    .results .stat span { color: #FFFFFF; }
+    .about { flex-direction: row; flex-wrap: wrap; gap: 32px; }
+    .about > div { flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 12px; color: var(--body); }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="inner">
+      <a class="brand" href="/"><img src="logo.svg" alt="">Early Warning</a>
+      <nav class="site-nav" aria-label="Sections">
+        <a href="#how">How it works</a><a href="#results">Results</a><a href="#about">About</a>
+      </nav>
+      <a class="btn secondary" href="/auth.html">Sign in</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="page hero" aria-labelledby="hero-title">
+      <div class="text">
+        <p class="eyebrow" style="color: var(--sky)">Machine learning for renewable energy</p>
+        <h1 id="hero-title">Know which turbine needs attention, and where to look first.</h1>
+        <p class="lead">Early Warning learns how each wind turbine normally behaves, then flags it when it starts acting differently, so maintenance teams can check it before a small problem grows.</p>
+        <div class="chips">
+          <a class="btn big" href="/care.html">Try the demo</a>
+          <a class="btn big secondary" href="/auth.html?mode=register">Create an account</a>
+        </div>
+        <p class="caption">The demo replays historical data from three real wind farms. Sign in or create a free account to explore it.</p>
+      </div>
+      <figure>
+        <img src="welcome-illustration.svg" width="600" height="680" alt="Illustration: a technician leans on a wall, looking past old smokestacks towards green hills covered with wind turbines and solar panels.">
+      </figure>
+    </section>
+
+    <section id="how" class="band" aria-labelledby="how-title">
+      <div class="page">
+        <div class="intro">
+          <h2 id="how-title">How it works</h2>
+          <p>Turbines already record hundreds of readings every ten minutes. Early Warning turns them into a short list of what to check.</p>
+        </div>
+        <ol class="steps grid" style="--min: 240px">
+          <li class="card"><span class="n">1</span><strong>Learns what normal looks like</strong><span>For each turbine, a model studies a year of its own readings from when nothing was wrong.</span></li>
+          <li class="card"><span class="n">2</span><strong>Notices when it drifts</strong><span>If readings stay away from that normal pattern for about 12 hours, the turbine is marked <strong style="font-size: inherit">Inspect now</strong>.</span></li>
+          <li class="card"><span class="n">3</span><strong>Points to where to start</strong><span>It lists the sensors furthest from normal, in plain words. An engineer decides what to do and records why.</span></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="page" aria-labelledby="users-title">
+      <h2 id="users-title" style="font-size: 32px">Built for two kinds of user</h2>
+      <div class="users grid" style="--min: 300px">
+        <a class="card" href="/care.html"><strong>Maintenance operators</strong><span>See which turbines need attention, read in plain language what changed, and record what you decided.</span><span class="go">Open what needs attention</span></a>
+        <a class="card" href="/models.html"><strong>ML Engineers</strong><span>Inspect each model, its settings and its test results, and use operators' feedback to improve it.</span><span class="go">Open the models page</span></a>
+      </div>
+    </section>
+
+    <section id="results" class="band strong" aria-labelledby="results-title">
+      <div class="page results">
+        <div class="intro">
+          <h2 id="results-title">Tested honestly on real wind farm data</h2>
+          <p style="color: #FFFFFF">95 monitoring cases from three wind farms in the public CARE benchmark. Settings were fixed on two farms, then checked once on the third.</p>
+        </div>
+        <div class="grid" style="--min: 220px">
+          <div class="stat"><strong>17 of 45</strong><span>recorded faults raised an alarm</span></div>
+          <div class="stat"><strong>40 of 50</strong><span>fault-free cases stayed quiet</span></div>
+          <div class="stat"><strong>0.58</strong><span>benchmark score, where random guessing scores 0.50 and the published reference 0.66</span></div>
+        </div>
+        <p>An early prototype: it helps decide where to look, but does not replace scheduled inspections. <a href="/care.html#/results">See how well it works</a></p>
+      </div>
+    </section>
+
+    <section id="about" class="page about" aria-labelledby="about-title">
+      <div>
+        <h2 id="about-title">About the project</h2>
+        <p><strong style="color: var(--ink)">A Machine Learning–Based Early Fault Warning System for Renewable Energy Equipment</strong>, a final-year ICS Project II.</p>
+        <p>Wind turbines are the main case study. A bearing fault classifier and a hydro plant study are kept as supporting research.</p>
+      </div>
+      <div>
+        <strong style="color: var(--ink)">Data</strong>
+        <span>CARE wind turbine benchmark, CC BY-SA 4.0</span>
+        <span>Case Western Reserve University bearing data</span>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="inner"><span>Early Warning · research prototype</span><span>The demo uses historical data only</span></div></footer>
+</body>
+</html>
