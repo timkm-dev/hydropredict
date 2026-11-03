@@ -1,4 +1,8 @@
-"""Create the small input ZIP for notebooks/train_care_autoencoder_colab.ipynb.
+"""Create the small input ZIP for the CARE Colab training notebooks.
+
+v1 (notebooks/train_care_autoencoder_colab.ipynb) trains Farm C; v2
+(notebooks/train_care_autoencoder_v2_colab.ipynb) trains all farms, so pass
+``--train-farms "Wind Farm A" "Wind Farm B" "Wind Farm C"``.
 
 The CARE data is not packaged: Colab downloads it from Zenodo and checks its MD5.
 A locally trained Farm A reference score file is included for a device parity check.
@@ -21,6 +25,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--reference-scores", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--train-farms", nargs="+", default=["Wind Farm C"])
     args = parser.parse_args()
     if args.output.exists():
         parser.error("Choose a new output path; prior packages are preserved.")
@@ -32,7 +37,8 @@ def main():
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
     archive = subprocess.check_output(
         ["git", "archive", "--format=zip", "HEAD", "pyproject.toml", "README.md", "src"]
-        + ["scripts", "notebooks", "docs/care-autoencoder-protocol.md"],
+        + ["scripts", "notebooks", "docs/care-autoencoder-protocol.md"]
+        + ["docs/care-autoencoder-v2-protocol.md"],
         cwd=root,
     )
     farm, event_id = PARITY
@@ -45,7 +51,7 @@ def main():
         zenodo_md5=ZENODO_MD5,
         zenodo_bytes=ZENODO_BYTES,
         parity=dict(farm=farm, event_id=event_id),
-        train_farms=["Wind Farm C"],
+        train_farms=args.train_farms,
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(args.output, "w", compression=zipfile.ZIP_DEFLATED) as bundle:
