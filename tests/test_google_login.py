@@ -91,7 +91,7 @@ def test_exchange_checks_nonce_and_client_id(monkeypatch: pytest.MonkeyPatch) ->
     assert calls["timeout"] == 15
     with pytest.raises(ValueError, match="could not be verified"):
         google.exchange("code", "verifier", "wrong-nonce")
-    with pytest.raises(ValueError, match="local dashboard"):
+    with pytest.raises(ValueError, match="redirect URI"):
         GoogleLogin("id", "secret", "http://untrusted.example/api/auth/google/callback")
 
 
