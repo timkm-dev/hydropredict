@@ -148,3 +148,29 @@ def test_http_google_flow(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> No
             connection.close()
             server.shutdown()
             worker.join(timeout=5)
+
+
+@pytest.mark.parametrize(
+    "uri",
+    [
+        "http://127.0.0.1:8766/api/auth/google/callback",
+        "http://localhost:8766/api/auth/google/callback",
+        "https://hydropredict-tkm26.azurewebsites.net/api/auth/google/callback",
+    ],
+)
+def test_redirect_uri_accepts_local_http_and_hosted_https(uri: str) -> None:
+    GoogleLogin("client", "secret", uri)
+
+
+@pytest.mark.parametrize(
+    "uri",
+    [
+        "http://hydropredict-tkm26.azurewebsites.net/api/auth/google/callback",
+        "https://hydropredict-tkm26.azurewebsites.net/other",
+        "https://hydropredict-tkm26.azurewebsites.net/api/auth/google/callback?x=1",
+        "https:///api/auth/google/callback",
+    ],
+)
+def test_redirect_uri_rejects_plain_http_hosts_and_other_paths(uri: str) -> None:
+    with pytest.raises(ValueError, match="redirect URI"):
+        GoogleLogin("client", "secret", uri)
