@@ -94,4 +94,6 @@ test('warning timing is honest about alarms after the fault started', () => {
   assert.equal(describeLead(-45), 'Flagged 45 h after the recorded fault started.');
   assert.equal(describeLead(null), 'No alarm was raised in this period.');
   assert.equal(formatDate('2023-08-04T18:00:00'), '4 Aug 2023');
+  // Saved alert decisions carry an explicit UTC offset from the server.
+  assert.equal(formatDate('2026-11-04T09:12:00.123456+00:00'), '4 Nov 2026');
 });

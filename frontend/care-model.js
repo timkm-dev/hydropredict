@@ -65,7 +65,8 @@ export function describeLead(hours) {
 }
 
 export function formatDate(iso) {
-  const date = new Date(iso.endsWith('Z') ? iso : `${iso}Z`);
+  // Replay times have no zone; saved decisions carry one (e.g. +00:00). Both are UTC.
+  const date = new Date(/(Z|[+-]\d\d:\d\d)$/.test(iso) ? iso : `${iso}Z`);
   return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
 }
 
