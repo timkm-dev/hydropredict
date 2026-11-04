@@ -21,6 +21,9 @@ historical data; it is not yet connected to live equipment.
 2. Finish your profile and choose your **role in this app**:
    - **Maintenance Operator** (default): see what needs attention and act on alerts.
    - **ML Engineer**: everything above, plus the models and research pages.
+   - **Administrator** (granted by another administrator): full access, plus the
+     **Admin** page for managing accounts. See [frontend/README.md](frontend/README.md#roles-issue-14)
+     to create the first one.
 3. Start on **What needs attention**. Each turbine has a plain-language status:
 
    | Status | Meaning |
