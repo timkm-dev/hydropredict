@@ -51,39 +51,14 @@ def test_invalid_reviews_are_not_saved(tmp_path):
     assert store.get("a", run_id)["reviews"] == []
 
 
-def test_care_reviews_are_owner_scoped_append_only_and_validated(tmp_path):
-    path = tmp_path / "assessments.sqlite3"
-    alerts = {"C-47-1", "A-0-1"}
-    store = AssessmentStore(path)
-    store.care_review(
-        "alice", {"alert": "C-47-1", "action": "inspect", "comment": "Pump A"}, alerts
-    )
-    store.care_review("alice", {"alert": "C-47-1", "action": "open"}, alerts)
-    restored = AssessmentStore(path)
-    reviews = restored.care_reviews("alice")
-    assert [r["action"] for r in reviews] == ["inspect", "open"]
-    assert reviews[0]["comment"] == "Pump A"
-    assert restored.care_reviews("bob") == []
-    for payload in [
-        {"alert": "unknown", "action": "inspect"},
-        {"alert": "A-0-1", "action": "healthy"},
-        {"alert": "A-0-1", "action": "dismissed", "comment": " "},
-        {"alert": "A-0-1", "action": "acknowledged", "comment": "x" * 2001},
-    ]:
-        with pytest.raises(ValueError):
-            restored.care_review("alice", payload, alerts)
-    assert len(restored.care_reviews("alice")) == 2
-
-
-def test_all_reviews_and_deleting_an_owner(tmp_path):
+def test_legacy_decisions_export_and_deleting_an_owner(tmp_path):
     store = AssessmentStore(tmp_path / "assessments.sqlite3")
-    alerts = {"A-0-1"}
-    store.care_review("1", {"alert": "A-0-1", "action": "inspect"}, alerts)
-    store.care_review("2", {"alert": "A-0-1", "action": "acknowledged"}, alerts)
+    with store.connect() as db:
+        db.execute("INSERT INTO care_reviews VALUES ('A-0-1','1','2026-11-01T00:00','inspect','')")
+        db.execute("INSERT INTO care_reviews VALUES ('A-0-1','2','2026-11-02T00:00','open','')")
     run_id = store.save("1", "run", [], {"scores": []})
-    assert [r["owner"] for r in store.all_care_reviews()] == ["2", "1"]
-    assert len(store.all_care_reviews(limit=1)) == 1
+    assert [r["owner"] for r in store.legacy_care_reviews()] == ["1", "2"]
     store.delete_owner("1")
-    assert [r["owner"] for r in store.all_care_reviews()] == ["2"]
+    assert [r["owner"] for r in store.legacy_care_reviews()] == ["2"]
     with pytest.raises(ValueError):
         store.get("1", run_id)

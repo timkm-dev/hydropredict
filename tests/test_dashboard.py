@@ -430,7 +430,7 @@ def test_administrator_permissions(service: InferenceService, tmp_path: Path) ->
             delete = {"id": target["id"], "action": "delete"}
             status, _, body = call("POST", "/api/admin/account", delete, admin)
             assert status == 200 and [a["email"] for a in body["accounts"]] == ["admin@example.com"]
-            assert assessments.all_care_reviews() == []
+            assert auth.recent_decisions() == []
         finally:
             connection.close()
             server.shutdown()

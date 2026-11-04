@@ -4,8 +4,8 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Early Warning · What needs attention</title>
   <link rel="icon" href="logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="theme.css">
-  <script type="module" src="care.js"></script>
+  <link rel="stylesheet" href="theme.css?v=decisions-1">
+  <script type="module" src="care.js?v=decisions-1"></script>
 </head>
 <body>
   <header class="site-header">
@@ -27,6 +27,7 @@
 
   <main class="page">
     <p id="message" role="status" aria-live="polite"></p>
+    <p id="announce" class="sr-only" aria-live="polite"></p>
 
     <section id="view-fleet" hidden aria-labelledby="fleet-title" class="section" style="gap: 28px">
       <div class="intro">

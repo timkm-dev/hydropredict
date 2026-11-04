@@ -1,4 +1,4 @@
-"""Small owner-scoped SQLite store for local assessments and alert review history."""
+"""Small owner-scoped SQLite store for local assessments and their review history."""
 
 from __future__ import annotations
 
@@ -10,8 +10,6 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 from uuid import uuid4
-
-CARE_ACTIONS = {"inspect", "acknowledged", "dismissed", "open"}
 
 
 class AssessmentStore:
@@ -98,27 +96,13 @@ class AssessmentStore:
                 (run["id"], episode, owner, datetime.now(UTC).isoformat(), action, comment.strip()),
             )
 
-    def care_reviews(self, owner: str) -> builtins.list[dict[str, Any]]:
-        """All of an owner's CARE alert decisions, oldest first."""
+    def legacy_care_reviews(self) -> builtins.list[dict[str, Any]]:
+        """CARE alert decisions saved here before they moved to the account database."""
         with closing(self.connect()) as db:
             return [
                 dict(r)
                 for r in db.execute(
-                    "SELECT alert,created,action,comment FROM care_reviews "
-                    "WHERE owner=? ORDER BY rowid",
-                    (owner,),
-                )
-            ]
-
-    def all_care_reviews(self, limit: int = 100) -> builtins.list[dict[str, Any]]:
-        """Every account's latest CARE alert decisions, newest first (administrators only)."""
-        with closing(self.connect()) as db:
-            return [
-                dict(r)
-                for r in db.execute(
-                    "SELECT alert,owner,created,action,comment FROM care_reviews "
-                    "ORDER BY rowid DESC LIMIT ?",
-                    (limit,),
+                    "SELECT alert,owner,created,action,comment FROM care_reviews ORDER BY rowid"
                 )
             ]
 
@@ -127,22 +111,3 @@ class AssessmentStore:
         with closing(self.connect()) as db, db:
             for table in ("runs", "reviews", "care_reviews"):
                 db.execute(f"DELETE FROM {table} WHERE owner=?", (owner,))
-
-    def care_review(self, owner: str, payload: dict[str, Any], alerts: set[str]) -> None:
-        """Append a decision on a known CARE alert; earlier decisions are kept."""
-        alert = payload.get("alert")
-        action = payload.get("action")
-        comment = payload.get("comment", "")
-        if not isinstance(alert, str) or alert not in alerts:
-            raise ValueError("Select an alert from the current replay data.")
-        if not isinstance(action, str) or action not in CARE_ACTIONS:
-            raise ValueError("Invalid review action.")
-        if not isinstance(comment, str) or len(comment) > 2000:
-            raise ValueError("Notes must contain at most 2,000 characters.")
-        if action == "dismissed" and not comment.strip():
-            raise ValueError("Add a reason before dismissing an alert.")
-        with closing(self.connect()) as db, db:
-            db.execute(
-                "INSERT INTO care_reviews VALUES (?,?,?,?,?)",
-                (alert, owner, datetime.now(UTC).isoformat(), action, comment.strip()),
-            )

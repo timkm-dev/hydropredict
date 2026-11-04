@@ -60,23 +60,46 @@ function updateCount() {
 }
 
 // ---------- Decisions (shared by the turbine page and the alerts inbox) ----------
+// Alerts decided since the page loaded offer Undo; older decisions offer Reopen.
+const decidedNow = new Set();
+function announce(text) { $('announce').textContent = text; }
+
+// `done` redraws the decision; it receives the action so callers can move focus.
 function decisionControls(alert, done) {
   const last = latestReview(reviews, alert.id);
-  const box = el('div', { class: 'section', style: 'gap: 10px' });
-  const error = el('p', { class: 'error-text', role: 'status' });
-  const save = async (action, comment = '') => {
+  const box = el('div', { class: 'decision' });
+  const error = el('p', { class: 'error-text', role: 'alert' });
+  const save = async (button, action, comment = '') => {
+    const controls = [...box.querySelectorAll('button, select, textarea')];
+    const label = button.textContent;
+    controls.forEach(c => { c.disabled = true; });
+    button.textContent = 'Saving…';
+    box.setAttribute('aria-busy', 'true');
+    error.textContent = '';
     try {
       reviews = (await api('/api/care/review', { alert: alert.id, action, comment })).reviews;
+      if (action === 'open') decidedNow.delete(alert.id); else decidedNow.add(alert.id);
       updateCount();
-      message(`${turbineName(alert.period)}: ${ACTION_LABEL[action].toLowerCase()}.`);
-      done();
-    } catch (e) { error.textContent = e.message; }
+      announce(`${turbineName(alert.period)}: ${ACTION_LABEL[action].toLowerCase()}.`);
+      done(action);
+    } catch (e) {
+      error.textContent = `Not saved. ${e.message}`;
+      button.textContent = label;
+      controls.forEach(c => { c.disabled = false; });
+      box.removeAttribute('aria-busy');
+    }
   };
   if (last && last.action !== 'open') {
+    const undo = decidedNow.has(alert.id);
     box.append(
-      el('p', {}, pill('done', ACTION_LABEL[last.action]), ` on ${formatMoment(last.created)}`),
-      last.comment ? el('p', { class: 'caption' }, `“${last.comment}”`) : null,
-      el('div', { class: 'actions' }, el('button', { type: 'button', class: 'btn plain', onclick: () => save('open') }, 'Reopen')),
+      el('div', { class: 'decided' },
+        el('span', { class: 'tick', 'aria-hidden': 'true' }, '✓'),
+        el('div', {},
+          el('strong', {}, ACTION_LABEL[last.action]),
+          el('span', { class: 'caption' }, ` · ${formatMoment(last.created)} UTC`),
+          last.comment ? el('p', { class: 'caption' }, `“${last.comment}”`) : null),
+        el('button', { type: 'button', class: 'btn plain',
+          onclick: event => save(event.currentTarget, 'open') }, undo ? 'Undo' : 'Reopen')),
       error);
     return box;
   }
@@ -86,14 +109,17 @@ function decisionControls(alert, done) {
   const reason = el('div', { class: 'reason', hidden: true },
     el('label', { class: 'field' }, 'Why is this not a problem?', reasonSelect),
     note,
-    el('button', { type: 'button', class: 'btn', onclick: () => {
-      if (!reasonSelect.value) { error.textContent = 'Choose a reason first.'; reasonSelect.focus(); return; }
-      save('dismissed', [reasonSelect.value, note.value.trim()].filter(Boolean).join(': '));
-    } }, 'Save decision'),
-    el('button', { type: 'button', class: 'btn plain', onclick: () => { reason.hidden = true; buttons.hidden = false; } }, 'Cancel'));
+    el('div', { class: 'actions' },
+      el('button', { type: 'button', class: 'btn', onclick: event => {
+        if (!reasonSelect.value) { error.textContent = 'Choose a reason first.'; reasonSelect.focus(); return; }
+        save(event.currentTarget, 'dismissed', [reasonSelect.value, note.value.trim()].filter(Boolean).join(': '));
+      } }, 'Save decision'),
+      el('button', { type: 'button', class: 'btn plain', onclick: () => {
+        reason.hidden = true; buttons.hidden = false; error.textContent = ''; buttons.lastChild.focus();
+      } }, 'Cancel')));
   const buttons = el('div', { class: 'actions' },
-    el('button', { type: 'button', class: 'btn', onclick: () => save('inspect') }, 'Send a technician'),
-    el('button', { type: 'button', class: 'btn secondary', onclick: () => save('acknowledged') }, 'Seen it, keep watching'),
+    el('button', { type: 'button', class: 'btn', onclick: event => save(event.currentTarget, 'inspect') }, 'Send a technician'),
+    el('button', { type: 'button', class: 'btn secondary', onclick: event => save(event.currentTarget, 'acknowledged') }, 'Seen it, keep watching'),
     el('button', { type: 'button', class: 'btn plain', onclick: () => { buttons.hidden = true; reason.hidden = false; reasonSelect.focus(); } }, 'Not a problem…'));
   box.append(buttons, reason, error);
   return box;
@@ -222,7 +248,11 @@ function renderDecision() {
   const full = { ...period.summary.alerts.find(a => a.id === alert.id), period: period.summary };
   $('period-decision').replaceChildren(
     el('p', { class: 'caption' }, `Alert raised ${formatMoment(alert.start)}`),
-    decisionControls(full, () => { renderDecision(); }));
+    decisionControls(full, () => { renderDecision(); focusDecision($('period-decision')); }));
+}
+// Keep keyboard and screen-reader users on the decision they just changed.
+function focusDecision(container) {
+  container.querySelector('.decision button')?.focus({ preventScroll: true });
 }
 function renderWhatNext() {
   const fault = period.fault;
@@ -307,19 +337,27 @@ function renderAlerts(focus) {
   $('alert-list').replaceChildren(...alerts.map(alert => alertCard(alert)));
   if (focus) document.getElementById(`alert-${focus}`)?.scrollIntoView({ block: 'center' });
 }
+// A decision redraws only its own card, so the list never jumps; decided cards leave
+// the To decide list the next time it is drawn.
 function alertCard(alert) {
   const history = reviews.filter(r => r.alert === alert.id);
   const last = latestReview(reviews, alert.id);
-  return el('article', { class: 'card alert-card', id: `alert-${alert.id}` },
+  const decided = Boolean(last && last.action !== 'open');
+  const card = el('article', { class: `card alert-card${decided ? ' is-decided' : ''}`, id: `alert-${alert.id}` },
     el('div', { class: 'head' },
-      last && last.action !== 'open' ? pill('done', ACTION_LABEL[last.action]) : pill('alarm'),
+      decided ? pill('done', 'Decided') : pill('alarm'),
       el('div', { class: 'what' },
         el('a', { href: `#/period/${alert.period.key}` }, turbineName(alert.period)),
         el('span', {}, `Check first: ${alert.component}. ${alert.top?.length ? `Biggest changes: ${listText(alert.top)}.` : ''}`)),
       el('span', { class: 'caption' }, `Since ${formatMoment(alert.start)}`)),
-    decisionControls(alert, () => renderAlerts(alert.id)),
+    decisionControls(alert, () => {
+      const fresh = alertCard(alert);
+      card.replaceWith(fresh);
+      focusDecision(fresh);
+    }),
     history.length > 1 ? el('div', { class: 'history' }, el('strong', {}, 'History'), ...history.map(r =>
       el('span', {}, `${formatMoment(r.created)} · ${ACTION_LABEL[r.action]}${r.comment ? ` · “${r.comment}”` : ''}`))) : null);
+  return card;
 }
 
 // ---------- Results ----------
