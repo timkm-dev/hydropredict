@@ -23,6 +23,11 @@ function showProfile(user) {
   $('step-label').textContent = 'MAKE IT YOURS';
   $('auth-title').textContent = 'Complete your profile';
   $('auth-description').textContent = 'Tell us a little about yourself and your organization.';
+  if (user.role === 'admin' && !$('role').querySelector('option[value="admin"]')) {
+    // Only another administrator can change this role; the server keeps it either way.
+    $('role').append(new Option('Administrator: full access, including managing accounts', 'admin'));
+    $('role').disabled = true;
+  }
   $('profile-form').elements.role.value = user.role || 'operator';
   for (const key of ['name', 'company', 'username', 'job_position']) {
     $('profile-form').elements[key].value = user[key] || '';

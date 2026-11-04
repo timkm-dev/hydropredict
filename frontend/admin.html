@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Early Warning · Accounts</title>
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="theme.css">
+  <script type="module" src="site.js"></script>
+  <script type="module" src="admin.js"></script>
+  <style>
+    .tiles .tile { cursor: default; }
+    .tiles .tile:hover { border-color: var(--line); }
+    .tiles .tile.alarm:hover { background: var(--sky); border-color: var(--sky); }
+    .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+    .toolbar input[type=search] { flex: 1 1 260px; min-height: 44px; padding: 0 12px; }
+    button.row { width: 100%; border: 0; border-bottom: 1px solid var(--line-soft); background: #FFFFFF; font: inherit; text-align: left; cursor: pointer; }
+    .row .who { flex: 1 1 240px; min-width: 0; display: flex; flex-direction: column; }
+    .row .who strong { flex: none; }
+    .row .who small, .row .when { color: var(--muted); font-size: 14px; overflow-wrap: anywhere; }
+    .row .tags { display: flex; flex-wrap: wrap; gap: 6px; flex: 0 1 auto; }
+    .row .when { flex: 0 0 150px; }
+    .row .open { color: var(--sky); font-weight: 600; font-size: 15px; margin-left: auto; }
+    label.field input, label.field select { font-weight: 400; }
+    #manage-confirm { min-height: 44px; padding: 0 10px; }
+    .pill.off { background: #FDECEC; color: #8A1C1C; }
+    .live { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--sky-dark); font-weight: 600; }
+    .live::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--sky); }
+    .empty { padding: 20px; color: var(--muted); }
+    form.stack { display: flex; flex-direction: column; gap: 12px; }
+    form.stack input:not([type=checkbox]), form.stack select { min-height: 44px; padding: 0 10px; width: 100%; }
+    .inline { display: flex; gap: 8px; }
+    .inline input { flex: 1 1 auto; min-width: 0; font-family: 'IBM Plex Mono', monospace; }
+    .handover { font-size: 15px; }
+    .handover code { font-size: 15px; background: #FFFFFF; border-radius: 6px; padding: 2px 6px; user-select: all; overflow-wrap: anywhere; }
+    .roles { margin: 0; display: grid; gap: 8px; font-size: 14px; }
+    .roles dt { font-weight: 600; color: var(--ink); }
+    .roles dd { margin: 0 0 4px; }
+    dialog { border: 1px solid var(--line); border-radius: var(--radius); padding: 0; width: min(600px, calc(100vw - 32px)); max-height: calc(100vh - 32px); color: var(--ink); box-shadow: 0 16px 48px rgba(15, 33, 51, .22); }
+    dialog::backdrop { background: rgba(15, 33, 51, .45); }
+    .dialog-head { background: var(--sky); color: #FFFFFF; padding: 18px 20px; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .dialog-head p { color: #E3F2FB; font-size: 15px; overflow-wrap: anywhere; }
+    .dialog-head button { background: rgba(255, 255, 255, .16); color: #FFFFFF; border: 0; border-radius: 8px; min-height: 40px; padding: 0 14px; font: inherit; cursor: pointer; }
+    .dialog-body { padding: 20px; display: flex; flex-direction: column; gap: 18px; }
+    .facts { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; font-size: 14px; }
+    .facts dt { color: var(--muted); }
+    .facts dd { margin: 0; overflow-wrap: anywhere; }
+    .block { display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--line-soft); padding-top: 16px; }
+    .block h3 { font-size: 16px; }
+    .block p { font-size: 14px; color: var(--body); }
+    .danger { border: 1px solid #F3C7C7; border-radius: 10px; padding: 14px 16px; }
+    .btn.danger-btn { background: #FFFFFF; color: #8A1C1C; border-color: #E9A8A8; }
+    .btn.danger-btn:hover { background: #FDECEC; color: #8A1C1C; }
+    .btn.danger-btn:disabled { opacity: .5; cursor: not-allowed; }
+    .note { background: var(--sky-soft); color: var(--sky-dark); border-radius: 10px; padding: 10px 14px; font-size: 14px; }
+    #dialog-message:empty { display: none; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="inner">
+      <a class="brand" href="/welcome.html"><img src="logo.svg" alt="">Early Warning</a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="care.html#/">Needs attention</a>
+        <a href="care.html#/alerts">Alerts</a>
+        <a href="care.html#/results">How well it works</a>
+        <a href="models.html">Models</a>
+        <details class="menu"><summary>Research</summary><div>
+          <a href="shp.html">Hydro plant monitoring</a><a href="bearing.html">Bearing diagnosis</a><a href="evidence.html">Hydro evaluation evidence</a>
+        </div></details>
+        <a href="admin.html" aria-current="page">Admin</a>
+      </nav>
+      <div class="account"><span class="role" id="role"></span><a href="auth.html?profile">Account</a><button type="button" id="logout">Sign out</button></div>
+    </div>
+  </header>
+
+  <main class="page">
+    <p id="message" role="status" aria-live="polite"></p>
+    <div class="intro">
+      <p class="eyebrow">Administration</p>
+      <h1>Accounts and access</h1>
+      <p>Everyone who can sign in to Early Warning. Add people, decide what they can see, reset a password or turn an account off.</p>
+    </div>
+
+    <div class="tiles" aria-label="Account summary">
+      <div class="tile alarm"><strong id="count-total">—</strong><span class="label">Accounts</span><span>Everyone who can sign in</span></div>
+      <div class="tile watch"><strong id="count-live">—</strong><span class="label">Signed in now</span><span>With an open session</span></div>
+      <div class="tile"><strong id="count-admins">—</strong><span class="label">Administrators</span><span>Full access, active</span></div>
+      <div class="tile"><strong id="count-off">—</strong><span class="label">Turned off</span><span>Cannot sign in</span></div>
+    </div>
+
+    <div class="split">
+      <section class="main" aria-labelledby="accounts-title">
+        <div class="section-head"><h2 id="accounts-title">Accounts</h2><span class="caption" id="shown-count"></span></div>
+        <div class="toolbar">
+          <label class="sr-only" for="search">Search accounts</label>
+          <input id="search" type="search" placeholder="Search by name, email, username or company" autocomplete="off">
+        </div>
+        <div class="chips" role="group" aria-label="Show accounts">
+          <button type="button" class="chip" data-show="all" aria-pressed="true">Everyone</button>
+          <button type="button" class="chip" data-show="admin" aria-pressed="false">Administrators</button>
+          <button type="button" class="chip" data-show="ml_engineer" aria-pressed="false">ML Engineers</button>
+          <button type="button" class="chip" data-show="operator" aria-pressed="false">Operators</button>
+          <button type="button" class="chip" data-show="disabled" aria-pressed="false">Turned off</button>
+        </div>
+        <div class="rows" id="account-rows"><p class="empty">Loading accounts…</p></div>
+      </section>
+
+      <aside class="side">
+        <section class="card" aria-labelledby="add-title">
+          <form class="stack" id="create-form">
+            <h2 id="add-title">Add an account</h2>
+            <label class="field">Email address<input name="email" type="email" maxlength="254" autocomplete="off" placeholder="name@company.com" required></label>
+            <label class="field"><span>Full name <span class="caption">(optional)</span></span><input name="name" maxlength="100" autocomplete="off"></label>
+            <label class="field">Role<select name="role" id="create-role"></select></label>
+            <label class="field" for="create-password">Temporary password</label>
+            <div class="inline">
+              <input id="create-password" name="password" type="text" minlength="12" maxlength="128" autocomplete="off" spellcheck="false" required>
+              <button type="button" class="btn plain" id="create-generate">New</button>
+            </div>
+            <p class="caption">12–128 characters. A random one is filled in for you.</p>
+            <button class="btn">Add account</button>
+            <p class="error-text" id="create-error" role="status"></p>
+          </form>
+        </section>
+        <div class="soft handover" id="handover" hidden>
+          <strong>Account created</strong>
+          <span>Share these sign-in details privately:</span>
+          <span>Email <code id="handover-email"></code></span>
+          <span>Password <code id="handover-password"></code></span>
+          <button type="button" class="btn secondary" id="handover-copy">Copy sign-in details</button>
+          <span class="caption">They complete their profile the first time they sign in.</span>
+        </div>
+        <section class="quiet-box" aria-labelledby="roles-title">
+          <h2 id="roles-title" style="font-size: 17px">What each role can do</h2>
+          <dl class="roles" id="role-help"></dl>
+          <span class="caption">Operators and ML Engineers can still switch between those two roles in their profile. Only an administrator can make someone an administrator.</span>
+        </section>
+      </aside>
+    </div>
+
+    <section class="section" aria-labelledby="activity-title">
+      <div class="section-head"><h2 id="activity-title">Recent alert decisions</h2><span class="caption">Across every account, newest first</span></div>
+      <div class="rows" id="activity-rows"><p class="empty">Loading…</p></div>
+    </section>
+  </main>
+
+  <dialog id="manage" aria-labelledby="manage-name">
+    <div class="dialog-head">
+      <div><h2 id="manage-name"></h2><p id="manage-email"></p></div>
+      <button type="button" id="manage-close">Close</button>
+    </div>
+    <div class="dialog-body">
+      <p id="dialog-message" role="status" aria-live="polite" class="note"></p>
+      <p class="note" id="manage-self" hidden>This is your account. You can reset your password here, but another administrator has to change your role, turn it off or delete it.</p>
+      <dl class="facts" id="manage-facts"></dl>
+
+      <div class="block">
+        <h3>Role</h3>
+        <div class="inline"><label class="sr-only" for="manage-role">Role</label><select id="manage-role" style="flex: 1 1 auto"></select><button type="button" class="btn" id="manage-role-save">Save role</button></div>
+      </div>
+
+      <div class="block">
+        <h3>Password</h3>
+        <p>Set a new password and give it to them privately. This signs them out everywhere.</p>
+        <div class="inline">
+          <label class="sr-only" for="manage-password">New password</label>
+          <input id="manage-password" type="text" minlength="12" maxlength="128" autocomplete="off" spellcheck="false">
+          <button type="button" class="btn plain" id="manage-generate">New</button>
+        </div>
+        <div class="actions"><button type="button" class="btn secondary" id="manage-password-save">Reset password</button></div>
+      </div>
+
+      <div class="block">
+        <h3>Access</h3>
+        <p id="manage-access-text"></p>
+        <div class="actions">
+          <button type="button" class="btn plain" id="manage-signout">Sign out everywhere</button>
+          <button type="button" class="btn plain" id="manage-toggle"></button>
+        </div>
+      </div>
+
+      <div class="block danger">
+        <h3>Delete account</h3>
+        <p>Removes the account, its sign-in methods, saved assessments and alert decisions. This cannot be undone; turning the account off keeps its history.</p>
+        <label class="field"><span>Type <code id="manage-confirm-hint"></code> to confirm</span><input id="manage-confirm" autocomplete="off" spellcheck="false"></label>
+        <div class="actions"><button type="button" class="btn danger-btn" id="manage-delete" disabled>Delete account</button></div>
+      </div>
+    </div>
+  </dialog>
+</body>
+</html>

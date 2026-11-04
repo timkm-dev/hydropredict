@@ -24,6 +24,8 @@ Shared styles are in `theme.css`; the logo and welcome illustration are
   timing of its first alarm.
 - **Models** (`models.html`, ML Engineers only): what each model does, its data,
   frozen settings and results.
+- **Admin** (`admin.html`, administrators only): accounts and access, described
+  under Roles below.
 
 Status rules: **Inspect now** when the warning counter reaches 72 (the CARE
 criticality rule, about 12 hours of unusual readings), **Keep an eye on** from 24 (a
@@ -32,19 +34,48 @@ detects unusual behaviour but does not classify faults.
 
 ## Roles (issue #14)
 
-| Action | Maintenance Operator | ML Engineer |
-|---|---|---|
-| Welcome, sign in, profile | yes | yes |
-| What needs attention, turbine, alerts, how well it works | yes | yes |
-| Record alert decisions | yes | yes |
-| Models page | no | yes |
-| Research pages, `evidence-data.json` and model-scoring APIs | no | yes |
+| Action | Maintenance Operator | ML Engineer | Administrator |
+|---|---|---|---|
+| Welcome, sign in, profile | yes | yes | yes |
+| What needs attention, turbine, alerts, how well it works | yes | yes | yes |
+| Record alert decisions | yes | yes | yes |
+| Models page | no | yes | yes |
+| Research pages, `evidence-data.json` and model-scoring APIs | no | yes | yes |
+| **Admin** page (`admin.html`) and `/api/admin/*` | no | no | yes |
 
-Each person chooses their role in their profile (**Role in this app**); new accounts
-start as Maintenance Operators. This is deliberately permissive for the prototype:
-anyone can choose ML Engineer. The server still checks the stored role on every
-request, so the pages and APIs above are only reachable after choosing it. A
-production version would need roles assigned by an administrator.
+Each person chooses between Maintenance Operator and ML Engineer in their profile
+(**Role in this app**); new accounts start as Maintenance Operators. This is
+deliberately permissive for the prototype: anyone can choose ML Engineer. The server
+still checks the stored role on every request. Only an administrator can make
+someone an administrator, and an administrator's profile cannot change their own role.
+
+**Admin page.** Administrators see an **Admin** link in the header. It lists every
+account (search and role filters, who is signed in now, last sign-in), adds accounts
+with a generated temporary password to hand over privately, and for each account can
+change the role, reset the password, sign out everywhere, turn the account off or
+on, or delete it (typing the email to confirm). Turned-off accounts cannot sign in
+and keep their history; deleting also removes the account's saved assessments and
+alert decisions. Administrators cannot change their own role, turn off or delete
+their own account, so there is always at least one administrator. The page also
+lists recent alert decisions across all accounts.
+
+**Creating the first administrator.** Run this against the same account database as
+the dashboard (`DATABASE_URL` from `.env`, otherwise `data/accounts.sqlite3`). It asks
+for the password, or use `--generate-password` to print a random one once:
+
+```powershell
+.venv/Scripts/python.exe -m hydropredict.account_admin --email admin@example.com
+```
+
+If the email already has an account, it is promoted to administrator and keeps its
+password.
+
+**On the hosted site** the container has no SSH server, so add two App Service
+settings instead: `ADMIN_EMAIL` and `ADMIN_PASSWORD` (12–128 characters). Saving them
+restarts the site, and on startup `docker/entrypoint.sh` creates that administrator
+once (`--create-only`). An email that already has an account is left unchanged, so
+someone who registered it first is never promoted. After signing in, change the
+password on the Admin page and delete both settings.
 
 The replay data is generated locally and ignored by Git (derived from CC BY-SA 4.0
 data). Build it once after the CARE models exist (about 15 minutes on a laptop); the dataset

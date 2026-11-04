@@ -110,6 +110,24 @@ class AssessmentStore:
                 )
             ]
 
+    def all_care_reviews(self, limit: int = 100) -> builtins.list[dict[str, Any]]:
+        """Every account's latest CARE alert decisions, newest first (administrators only)."""
+        with closing(self.connect()) as db:
+            return [
+                dict(r)
+                for r in db.execute(
+                    "SELECT alert,owner,created,action,comment FROM care_reviews "
+                    "ORDER BY rowid DESC LIMIT ?",
+                    (limit,),
+                )
+            ]
+
+    def delete_owner(self, owner: str) -> None:
+        """Remove a deleted account's records so a reused account id never inherits them."""
+        with closing(self.connect()) as db, db:
+            for table in ("runs", "reviews", "care_reviews"):
+                db.execute(f"DELETE FROM {table} WHERE owner=?", (owner,))
+
     def care_review(self, owner: str, payload: dict[str, Any], alerts: set[str]) -> None:
         """Append a decision on a known CARE alert; earlier decisions are kept."""
         alert = payload.get("alert")

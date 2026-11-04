@@ -358,3 +358,80 @@ def test_role_permissions(service: InferenceService, tmp_path: Path) -> None:
             connection.close()
             server.shutdown()
             worker.join(timeout=5)
+
+
+def test_administrator_permissions(service: InferenceService, tmp_path: Path) -> None:
+    care = tmp_path / "care-data"
+    care.mkdir()
+    (care / "fleet.json").write_text(json.dumps({"periods": [{"alerts": [{"id": "A-1-1"}]}]}))
+    auth = AuthStore(tmp_path / "accounts.sqlite3")
+    assessments = AssessmentStore(tmp_path / "assessments.sqlite3")
+    auth.make_admin("admin@example.com", "admin passphrase 1")
+    handler = partial(
+        DashboardHandler, service=service, auth=auth, assessments=assessments, care_data=care
+    )
+    with HTTPServer(("127.0.0.1", 0), handler) as server:
+        worker = threading.Thread(target=server.serve_forever, daemon=True)
+        worker.start()
+        connection = http.client.HTTPConnection("127.0.0.1", server.server_port, timeout=10)
+
+        def call(method: str, path: str, body: Any = None, cookie: str = "") -> Any:
+            headers = {"Content-Type": "application/json", "Cookie": cookie}
+            connection.request(method, path, None if body is None else json.dumps(body), headers)
+            response = connection.getresponse()
+            return (
+                response.status,
+                response.getheader("Set-Cookie"),
+                json.loads(response.read() or b"null")
+                if response.getheader("Content-Type") == "application/json"
+                else None,
+            )
+
+        def sign_in(email: str, password: str, username: str) -> str:
+            credentials = {"email": email, "password": password}
+            cookie = call("POST", "/api/auth/login", credentials)[1].split(";", 1)[0]
+            profile = {"name": "N", "company": "C", "username": username, "job_position": "x"}
+            assert call("POST", "/api/auth/profile", profile, cookie)[0] == 200
+            return cookie
+
+        try:
+            assert call("GET", "/api/admin/accounts")[0] == 401
+            assert call("GET", "/admin.html")[0] == 302
+            assert call("POST", "/api/admin/create", {"email": "x@example.com"})[0] == 401
+            admin = sign_in("admin@example.com", "admin passphrase 1", "admin")
+            # Administrators have full access, including ML Engineer pages and APIs.
+            for path in ["/admin.html", "/models.html", "/api/model", "/care.html"]:
+                assert call("GET", path, cookie=admin)[0] == 200
+            new = {"email": "op@example.com", "password": "temporary pass", "role": "operator"}
+            status, _, body = call("POST", "/api/admin/create", new, admin)
+            assert status == 200
+            target = next(a for a in body["accounts"] if a["email"] == "op@example.com")
+            assert call("POST", "/api/admin/create", new, admin)[0] == 400
+
+            operator = sign_in("op@example.com", "temporary pass", "operator")
+            assert call("GET", "/admin.html", cookie=operator)[0] == 403
+            for path in ["/api/admin/accounts", "/api/admin/activity"]:
+                assert call("GET", path, cookie=operator)[0] == 403
+            grant = {"id": target["id"], "action": "role", "role": "admin"}
+            assert call("POST", "/api/admin/account", grant, operator)[0] == 403
+            review = {"alert": "A-1-1", "action": "inspect"}
+            assert call("POST", "/api/care/review", review, operator)[0] == 200
+
+            status, _, body = call("GET", "/api/admin/activity", cookie=admin)
+            assert [(r["owner"], r["action"]) for r in body["reviews"]] == [
+                (str(target["id"]), "inspect")
+            ]
+            me = call("GET", "/api/admin/accounts", cookie=admin)[2]["me"]
+            delete_self = {"id": me, "action": "delete"}
+            assert call("POST", "/api/admin/account", delete_self, admin)[0] == 400
+            turn_off = {"id": target["id"], "action": "disable"}
+            assert call("POST", "/api/admin/account", turn_off, admin)[0] == 200
+            assert call("GET", "/api/auth/me", cookie=operator)[0] == 401
+            delete = {"id": target["id"], "action": "delete"}
+            status, _, body = call("POST", "/api/admin/account", delete, admin)
+            assert status == 200 and [a["email"] for a in body["accounts"]] == ["admin@example.com"]
+            assert assessments.all_care_reviews() == []
+        finally:
+            connection.close()
+            server.shutdown()
+            worker.join(timeout=5)

@@ -21,7 +21,7 @@ import torch
 from dotenv import load_dotenv
 
 from hydropredict.assessment_store import AssessmentStore
-from hydropredict.auth import ML_ENGINEER, SESSION_SECONDS, AuthStore
+from hydropredict.auth import ADMIN, ML_ROLES, SESSION_SECONDS, AuthStore
 from hydropredict.data.schema import MEASUREMENT_COLUMNS
 from hydropredict.google_login import GoogleLogin
 from hydropredict.models.lstm import SHPLSTMAutoencoder
@@ -34,11 +34,17 @@ MAX_ROWS = 100_000
 # Issue #14 role matrix: research pages, their data and model-scoring APIs are ML Engineer only.
 ML_PAGES = {"/models.html", "/shp.html", "/bearing.html", "/evidence.html", "/evidence-data.json"}
 ML_APIS = {"/api/model", "/api/score", "/api/assess", "/api/review", "/api/runs", "/api/run"}
-SIGNED_IN_PAGES = {"/care.html", *ML_PAGES}
+# Account administration is for administrators, who also pass every ML Engineer check.
+ADMIN_PAGES = {"/admin.html", "/admin.js"}
+SIGNED_IN_PAGES = {"/care.html", *ML_PAGES, *ADMIN_PAGES}
 
 
 def ml_only(path: str) -> bool:
     return path in ML_PAGES or path in ML_APIS or path.startswith("/api/bearing/")
+
+
+def admin_only(path: str) -> bool:
+    return path in ADMIN_PAGES or path.startswith("/api/admin/")
 
 
 class InferenceService:
@@ -186,11 +192,17 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             ):
                 self.redirect("/auth.html")
                 return
-            if ml_only(path) and user and user["role"] != ML_ENGINEER:
+            if ml_only(path) and user and user["role"] not in ML_ROLES:
                 if path.startswith("/api/"):
                     self.respond(403, {"error": "This area is for ML Engineers."})
                 else:
                     self.forbidden_page()
+                return
+            if admin_only(path) and user and user["role"] != ADMIN:
+                if path.startswith("/api/"):
+                    self.respond(403, {"error": "This area is for administrators."})
+                else:
+                    self.forbidden_page(admin=True)
                 return
         if path.startswith("/api/bearing/"):
             user = self.auth.user(self.token()) if self.auth else None
@@ -231,6 +243,15 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 self.respond(401, {"error": "Sign in to see alert reviews."})
                 return
             self.respond(200, {"reviews": self.assessments.care_reviews(str(user["id"]))})
+        elif path in {"/api/admin/accounts", "/api/admin/activity"}:
+            user = self.auth.user(self.token()) if self.auth else None
+            if not user or user["role"] != ADMIN or self.auth is None:
+                self.respond(403, {"error": "This area is for administrators."})
+            elif path == "/api/admin/accounts":
+                self.respond(200, {"accounts": self.auth.accounts(), "me": user["id"]})
+            else:
+                reviews = self.assessments.all_care_reviews() if self.assessments else []
+                self.respond(200, {"reviews": reviews})
         elif self.path == "/api/model":
             self.respond(200, self.service.info())
         elif self.path.startswith("/api/"):
@@ -240,17 +261,30 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 self.path = "/care.html"
             super().do_GET()
 
-    def forbidden_page(self) -> None:
+    def forbidden_page(self, admin: bool = False) -> None:
+        title, text, change = (
+            (
+                "administrators",
+                "Managing accounts needs an administrator account. Ask an administrator "
+                "if you need access.",
+                "",
+            )
+            if admin
+            else (
+                "ML Engineers",
+                "Your account is set up as a Maintenance Operator. To see the models and "
+                "research pages, change your role to ML Engineer in your profile.",
+                '<a class="btn" href="/auth.html?profile">Change my role</a>',
+            )
+        )
         body = (
             '<!doctype html><html lang="en"><head><meta charset="utf-8">'
             '<meta name="viewport" content="width=device-width,initial-scale=1">'
-            "<title>Early Warning · ML Engineers only</title>"
+            f"<title>Early Warning · {title.capitalize()} only</title>"
             '<link rel="icon" href="/logo.svg" type="image/svg+xml">'
             '<link rel="stylesheet" href="/theme.css"></head><body><main class="page">'
-            '<div class="intro"><h1>This page is for ML Engineers</h1>'
-            "<p>Your account is set up as a Maintenance Operator. To see the models and "
-            "research pages, change your role to ML Engineer in your profile.</p></div>"
-            '<p class="actions"><a class="btn" href="/auth.html?profile">Change my role</a>'
+            f'<div class="intro"><h1>This page is for {title}</h1><p>{text}</p></div>'
+            f'<p class="actions">{change}'
             '<a class="btn secondary" href="/care.html">Go to what needs attention</a></p>'
             "</main></body></html>"
         ).encode()
@@ -341,6 +375,8 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             "/api/auth/login",
             "/api/auth/logout",
             "/api/auth/profile",
+            "/api/admin/create",
+            "/api/admin/account",
         }:
             self.respond(404, {"error": "Unknown endpoint."})
             return
@@ -377,9 +413,15 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 if not user["username"]:
                     self.respond(403, {"error": "Complete your profile first."})
                     return
-                if ml_only(self.path) and user["role"] != ML_ENGINEER:
+                if ml_only(self.path) and user["role"] not in ML_ROLES:
                     self.respond(403, {"error": "This action is for ML Engineers."})
                     return
+            if admin_only(self.path):
+                if user is None or user["role"] != ADMIN:
+                    self.respond(403, {"error": "This action is for administrators."})
+                    return
+                self.handle_admin(user, payload)
+                return
             if self.path == "/api/care/review":
                 if user is None or self.assessments is None:
                     self.respond(401, {"error": "Sign in to review alerts."})
@@ -447,6 +489,19 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 return
             self.auth.profile(user["id"], payload)
         self.respond(200, {"user": self.auth.user(token)})
+
+    def handle_admin(self, user: dict[str, Any], payload: dict[str, Any]) -> None:
+        assert self.auth is not None  # Only signed-in administrators reach this point.
+        if self.path == "/api/admin/create":
+            self.auth.create_account(payload)
+        else:
+            target, action = payload.get("id"), payload.get("action")
+            self.auth.administer(user["id"], target, action, payload)
+            if action == "delete":
+                for store in (self.assessments, getattr(self.bearing, "store", None)):
+                    if store is not None:
+                        store.delete_owner(str(target))
+        self.respond(200, {"accounts": self.auth.accounts(), "me": user["id"]})
 
 
 def main() -> None:

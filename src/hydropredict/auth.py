@@ -34,9 +34,30 @@ class PostgresConnection:
 SESSION_SECONDS = 8 * 60 * 60
 OPERATOR = "operator"
 ML_ENGINEER = "ml_engineer"
+ADMIN = "admin"
 
-
+# People choose between these two themselves; only an administrator can grant ADMIN.
 ROLES = {OPERATOR, ML_ENGINEER}
+ALL_ROLES = {*ROLES, ADMIN}
+# Roles allowed on the models, research pages and scoring APIs: administrators see everything.
+ML_ROLES = {ML_ENGINEER, ADMIN}
+ADMIN_ACTIONS = {"role", "password", "sign_out", "disable", "enable", "delete"}
+EMAIL = r"[^\s@]+@[^\s@]+\.[^\s@]+"
+
+
+def hash_password(password: Any) -> str:
+    if not isinstance(password, str) or not 12 <= len(password) <= 128:
+        raise ValueError("Use a password between 12 and 128 characters.")
+    salt = secrets.token_hex(16)
+    digest = hashlib.scrypt(password.encode(), salt=salt.encode(), n=16384, r=8, p=1).hex()
+    return salt + ":" + digest
+
+
+def clean_email(value: Any) -> str:
+    email = str(value or "").strip().lower()
+    if len(email) > 254 or not re.fullmatch(EMAIL, email):
+        raise ValueError("Enter a valid email address.")
+    return email
 
 
 class AuthStore:
@@ -77,14 +98,24 @@ class AuthStore:
                     link_user BIGINT REFERENCES users(id), expires DOUBLE PRECISION NOT NULL
                 );
             """)
-            # Prototype roles are self-selected in the profile (issue #14); add to older tables.
-            if self.postgres:
-                db.execute(
-                    "ALTER TABLE users ADD COLUMN IF NOT EXISTS role TEXT NOT NULL "
-                    f"DEFAULT '{OPERATOR}'"
-                )
-            elif "role" not in {row["name"] for row in db.execute("PRAGMA table_info(users)")}:
-                db.execute(f"ALTER TABLE users ADD COLUMN role TEXT NOT NULL DEFAULT '{OPERATOR}'")
+            # Columns added after the first release (issue #14 roles, administration); older
+            # tables gain them here. Accounts created before `created` existed show 0.
+            columns = {
+                "role": f"TEXT NOT NULL DEFAULT '{OPERATOR}'",
+                "disabled": "INTEGER NOT NULL DEFAULT 0",
+                "created": "DOUBLE PRECISION NOT NULL DEFAULT 0",
+                "last_login": "DOUBLE PRECISION",
+            }
+            existing = (
+                set()
+                if self.postgres
+                else {row["name"] for row in db.execute("PRAGMA table_info(users)")}
+            )
+            for name, definition in columns.items():
+                if self.postgres:
+                    db.execute(f"ALTER TABLE users ADD COLUMN IF NOT EXISTS {name} {definition}")
+                elif name not in existing:
+                    db.execute(f"ALTER TABLE users ADD COLUMN {name} {definition}")
 
     @contextmanager
     def connect(self) -> Iterator[Any]:
@@ -104,19 +135,13 @@ class AuthStore:
                 db.close()
 
     def register(self, data: dict[str, Any]) -> str:
-        email = str(data.get("email", "")).strip().lower()
-        password = data.get("password", "")
-        if len(email) > 254 or not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", email):
-            raise ValueError("Enter a valid email address.")
-        if not isinstance(password, str) or not 12 <= len(password) <= 128:
-            raise ValueError("Use a password between 12 and 128 characters.")
-        salt = secrets.token_hex(16)
-        digest = hashlib.scrypt(password.encode(), salt=salt.encode(), n=16384, r=8, p=1).hex()
+        email = clean_email(data.get("email"))
+        password = hash_password(data.get("password", ""))
         try:
             with self.connect() as db:
                 cursor = db.execute(
-                    "INSERT INTO users(email, password) VALUES (?, ?) RETURNING id",
-                    (email, salt + ":" + digest),
+                    "INSERT INTO users(email, password, created) VALUES (?, ?, ?) RETURNING id",
+                    (email, password, time.time()),
                 )
                 user_id = cursor.fetchone()["id"]
         except (sqlite3.IntegrityError, psycopg.IntegrityError) as error:
@@ -146,6 +171,8 @@ class AuthStore:
         actual = hashlib.scrypt(password.encode(), salt=salt.encode(), n=16384, r=8, p=1).hex()
         if not secrets.compare_digest(actual, expected) or user is None:
             raise ValueError("Incorrect email or password.")
+        if user["disabled"]:
+            raise ValueError("This account has been turned off. Contact your administrator.")
         with self.connect() as db:
             db.execute("DELETE FROM login_attempts WHERE email = ?", (email,))
         return self.session(user["id"])
@@ -161,9 +188,10 @@ class AuthStore:
             or claims.get("email_verified") is not True
         ):
             raise ValueError("Google did not provide a verified email address.")
-        email = email.strip().lower()
-        if len(email) > 254 or not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", email):
-            raise ValueError("Google did not provide a valid email address.")
+        try:
+            email = clean_email(email)
+        except ValueError as error:
+            raise ValueError("Google did not provide a valid email address.") from error
         try:
             with self.connect() as db:
                 identity = db.execute(
@@ -188,8 +216,9 @@ class AuthStore:
                                 "open your profile, and choose Connect Google."
                             )
                         user_id = db.execute(
-                            "INSERT INTO users(email,password,name) VALUES (?, ?, ?) RETURNING id",
-                            (email, "!", str(claims.get("name", ""))[:100]),
+                            "INSERT INTO users(email,password,name,created) VALUES (?, ?, ?, ?) "
+                            "RETURNING id",
+                            (email, "!", str(claims.get("name", ""))[:100], time.time()),
                         ).fetchone()["id"]
                     db.execute(
                         "INSERT INTO external_identities VALUES ('google', ?, ?)",
@@ -199,6 +228,10 @@ class AuthStore:
             raise ValueError(
                 "Unable to connect this Google account. Try signing in again."
             ) from error
+        with self.connect() as db:
+            account = db.execute("SELECT disabled FROM users WHERE id=?", (user_id,)).fetchone()
+        if account["disabled"]:
+            raise ValueError("This account has been turned off. Contact your administrator.")
         return self.session(user_id)
 
     def begin_google(self, link_user: int | None = None) -> tuple[str, str, str]:
@@ -231,6 +264,7 @@ class AuthStore:
         token = secrets.token_urlsafe(32)
         with self.connect() as db:
             db.execute("DELETE FROM sessions WHERE expires <= ?", (time.time(),))
+            db.execute("UPDATE users SET last_login=? WHERE id=?", (time.time(), user_id))
             db.execute(
                 "INSERT INTO sessions VALUES (?, ?, ?)",
                 (
@@ -247,7 +281,8 @@ class AuthStore:
                 "SELECT users.id, email, name, company, username, job_position, role, "
                 "EXISTS(SELECT 1 FROM external_identities WHERE provider='google' "
                 "AND user_id=users.id) AS google_connected FROM users "
-                "JOIN sessions ON users.id = sessions.user_id WHERE token = ? AND expires > ?",
+                "JOIN sessions ON users.id = sessions.user_id "
+                "WHERE token = ? AND expires > ? AND disabled = 0",
                 (hashlib.sha256(token.encode()).hexdigest(), time.time()),
             ).fetchone()
         return dict(row) if row else None
@@ -270,10 +305,14 @@ class AuthStore:
         if not re.fullmatch(r"[a-z0-9_]{3,30}", values[2]):
             raise ValueError("Username must be 3–30 letters, numbers, or underscores.")
         role = data.get("role", OPERATOR)
-        if role not in ROLES:
-            raise ValueError("Choose Maintenance Operator or ML Engineer.")
         try:
             with self.connect() as db:
+                current = db.execute("SELECT role FROM users WHERE id=?", (user_id,)).fetchone()
+                # Administrators keep their role; only another administrator can change it.
+                if current and current["role"] == ADMIN:
+                    role = ADMIN
+                elif role not in ROLES:
+                    raise ValueError("Choose Maintenance Operator or ML Engineer.")
                 db.execute(
                     "UPDATE users SET name=?, company=?, username=?, job_position=?, role=? "
                     "WHERE id=?",
@@ -281,3 +320,91 @@ class AuthStore:
                 )
         except (sqlite3.IntegrityError, psycopg.IntegrityError) as error:
             raise ValueError("This username is already taken.") from error
+
+    # Administration: the server calls these only for signed-in administrators.
+
+    def accounts(self) -> list[dict[str, Any]]:
+        with self.connect() as db:
+            rows = db.execute(
+                "SELECT id, email, name, company, username, job_position, role, disabled, "
+                "created, last_login, password <> '!' AS has_password, "
+                "EXISTS(SELECT 1 FROM external_identities WHERE provider='google' "
+                "AND user_id=users.id) AS google_connected, "
+                "(SELECT COUNT(*) FROM sessions WHERE user_id=users.id AND expires > ?) "
+                "AS sessions FROM users ORDER BY id",
+                (time.time(),),
+            ).fetchall()
+        return [
+            {
+                **dict(row),
+                "disabled": bool(row["disabled"]),
+                "has_password": bool(row["has_password"]),
+                "google_connected": bool(row["google_connected"]),
+            }
+            for row in rows
+        ]
+
+    def create_account(self, data: dict[str, Any]) -> int:
+        """Add an account with a password chosen by an administrator."""
+        email = clean_email(data.get("email"))
+        password = hash_password(data.get("password", ""))
+        role = data.get("role", OPERATOR)
+        if role not in ALL_ROLES:
+            raise ValueError("Choose Maintenance Operator, ML Engineer or Administrator.")
+        name = data.get("name", "")
+        if not isinstance(name, str) or len(name.strip()) > 100:
+            raise ValueError("Names can have at most 100 characters.")
+        try:
+            with self.connect() as db:
+                user_id: int = db.execute(
+                    "INSERT INTO users(email, password, name, role, created) "
+                    "VALUES (?, ?, ?, ?, ?) RETURNING id",
+                    (email, password, name.strip(), role, time.time()),
+                ).fetchone()["id"]
+        except (sqlite3.IntegrityError, psycopg.IntegrityError) as error:
+            raise ValueError("An account already uses this email.") from error
+        return user_id
+
+    def administer(self, actor: int, target: Any, action: Any, data: dict[str, Any]) -> None:
+        """Apply one administrator action; administrators cannot lock themselves out."""
+        if action not in ADMIN_ACTIONS:
+            raise ValueError("Unknown account action.")
+        if isinstance(target, bool) or not isinstance(target, int):
+            raise ValueError("Choose an account.")
+        if target == actor and action in {"role", "disable", "delete"}:
+            raise ValueError("You cannot change your own role, turn off or delete your account.")
+        role = data.get("role")
+        if action == "role" and role not in ALL_ROLES:
+            raise ValueError("Choose Maintenance Operator, ML Engineer or Administrator.")
+        password = hash_password(data.get("password")) if action == "password" else ""
+        with self.connect() as db:
+            user = db.execute("SELECT email FROM users WHERE id=?", (target,)).fetchone()
+            if user is None:
+                raise ValueError("This account no longer exists.")
+            if action == "role":
+                db.execute("UPDATE users SET role=? WHERE id=?", (role, target))
+            elif action in {"disable", "enable"}:
+                db.execute(
+                    "UPDATE users SET disabled=? WHERE id=?", (int(action == "disable"), target)
+                )
+            elif action == "password":
+                db.execute("UPDATE users SET password=? WHERE id=?", (password, target))
+                db.execute("DELETE FROM login_attempts WHERE email=?", (user["email"],))
+            # Resetting a password, signing out, turning off and deleting all end its sessions.
+            if action in {"password", "sign_out", "disable", "delete"}:
+                db.execute("DELETE FROM sessions WHERE user_id=?", (target,))
+            if action == "delete":
+                db.execute("DELETE FROM external_identities WHERE user_id=?", (target,))
+                db.execute("DELETE FROM oauth_states WHERE link_user=?", (target,))
+                db.execute("DELETE FROM login_attempts WHERE email=?", (user["email"],))
+                db.execute("DELETE FROM users WHERE id=?", (target,))
+
+    def make_admin(self, email: Any, password: Any = None, name: str = "") -> bool:
+        """Create an administrator, or promote an existing account; True when created."""
+        email = clean_email(email)
+        with self.connect() as db:
+            if db.execute("SELECT id FROM users WHERE email=?", (email,)).fetchone():
+                db.execute("UPDATE users SET role=?, disabled=0 WHERE email=?", (ADMIN, email))
+                return False
+        self.create_account({"email": email, "password": password, "name": name, "role": ADMIN})
+        return True
