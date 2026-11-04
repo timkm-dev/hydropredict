@@ -239,10 +239,10 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 self.respond(404, {"error": str(error)})
         elif path == "/api/care/reviews":
             user = self.auth.user(self.token()) if self.auth else None
-            if not user or self.assessments is None:
+            if not user or self.auth is None:
                 self.respond(401, {"error": "Sign in to see alert reviews."})
                 return
-            self.respond(200, {"reviews": self.assessments.care_reviews(str(user["id"]))})
+            self.respond(200, {"reviews": self.auth.decisions(user["id"])})
         elif path in {"/api/admin/accounts", "/api/admin/activity"}:
             user = self.auth.user(self.token()) if self.auth else None
             if not user or user["role"] != ADMIN or self.auth is None:
@@ -250,8 +250,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             elif path == "/api/admin/accounts":
                 self.respond(200, {"accounts": self.auth.accounts(), "me": user["id"]})
             else:
-                reviews = self.assessments.all_care_reviews() if self.assessments else []
-                self.respond(200, {"reviews": reviews})
+                self.respond(200, {"reviews": self.auth.recent_decisions()})
         elif self.path == "/api/model":
             self.respond(200, self.service.info())
         elif self.path.startswith("/api/"):
@@ -423,11 +422,11 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 self.handle_admin(user, payload)
                 return
             if self.path == "/api/care/review":
-                if user is None or self.assessments is None:
+                if user is None or self.auth is None:
                     self.respond(401, {"error": "Sign in to review alerts."})
                     return
-                self.assessments.care_review(str(user["id"]), payload, self.care_alerts())
-                self.respond(200, {"reviews": self.assessments.care_reviews(str(user["id"]))})
+                self.auth.decide(user["id"], payload, self.care_alerts())
+                self.respond(200, {"reviews": self.auth.decisions(user["id"])})
                 return
             if self.path == "/api/bearing/assess":
                 if not user:
@@ -541,12 +540,17 @@ def main() -> None:
         from hydropredict.bearing_workflow import BearingWorkflow
 
         bearing = BearingWorkflow(ROOT)
+    auth = AuthStore(args.auth_db if args.local_accounts else database_url or args.auth_db)
+    assessments = AssessmentStore(ROOT / "data/assessments.sqlite3")
+    # Alert decisions moved from the assessments file into the account database.
+    if copied := auth.import_decisions(assessments.legacy_care_reviews()):
+        print(f"Copied {copied} earlier alert decisions into the account database.", flush=True)
     handler = partial(
         DashboardHandler,
         service=service,
-        auth=AuthStore(args.auth_db if args.local_accounts else database_url or args.auth_db),
+        auth=auth,
         google=google,
-        assessments=AssessmentStore(ROOT / "data/assessments.sqlite3"),
+        assessments=assessments,
         bearing=bearing,
         public_origin=os.environ.get("PUBLIC_ORIGIN") or None,
     )

@@ -146,3 +146,70 @@ def test_created_accounts_and_promotion(tmp_path: Path) -> None:
     # Promoting an existing account keeps its password and turns it back on.
     assert not store.make_admin("new@example.com")
     assert store.user(token)["role"] == "admin"
+
+
+def test_alert_decisions_are_per_account_append_only_and_validated(tmp_path: Path) -> None:
+    store = AuthStore(tmp_path / "accounts.sqlite3")
+    alerts = {"C-47-1", "A-0-1"}
+    alice = store.user(store.register({"email": "a@example.com", "password": "alice passphrase"}))
+    bob = store.user(store.register({"email": "b@example.com", "password": "bob passphrase!"}))
+    store.decide(alice["id"], {"alert": "C-47-1", "action": "inspect", "comment": "Pump A"}, alerts)
+    store.decide(alice["id"], {"alert": "C-47-1", "action": "open"}, alerts)
+    reopened = AuthStore(store.path)
+    decisions = reopened.decisions(alice["id"])
+    assert [d["action"] for d in decisions] == ["inspect", "open"]
+    assert decisions[0]["comment"] == "Pump A" and decisions[0]["created"].endswith("+00:00")
+    assert reopened.decisions(bob["id"]) == []
+    for payload in [
+        {"alert": "unknown", "action": "inspect"},
+        {"alert": "A-0-1", "action": "healthy"},
+        {"alert": "A-0-1", "action": "dismissed", "comment": " "},
+        {"alert": "A-0-1", "action": "acknowledged", "comment": "x" * 2001},
+    ]:
+        with pytest.raises(ValueError):
+            reopened.decide(alice["id"], payload, alerts)
+    assert len(reopened.decisions(alice["id"])) == 2
+    store.decide(bob["id"], {"alert": "A-0-1", "action": "acknowledged"}, alerts)
+    assert [(d["owner"], d["action"]) for d in store.recent_decisions(limit=2)] == [
+        (str(bob["id"]), "acknowledged"),
+        (str(alice["id"]), "open"),
+    ]
+
+
+def test_earlier_decisions_are_copied_once(tmp_path: Path) -> None:
+    store = AuthStore(tmp_path / "accounts.sqlite3")
+    user = store.user(store.register({"email": "a@example.com", "password": "alice passphrase"}))
+    owner = str(user["id"])
+    legacy = [
+        {
+            "alert": "A-0-1",
+            "owner": owner,
+            "created": "2026-11-02T00:00",
+            "action": "open",
+            "comment": "",
+        },
+        {
+            "alert": "A-0-1",
+            "owner": owner,
+            "created": "2026-11-01T00:00",
+            "action": "inspect",
+            "comment": "x",
+        },
+        {
+            "alert": "A-0-1",
+            "owner": "999",
+            "created": "2026-11-01T00:00",
+            "action": "inspect",
+            "comment": "",
+        },
+        {
+            "alert": "A-0-1",
+            "owner": "alice",
+            "created": "2026-11-01T00:00",
+            "action": "inspect",
+            "comment": "",
+        },
+    ]
+    assert store.import_decisions(legacy) == 2
+    assert [d["action"] for d in store.decisions(user["id"])] == ["inspect", "open"]
+    assert store.import_decisions(legacy) == 0  # Already copied: nothing is duplicated.

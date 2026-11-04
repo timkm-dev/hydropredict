@@ -1,4 +1,4 @@
-"""Persistent local accounts and expiring, opaque sessions."""
+"""Persistent local accounts, expiring opaque sessions and each account's alert decisions."""
 
 from __future__ import annotations
 
@@ -9,6 +9,7 @@ import sqlite3
 import time
 from collections.abc import Iterator
 from contextlib import contextmanager
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -42,6 +43,8 @@ ALL_ROLES = {*ROLES, ADMIN}
 # Roles allowed on the models, research pages and scoring APIs: administrators see everything.
 ML_ROLES = {ML_ENGINEER, ADMIN}
 ADMIN_ACTIONS = {"role", "password", "sign_out", "disable", "enable", "delete"}
+# Decisions on a CARE alert: send a technician, seen it, not a problem, or reopen.
+DECISION_ACTIONS = {"inspect", "acknowledged", "dismissed", "open"}
 EMAIL = r"[^\s@]+@[^\s@]+\.[^\s@]+"
 
 
@@ -97,6 +100,12 @@ class AuthStore:
                     state TEXT PRIMARY KEY, nonce TEXT NOT NULL, verifier TEXT NOT NULL,
                     link_user BIGINT REFERENCES users(id), expires DOUBLE PRECISION NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS alert_decisions (
+                    id {identity}, user_id BIGINT NOT NULL REFERENCES users(id),
+                    alert TEXT NOT NULL, action TEXT NOT NULL,
+                    comment TEXT NOT NULL DEFAULT '', created TEXT NOT NULL
+                );
+                CREATE INDEX IF NOT EXISTS decisions_user ON alert_decisions(user_id, id);
             """)
             # Columns added after the first release (issue #14 roles, administration); older
             # tables gain them here. Accounts created before `created` existed show 0.
@@ -394,6 +403,7 @@ class AuthStore:
             if action in {"password", "sign_out", "disable", "delete"}:
                 db.execute("DELETE FROM sessions WHERE user_id=?", (target,))
             if action == "delete":
+                db.execute("DELETE FROM alert_decisions WHERE user_id=?", (target,))
                 db.execute("DELETE FROM external_identities WHERE user_id=?", (target,))
                 db.execute("DELETE FROM oauth_states WHERE link_user=?", (target,))
                 db.execute("DELETE FROM login_attempts WHERE email=?", (user["email"],))
@@ -408,3 +418,64 @@ class AuthStore:
                 return False
         self.create_account({"email": email, "password": password, "name": name, "role": ADMIN})
         return True
+
+    # Alert decisions (issue #13): append-only, so earlier decisions are never changed.
+
+    def decide(self, user_id: int, data: dict[str, Any], alerts: set[str]) -> None:
+        """Record a decision on a known CARE alert."""
+        alert = data.get("alert")
+        action = data.get("action")
+        comment = data.get("comment", "")
+        if not isinstance(alert, str) or alert not in alerts:
+            raise ValueError("Select an alert from the current replay data.")
+        if not isinstance(action, str) or action not in DECISION_ACTIONS:
+            raise ValueError("Invalid review action.")
+        if not isinstance(comment, str) or len(comment) > 2000:
+            raise ValueError("Notes must contain at most 2,000 characters.")
+        if action == "dismissed" and not comment.strip():
+            raise ValueError("Add a reason before dismissing an alert.")
+        with self.connect() as db:
+            db.execute(
+                "INSERT INTO alert_decisions(user_id, alert, action, comment, created) "
+                "VALUES (?, ?, ?, ?, ?)",
+                (user_id, alert, action, comment.strip(), datetime.now(UTC).isoformat()),
+            )
+
+    def decisions(self, user_id: int) -> list[dict[str, Any]]:
+        """All of one account's decisions, oldest first."""
+        with self.connect() as db:
+            rows = db.execute(
+                "SELECT alert, created, action, comment FROM alert_decisions "
+                "WHERE user_id=? ORDER BY id",
+                (user_id,),
+            ).fetchall()
+        return [dict(row) for row in rows]
+
+    def recent_decisions(self, limit: int = 100) -> list[dict[str, Any]]:
+        """Every account's latest decisions, newest first (administrators only)."""
+        with self.connect() as db:
+            rows = db.execute(
+                "SELECT alert, user_id, created, action, comment FROM alert_decisions "
+                "ORDER BY id DESC LIMIT ?",
+                (limit,),
+            ).fetchall()
+        return [{**dict(row), "owner": str(row["user_id"])} for row in rows]
+
+    def import_decisions(self, rows: list[dict[str, Any]]) -> int:
+        """Copy decisions from the earlier assessments file once, while this table is empty."""
+        with self.connect() as db:
+            if db.execute("SELECT COUNT(*) AS n FROM alert_decisions").fetchone()["n"]:
+                return 0
+            users = {row["id"] for row in db.execute("SELECT id FROM users").fetchall()}
+            copied = [
+                (int(row["owner"]), row["alert"], row["action"], row["comment"], row["created"])
+                for row in sorted(rows, key=lambda row: row["created"])
+                if row["owner"].isdigit() and int(row["owner"]) in users
+            ]
+            for values in copied:
+                db.execute(
+                    "INSERT INTO alert_decisions(user_id, alert, action, comment, created) "
+                    "VALUES (?, ?, ?, ?, ?)",
+                    values,
+                )
+        return len(copied)
