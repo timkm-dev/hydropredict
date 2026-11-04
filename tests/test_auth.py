@@ -73,4 +73,76 @@ def test_existing_accounts_gain_operator_role(tmp_path: Path) -> None:
     store = AuthStore(path)
     AuthStore(path)  # Reopening must not try to add the column twice.
     with store.connect() as db:
-        assert db.execute("SELECT role FROM users").fetchone()["role"] == "operator"
+        row = db.execute("SELECT role, disabled, created FROM users").fetchone()
+        assert (row["role"], row["disabled"], row["created"]) == ("operator", 0, 0)
+
+
+def test_administrator_account_actions(tmp_path: Path) -> None:
+    store = AuthStore(tmp_path / "accounts.sqlite3")
+    assert store.make_admin("Admin@Example.com", "admin passphrase 1", "Admin")
+    admin = store.user(
+        store.login({"email": "admin@example.com", "password": "admin passphrase 1"})
+    )
+    assert admin is not None and admin["role"] == "admin"
+    person = {"email": "p@example.com", "password": "first passphrase"}
+    token = store.register(person)
+    target = store.user(token)["id"]
+
+    listed = {a["email"]: a for a in store.accounts()}
+    assert listed["p@example.com"]["sessions"] == 1
+    assert listed["p@example.com"]["last_login"] > 0
+    assert "password" not in listed["p@example.com"]
+
+    store.administer(admin["id"], target, "role", {"role": "ml_engineer"})
+    assert store.user(token)["role"] == "ml_engineer"
+    with pytest.raises(ValueError):
+        store.administer(admin["id"], target, "role", {"role": "owner"})
+
+    # Turning an account off ends its sessions and refuses sign-in until it is turned on.
+    store.administer(admin["id"], target, "disable", {})
+    assert store.user(token) is None
+    with pytest.raises(ValueError, match="turned off"):
+        store.login(person)
+    store.administer(admin["id"], target, "enable", {})
+    token = store.login(person)
+
+    store.administer(admin["id"], target, "password", {"password": "second passphrase"})
+    assert store.user(token) is None
+    with pytest.raises(ValueError, match="Incorrect"):
+        store.login(person)
+    token = store.login({**person, "password": "second passphrase"})
+    store.administer(admin["id"], target, "sign_out", {})
+    assert store.user(token) is None
+
+    # An administrator cannot lock themselves out, and keeps the role when saving a profile.
+    for action in ("role", "disable", "delete"):
+        with pytest.raises(ValueError, match="your own"):
+            store.administer(admin["id"], admin["id"], action, {"role": "operator"})
+    store.profile(
+        admin["id"],
+        {"name": "A", "company": "C", "username": "admin", "job_position": "x", "role": "operator"},
+    )
+    assert store.accounts()[0]["role"] == "admin"
+    with pytest.raises(ValueError):
+        store.administer(admin["id"], True, "sign_out", {})
+
+    store.administer(admin["id"], target, "delete", {})
+    assert [a["email"] for a in store.accounts()] == ["admin@example.com"]
+    with pytest.raises(ValueError, match="no longer exists"):
+        store.administer(admin["id"], target, "sign_out", {})
+
+
+def test_created_accounts_and_promotion(tmp_path: Path) -> None:
+    store = AuthStore(tmp_path / "accounts.sqlite3")
+    created = {"email": "new@example.com", "password": "temporary passphrase", "role": "operator"}
+    store.create_account(created)
+    with pytest.raises(ValueError, match="already uses"):
+        store.create_account(created)
+    with pytest.raises(ValueError):
+        store.create_account({**created, "email": "x@example.com", "role": "owner"})
+    with pytest.raises(ValueError):
+        store.create_account({**created, "email": "y@example.com", "password": "short"})
+    token = store.login(created)
+    # Promoting an existing account keeps its password and turns it back on.
+    assert not store.make_admin("new@example.com")
+    assert store.user(token)["role"] == "admin"
