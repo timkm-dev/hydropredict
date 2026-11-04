@@ -73,3 +73,17 @@ def test_care_reviews_are_owner_scoped_append_only_and_validated(tmp_path):
         with pytest.raises(ValueError):
             restored.care_review("alice", payload, alerts)
     assert len(restored.care_reviews("alice")) == 2
+
+
+def test_all_reviews_and_deleting_an_owner(tmp_path):
+    store = AssessmentStore(tmp_path / "assessments.sqlite3")
+    alerts = {"A-0-1"}
+    store.care_review("1", {"alert": "A-0-1", "action": "inspect"}, alerts)
+    store.care_review("2", {"alert": "A-0-1", "action": "acknowledged"}, alerts)
+    run_id = store.save("1", "run", [], {"scores": []})
+    assert [r["owner"] for r in store.all_care_reviews()] == ["2", "1"]
+    assert len(store.all_care_reviews(limit=1)) == 1
+    store.delete_owner("1")
+    assert [r["owner"] for r in store.all_care_reviews()] == ["2"]
+    with pytest.raises(ValueError):
+        store.get("1", run_id)
