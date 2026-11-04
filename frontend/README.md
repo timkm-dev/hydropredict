@@ -18,8 +18,12 @@ Shared styles are in `theme.css`; the logo and welcome illustration are
   replay controls. For periods with a recorded fault, a demo-only box says what
   happened next and whether the first alarm came before or after it.
 - **Alerts**: **Send a technician**, **Seen it, keep watching** or **Not a problem**
-  (a reason is required), and **Reopen**. Decisions are append-only and stored per
-  account in `data/assessments.sqlite3`.
+  (a reason is required), and **Undo**/**Reopen**. The button shows *Saving…*, then
+  the card confirms the decision in place (the list does not jump; decided alerts
+  leave **To decide** the next time it is opened). Decisions are append-only, stored
+  per account in the `alert_decisions` table of the account database (PostgreSQL
+  when `DATABASE_URL` is set, otherwise `data/accounts.sqlite3`). Decisions saved
+  earlier in `data/assessments.sqlite3` are copied over once on startup.
 - **How well it works**: the benchmark results and every recorded fault with the
   timing of its first alarm.
 - **Models** (`models.html`, ML Engineers only): what each model does, its data,

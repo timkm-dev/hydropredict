@@ -161,6 +161,17 @@ details.card[open] > summary { margin-bottom: 12px; }
 .reason { background: var(--quiet); border-radius: 10px; padding: 14px 16px; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 14px; }
 .reason .field { flex: 1 1 280px; }
 .alert-card .history { font-size: 14px; color: var(--muted); display: flex; flex-direction: column; gap: 2px; }
+.alert-card.is-decided { background: var(--sky-wash); }
+.decision { display: flex; flex-direction: column; gap: 10px; }
+.decision[aria-busy="true"] { cursor: progress; }
+.btn:disabled { opacity: .6; cursor: not-allowed; }
+.decision[aria-busy="true"] .btn:disabled { cursor: progress; }
+.decided { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; background: var(--sky-soft); border-radius: 10px; padding: 12px 16px; animation: decided-in .25s ease-out; }
+.decided > div { flex: 1 1 220px; }
+.decided strong { color: var(--sky-dark); }
+.decided .tick { flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--sky); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; }
+@keyframes decided-in { from { opacity: 0; transform: translateY(4px); } }
+@media (prefers-reduced-motion: reduce) { .decided { animation: none; } }
 .error-text { color: #8A1C1C; font-size: 14px; }
 
 /* Stats and tables */
@@ -181,4 +192,7 @@ footer.site-footer .inner { max-width: 1180px; margin: 0 auto; padding: 24px; di
 @media (max-width: 640px) {
   .page, .site-header .inner { padding-left: 16px; padding-right: 16px; }
   .row strong { flex-basis: 100%; }
+  /* Decision buttons become full-width, easy-to-tap rows on phones. */
+  .decision .actions .btn { flex: 1 1 100%; }
+  .alert-card .head .caption { flex-basis: 100%; }
 }
