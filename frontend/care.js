@@ -3,6 +3,7 @@ import {
   describeLead, fleetCounts, formatDate, formatMoment, formatValue, indexAt, latestReview, linePath,
   statusOf, upperBound, warningLead,
 } from './care-model.js';
+import { ROLE_BADGE, showForRole } from './accounts.js';
 
 const $ = id => document.getElementById(id);
 const SVG = 'http://www.w3.org/2000/svg';
@@ -370,8 +371,8 @@ try {
   message('Loading replay data…');
   const [{ user }, data, saved] = await Promise.all([api('/api/auth/me'), api('care-data/fleet.json'), api('/api/care/reviews')]);
   fleet = data; reviews = saved.reviews;
-  $('role').textContent = user.role === 'ml_engineer' ? 'ML Engineer' : 'Operator';
-  for (const node of document.querySelectorAll('[data-role]')) node.hidden = node.dataset.role !== user.role;
+  $('role').textContent = ROLE_BADGE[user.role];
+  showForRole(document.querySelectorAll('[data-role]'), user.role);
   message('');
   updateCount();
   await route();

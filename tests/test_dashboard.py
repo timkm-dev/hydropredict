@@ -400,7 +400,7 @@ def test_administrator_permissions(service: InferenceService, tmp_path: Path) ->
             assert call("POST", "/api/admin/create", {"email": "x@example.com"})[0] == 401
             admin = sign_in("admin@example.com", "admin passphrase 1", "admin")
             # Administrators have full access, including ML Engineer pages and APIs.
-            for path in ["/models.html", "/api/model", "/care.html"]:
+            for path in ["/admin.html", "/models.html", "/api/model", "/care.html"]:
                 assert call("GET", path, cookie=admin)[0] == 200
             new = {"email": "op@example.com", "password": "temporary pass", "role": "operator"}
             status, _, body = call("POST", "/api/admin/create", new, admin)
