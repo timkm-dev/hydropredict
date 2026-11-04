@@ -31,6 +31,18 @@ def test_create_and_promote_administrators(
     assert "unchanged" in capsys.readouterr().out
     assert store.user(token)["role"] == "admin"
 
+    # Startup creation never promotes or resets an account someone else registered.
+    other = store.register({"email": "taken@example.com", "password": "someone elses pass"})
+    monkeypatch.setattr("sys.stdin", io.StringIO("bootstrap passphrase\n"))
+    assert main([*base, "--email", "taken@example.com", "--password-stdin", "--create-only"]) == 0
+    assert "nothing changed" in capsys.readouterr().out
+    assert store.user(other)["role"] == "operator"
+    with pytest.raises(ValueError, match="Incorrect"):
+        store.login({"email": "taken@example.com", "password": "bootstrap passphrase"})
+    monkeypatch.setattr("sys.stdin", io.StringIO("bootstrap passphrase\n"))
+    assert main([*base, "--email", "boot@example.com", "--password-stdin", "--create-only"]) == 0
+    assert store.login({"email": "boot@example.com", "password": "bootstrap passphrase"})
+
     monkeypatch.setattr("sys.stdin", io.StringIO("short\n"))
     with pytest.raises(SystemExit):
         main([*base, "--email", "x@example.com", "--password-stdin"])

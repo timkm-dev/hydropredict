@@ -33,6 +33,11 @@ def main(arguments: list[str] | None = None) -> int:
     source.add_argument(
         "--password-stdin", action="store_true", help="read the password from standard input"
     )
+    parser.add_argument(
+        "--create-only",
+        action="store_true",
+        help="leave an existing account unchanged instead of promoting it (startup use)",
+    )
     parser.add_argument("--auth-db", type=Path, default=ROOT / "data/accounts.sqlite3")
     parser.add_argument(
         "--local-accounts",
@@ -47,6 +52,10 @@ def main(arguments: list[str] | None = None) -> int:
         email = clean_email(args.email)
         with store.connect() as db:
             exists = db.execute("SELECT id FROM users WHERE email=?", (email,)).fetchone()
+        # Anyone can register an email, so startup must never promote an existing account.
+        if exists and args.create_only:
+            print(f"{email} already has an account; nothing changed.")
+            return 0
         if exists:
             store.make_admin(email)
             print(f"{email} is now an administrator. Its password is unchanged.")

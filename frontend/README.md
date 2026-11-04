@@ -68,9 +68,14 @@ for the password, or use `--generate-password` to print a random one once:
 ```
 
 If the email already has an account, it is promoted to administrator and keeps its
-password. On the hosted site, open an SSH session to the container (App Service
-**SSH**, or `az webapp ssh`) and run `python -m hydropredict.account_admin --email ...`
-from `/app`, after a deploy that includes this command.
+password.
+
+**On the hosted site** the container has no SSH server, so add two App Service
+settings instead: `ADMIN_EMAIL` and `ADMIN_PASSWORD` (12–128 characters). Saving them
+restarts the site, and on startup `docker/entrypoint.sh` creates that administrator
+once (`--create-only`). An email that already has an account is left unchanged, so
+someone who registered it first is never promoted. After signing in, change the
+password on the Admin page and delete both settings.
 
 The replay data is generated locally and ignored by Git (derived from CC BY-SA 4.0
 data). Build it once after the CARE models exist (about 15 minutes on a laptop); the dataset
