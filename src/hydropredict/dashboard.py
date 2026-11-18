@@ -133,7 +133,28 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         self.public_origin = public_origin
         self.secure = "; Secure" if public_origin and public_origin.startswith("https://") else ""
         self.session_cookie: str | None = None
+        self.static_cache: str | None = None
         super().__init__(*args, directory=str(ROOT / "frontend"), **kwargs)
+
+    def serve_static(self) -> None:
+        """Serve a frontend file without letting the browser reuse a stale page.
+
+        "/" shows the welcome page or the workspace depending on the session, so a
+        cached copy would send a user who just signed in back to the welcome page.
+        Pages are never stored; other assets are revalidated after each deploy.
+        """
+        if urlsplit(self.path).path.endswith(".html"):
+            self.static_cache = "no-store"
+            # A 304 would revive whatever page the browser cached for this URL before.
+            del self.headers["If-Modified-Since"]
+        else:
+            self.static_cache = "no-cache"
+        super().do_GET()
+
+    def end_headers(self) -> None:
+        if self.static_cache is not None:
+            self.send_header("Cache-Control", self.static_cache)
+        super().end_headers()
 
     def token(self, name: str = "hp_session") -> str:
         cookie = SimpleCookie()
@@ -185,7 +206,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             if path in {"/", "/index.html"} and user is None:
                 # Visitors who are not signed in see the public project introduction.
                 self.path = "/welcome.html"
-                super().do_GET()
+                self.serve_static()
                 return
             if (path in SIGNED_IN_PAGES or path in {"/", "/index.html"}) and (
                 not user or not user["username"]
@@ -258,7 +279,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         else:
             if path in {"/", "/index.html"}:
                 self.path = "/care.html"
-            super().do_GET()
+            self.serve_static()
 
     def forbidden_page(self, admin: bool = False) -> None:
         title, text, change = (

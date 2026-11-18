@@ -77,9 +77,12 @@ def test_saved_assessment_http_flow(service: InferenceService, tmp_path: Path) -
             response = connection.getresponse()
             assert response.status == 200
             assert json.loads(response.read())["records"] == records()
-            connection.request("GET", "/", headers=headers)
+            # A browser revalidating its cached welcome page must get the workspace.
+            stale = {**headers, "If-Modified-Since": "Fri, 01 Jan 2100 00:00:00 GMT"}
+            connection.request("GET", "/", headers=stale)
             response = connection.getresponse()
             assert response.status == 200
+            assert response.getheader("Cache-Control") == "no-store"
             assert b"care.js" in response.read()
             connection.request("GET", "/shp.html", headers=headers)
             response = connection.getresponse()
@@ -203,7 +206,14 @@ def test_authenticated_http_flow(service: InferenceService, tmp_path: Path) -> N
             connection.request("GET", "/")
             response = connection.getresponse()
             assert response.status == 200
+            # "/" depends on the session: a cached welcome page would undo a sign-in.
+            assert response.getheader("Cache-Control") == "no-store"
             assert b"welcome-illustration.svg" in response.read()
+            connection.request("GET", "/theme.css")
+            response = connection.getresponse()
+            assert response.status == 200
+            assert response.getheader("Cache-Control") == "no-cache"
+            response.read()
             connection.request("GET", "/care.html")
             response = connection.getresponse()
             assert response.status == 302
