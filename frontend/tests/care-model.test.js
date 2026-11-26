@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   awaitingReview, cleanUnit, describeDeviation, describeLead, fleetCounts, formatDate, formatHours,
-  formatValue, indexAt, latestReview, linePath, STATUS_LABEL, statusOf, upperBound, warningLead,
+  formatValue, indexAt, latestReview, likelySensorFault, linePath, STATUS_LABEL, statusOf, upperBound,
+  warningLead,
 } from '../care-model.js';
 
 test('status follows the warning counter', () => {
@@ -83,6 +84,19 @@ test('deviations are described against normal', () => {
   assert.equal(describeDeviation(12, 10, 'A'), 'About 20% higher than normal.');
   assert.equal(describeDeviation(10.1, 10, 'A'), 'Close to normal right now.');
   assert.equal(describeDeviation(null, 10, 'A'), 'Differs from its normal pattern.');
+});
+
+test('impossible temperatures are labelled as likely sensor faults', () => {
+  // Farm C turbine 52: both rotor bearing sensors stuck at the 850 °C full scale.
+  assert.equal(likelySensorFault(850, 'Celsius'), true);
+  assert.equal(likelySensorFault(-80, '°C'), true);
+  assert.equal(likelySensorFault(300, 'Celsius'), false);
+  assert.equal(likelySensorFault(-60, 'Celsius'), false);
+  assert.equal(likelySensorFault(58.5, 'Celsius'), false);
+  assert.equal(likelySensorFault(850, 'kW'), false);
+  assert.equal(likelySensorFault(null, 'Celsius'), false);
+  assert.equal(describeDeviation(850, 77, 'Celsius'),
+    'Out of range for this sensor, so not a real temperature.');
 });
 
 test('warning timing is honest about alarms after the fault started', () => {

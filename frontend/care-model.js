@@ -41,8 +41,18 @@ export function formatValue(value, unit) {
   return `${value.toFixed(digits)}${clean ? (clean === '°C' ? ' °C' : ` ${clean}`) : ''}`;
 }
 
+// No turbine part runs outside this range. A temperature beyond it is almost always a failed
+// or disconnected sensor (a Pt100 sensor reads its 850 °C full scale), not a real reading.
+export const TEMPERATURE_RANGE = [-60, 300];
+
+export function likelySensorFault(value, unit) {
+  if (!Number.isFinite(value) || cleanUnit(unit) !== '°C') return false;
+  return value < TEMPERATURE_RANGE[0] || value > TEMPERATURE_RANGE[1];
+}
+
 // Plain-language comparison of a reading with the model's expected value.
 export function describeDeviation(actual, expected, unit) {
+  if (likelySensorFault(actual, unit)) return 'Out of range for this sensor, so not a real temperature.';
   if (!Number.isFinite(actual) || !Number.isFinite(expected)) return 'Differs from its normal pattern.';
   const gap = actual - expected;
   const scale = Math.max(Math.abs(expected), 1);

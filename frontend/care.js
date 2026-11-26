@@ -1,7 +1,7 @@
 import {
   ACTION_LABEL, DISMISS_REASONS, STATUS_LABEL, WATCH, awaitingReview, cleanUnit, describeDeviation,
-  describeLead, fleetCounts, formatDate, formatMoment, formatValue, indexAt, latestReview, linePath,
-  statusOf, upperBound, warningLead,
+  describeLead, fleetCounts, formatDate, formatMoment, formatValue, indexAt, latestReview, likelySensorFault,
+  linePath, statusOf, upperBound, warningLead,
 } from './care-model.js';
 import { ROLE_BADGE, showForRole } from './accounts.js';
 
@@ -201,7 +201,10 @@ function setCursor(index) {
   $('crit-value').textContent = `${Math.min(crit, period.alarm_level)} / ${period.alarm_level}`;
   $('crit-bar').style.width = `${Math.min(100, crit / period.alarm_level * 100)}%`;
   $('period-status').replaceChildren(pill(status));
-  const top = (period.top[cursor] || []).map(([index]) => period.sensors[index]);
+  // Name the component from real readings; a likely sensor fault says nothing about the part.
+  const top = (period.top[cursor] || [])
+    .filter(([index]) => !likelySensorFault(period.series[index]?.actual[cursor], period.sensors[index].unit))
+    .map(([index]) => period.sensors[index]);
   const component = top.find(s => s.component !== 'Operating conditions')?.component;
   const raised = raisedAt(cursor);
   $('period-title').textContent = status === 'normal'
@@ -225,11 +228,13 @@ function renderFindings() {
     const series = period.series[index];
     const actual = series?.actual[cursor], expected = series?.expected[cursor];
     const context = info.component === 'Operating conditions';
+    const faulty = likelySensorFault(actual, info.unit);
     const selected = String(index) === sensor;
     return el('div', { class: `card${selected ? ' selected' : ''}`, style: 'padding: 16px 20px' },
       el('button', { type: 'button', class: 'finding-row', 'aria-pressed': String(selected),
         onclick: () => { if (series) { sensor = String(index); $('sensor').value = sensor; renderFindings(); renderSensorChart(); } } },
         el('span', { class: 'what' }, el('strong', {}, info.description),
+          faulty ? el('em', { class: 'fault-tag' }, 'Likely sensor fault') : null,
           el('span', {}, describeDeviation(actual, expected, info.unit)),
           el('small', {}, context ? 'Operating conditions: context, not equipment health' : info.component)),
         Number.isFinite(actual) && Number.isFinite(expected)
