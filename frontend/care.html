@@ -4,8 +4,8 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Early Warning · What needs attention</title>
   <link rel="icon" href="logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="theme.css?v=sensor-fault-1">
-  <script type="module" src="care.js?v=sensor-fault-1"></script>
+  <link rel="stylesheet" href="theme.css?v=team-routing-1">
+  <script type="module" src="care.js?v=team-routing-1"></script>
 </head>
 <body>
   <header class="site-header">
@@ -119,6 +119,10 @@
       <div class="chips" role="group" aria-label="Show">
         <button type="button" class="chip" id="show-awaiting" aria-pressed="true">To decide</button>
         <button type="button" class="chip" id="show-all" aria-pressed="false">All alerts</button>
+      </div>
+      <div class="filter-group">
+        <p class="caption" id="team-filter-label">Suggested team (from the sensors that changed most; you decide who to send)</p>
+        <div class="chips" id="team-filter" role="group" aria-labelledby="team-filter-label"></div>
       </div>
       <div id="alert-list" class="section" style="gap: 12px"></div>
       <p id="alerts-empty" class="caption" hidden>Nothing left to decide. Choose All alerts to see earlier decisions.</p>

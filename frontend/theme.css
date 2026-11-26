@@ -158,6 +158,9 @@ details.card[open] > summary { margin-bottom: 12px; }
 .alert-card .head .what { flex: 1 1 320px; display: flex; flex-direction: column; gap: 2px; }
 .alert-card .head .what a { font-size: 18px; font-weight: 700; color: var(--ink); }
 .alert-card .head .what span { color: var(--body); font-size: 15px; }
+.team-line strong { color: var(--ink); }
+.team-note { display: flex; flex-direction: column; gap: 4px; font-size: 15px; color: var(--body); margin: 4px 0 12px; }
+.filter-group { display: flex; flex-direction: column; gap: 8px; }
 .actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .reason { background: var(--quiet); border-radius: 10px; padding: 14px 16px; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 14px; }
 .reason .field { flex: 1 1 280px; }

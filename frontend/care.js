@@ -1,5 +1,6 @@
 import {
-  ACTION_LABEL, DISMISS_REASONS, STATUS_LABEL, WATCH, awaitingReview, cleanUnit, describeDeviation,
+  ACTION_LABEL, DISMISS_REASONS, STATUS_LABEL, TEAM_LABEL, WATCH, alertTeam, awaitingReview, cleanUnit,
+  describeDeviation, readingTeam,
   describeLead, fleetCounts, formatDate, formatMoment, formatValue, indexAt, latestReview, likelySensorFault,
   linePath, statusOf, upperBound, warningLead,
 } from './care-model.js';
@@ -10,6 +11,8 @@ const SVG = 'http://www.w3.org/2000/svg';
 const SHOWN = 6;
 let fleet = null, reviews = [], period = null, cursor = 0, timer = null, sensor = null;
 let showAllInspect = false, showAllWatch = false, showAllAlerts = false;
+// '' shows every team, as before; otherwise one key of TEAM_LABEL.
+let teamFilter = '';
 const cache = new Map();
 
 function el(tag, props = {}, ...children) {
@@ -229,6 +232,8 @@ function renderFindings() {
     const actual = series?.actual[cursor], expected = series?.expected[cursor];
     const context = info.component === 'Operating conditions';
     const faulty = likelySensorFault(actual, info.unit);
+    const team = readingTeam(info.description, actual, info.unit);
+    const where = team && team !== 'context' ? `${info.component} · ${TEAM_LABEL[team]} team` : info.component;
     const selected = String(index) === sensor;
     return el('div', { class: `card${selected ? ' selected' : ''}`, style: 'padding: 16px 20px' },
       el('button', { type: 'button', class: 'finding-row', 'aria-pressed': String(selected),
@@ -236,7 +241,7 @@ function renderFindings() {
         el('span', { class: 'what' }, el('strong', {}, info.description),
           faulty ? el('em', { class: 'fault-tag' }, 'Likely sensor fault') : null,
           el('span', {}, describeDeviation(actual, expected, info.unit)),
-          el('small', {}, context ? 'Operating conditions: context, not equipment health' : info.component)),
+          el('small', {}, context ? 'Operating conditions: context, not equipment health' : where)),
         Number.isFinite(actual) && Number.isFinite(expected)
           ? el('span', { class: 'nums' },
             el('div', {}, el('span', {}, 'Now'), el('strong', { class: 'now' }, formatValue(actual, info.unit))),
@@ -251,8 +256,13 @@ function renderDecision() {
     return;
   }
   const full = { ...period.summary.alerts.find(a => a.id === alert.id), period: period.summary };
+  // Readings are only available here, so a likely sensor fault adds Instrumentation.
+  const faultShown = (period.top[cursor] || []).slice(0, 3).some(([index]) =>
+    likelySensorFault(period.series[index]?.actual[cursor], period.sensors[index].unit));
   $('period-decision').replaceChildren(
     el('p', { class: 'caption' }, `Alert raised ${formatMoment(alert.start)}`),
+    el('div', { class: 'team-note' }, teamLine(alertTeam(full)),
+      faultShown ? el('p', { class: 'caption' }, `A reading shown looks like a sensor fault, so the ${TEAM_LABEL.instrumentation} team may also be needed.`) : null),
     decisionControls(full, () => { renderDecision(); focusDecision($('period-decision')); }));
 }
 // Keep keyboard and screen-reader users on the decision they just changed.
@@ -336,11 +346,34 @@ function togglePlay() {
 function renderAlerts(focus) {
   $('show-awaiting').setAttribute('aria-pressed', String(!showAllAlerts));
   $('show-all').setAttribute('aria-pressed', String(showAllAlerts));
-  const alerts = allAlerts().filter(a => showAllAlerts || awaitingReview(reviews, a.id) || a.id === focus)
+  const listed = allAlerts().filter(a => showAllAlerts || awaitingReview(reviews, a.id) || a.id === focus);
+  renderTeamFilter(listed);
+  const alerts = listed.filter(a => !teamFilter || alertTeam(a) === teamFilter || a.id === focus)
     .sort((a, b) => b.peak - a.peak);
   $('alerts-empty').hidden = alerts.length > 0;
+  $('alerts-empty').textContent = teamFilter
+    ? `No alerts here for the ${TEAM_LABEL[teamFilter]} team. Choose All teams to see every alert.`
+    : 'Nothing left to decide. Choose All alerts to see earlier decisions.';
   $('alert-list').replaceChildren(...alerts.map(alert => alertCard(alert)));
   if (focus) document.getElementById(`alert-${focus}`)?.scrollIntoView({ block: 'center' });
+}
+// One chip per team with alerts in the current list, after an All teams chip that shows everything.
+function renderTeamFilter(listed) {
+  const counts = new Map();
+  for (const alert of listed) {
+    const team = alertTeam(alert);
+    if (team) counts.set(team, (counts.get(team) ?? 0) + 1);
+  }
+  const chip = (team, label) => el('button', { type: 'button', class: 'chip', 'aria-pressed': String(teamFilter === team),
+    onclick: () => { teamFilter = team; renderAlerts(); } }, label);
+  $('team-filter').replaceChildren(
+    chip('', `All teams (${listed.length})`),
+    ...Object.keys(TEAM_LABEL).filter(team => counts.has(team) || team === teamFilter)
+      .map(team => chip(team, `${TEAM_LABEL[team]} (${counts.get(team) ?? 0})`)));
+}
+function teamLine(team) {
+  return el('span', { class: 'team-line' }, 'Suggested team: ',
+    el('strong', {}, team ? TEAM_LABEL[team] : 'not clear, see the details'));
 }
 // A decision redraws only its own card, so the list never jumps; decided cards leave
 // the To decide list the next time it is drawn.
@@ -353,7 +386,8 @@ function alertCard(alert) {
       decided ? pill('done', 'Decided') : pill('alarm'),
       el('div', { class: 'what' },
         el('a', { href: `#/period/${alert.period.key}` }, turbineName(alert.period)),
-        el('span', {}, `Check first: ${alert.component}. ${alert.top?.length ? `Biggest changes: ${listText(alert.top)}.` : ''}`)),
+        el('span', {}, `Check first: ${alert.component}. ${alert.top?.length ? `Biggest changes: ${listText(alert.top)}.` : ''}`),
+        teamLine(alertTeam(alert))),
       el('span', { class: 'caption' }, `Since ${formatMoment(alert.start)}`)),
     decisionControls(alert, () => {
       const fresh = alertCard(alert);
