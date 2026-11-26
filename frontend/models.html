@@ -8,9 +8,8 @@
   <script type="module" src="site.js"></script>
   <style>
     .flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 10px; }
-    .flow .card { flex: 1 1 200px; display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; }
+    .flow .card { flex: 1 1 180px; display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; }
     .flow .card.detect { background: var(--sky); border-color: var(--sky); color: #FFFFFF; }
-    .flow .card.diagnose { border-style: dashed; border-color: var(--sky); }
     .flow .arrow { display: flex; align-items: center; color: var(--sky); font-size: 22px; }
     .flow small { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
     .model dl { margin: 0; display: grid; grid-template-columns: 96px 1fr; gap: 6px 12px; font-size: 14px; }
@@ -19,11 +18,13 @@
     .bars { display: flex; flex-direction: column; gap: 12px; }
     .bars div { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; font-size: 14px; }
     .bars .name { flex: 0 0 240px; }
-    .bars .track { flex: 1 1 300px; height: 22px; background: var(--line-soft); border-radius: 4px; }
+    .bars .track { flex: 1 1 300px; height: 22px; background: var(--line-soft); border-radius: 4px; position: relative; }
     .bars .track i { display: block; height: 100%; border-radius: 4px; background: #94A3B8; }
+    .bars .track .chance { position: absolute; top: -4px; bottom: -4px; left: 50%; border-left: 2px dashed var(--ink); }
     .bars .ours .track i { background: var(--sky); }
     .bars .ours { font-weight: 700; }
     .bars .value { flex: 0 0 52px; text-align: right; font-family: 'IBM Plex Mono', monospace; }
+    .lead { font-size: 17px; color: var(--ink); max-width: 860px; }
   </style>
 </head>
 <body>
@@ -35,9 +36,6 @@
         <a href="care.html#/alerts">Alerts</a>
         <a href="care.html#/results">How well it works</a>
         <a href="models.html" aria-current="page">Models</a>
-        <details class="menu"><summary>Research</summary><div>
-          <a href="shp.html">Hydro plant monitoring</a><a href="bearing.html">Bearing diagnosis</a><a href="evidence.html">Hydro evaluation evidence</a>
-        </div></details>
         <a href="admin.html" data-role="admin" hidden>Admin</a>
       </nav>
       <div class="account"><span class="role" id="role"></span><a href="auth.html?profile">Account</a><button type="button" id="logout">Sign out</button></div>
@@ -48,48 +46,77 @@
     <div class="intro">
       <p class="eyebrow">ML Engineer view</p>
       <h1>Models</h1>
-      <p>What each model does, which data it was tested on, and how well it performed. All numbers come from frozen evaluation runs documented in the repository.</p>
+      <p>How the wind turbine warning model was chosen and how well it performs. Models were compared on Farms A and B; Farm C was kept back for one final test. Every number comes from a frozen evaluation run in the repository.</p>
     </div>
 
     <section class="section" aria-labelledby="flow-title">
-      <h2 id="flow-title">How the models fit together</h2>
+      <h2 id="flow-title">How a warning is produced</h2>
       <div class="flow">
-        <div class="card"><small style="color: var(--muted)">Input</small><strong>Turbine data</strong><span class="caption">10-minute averages, 42 to about 220 sensors</span></div>
+        <div class="card"><small style="color: var(--muted)">Input</small><strong>Turbine SCADA data</strong><span class="caption">10-minute averages, 42 to about 220 sensors per turbine</span></div>
         <div class="arrow" aria-hidden="true">→</div>
-        <div class="card detect"><small>Step 1 · Detect</small><strong>CARE autoencoder</strong><span>Is this turbine behaving unusually, and which sensors are furthest from normal?</span></div>
+        <div class="card detect"><small>1 · Detect</small><strong>Autoencoder</strong><span>Rebuilds the readings it expects from a healthy turbine. The gap from reality is how unusual the turbine is.</span></div>
         <div class="arrow" aria-hidden="true">→</div>
-        <div class="card diagnose"><small style="color: var(--sky)">Step 2 · Diagnose (optional)</small><strong>CWRU bearing classifier</strong><span class="caption">Only if a vibration recording is taken at the flagged bearing. Names the fault type.</span></div>
+        <div class="card"><small style="color: var(--sky)">2 · Alarm</small><strong>Sustained deviation</strong><span class="caption">6-hour average above the healthy-data threshold; alarm after about 12 hours.</span></div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="card"><small style="color: var(--sky)">3 · Explain</small><strong>Where to look</strong><span class="caption">Sensors furthest from normal, grouped by component, with a suggested team.</span></div>
       </div>
-      <p class="caption">The autoencoder does not classify faults. Its "check first" hint ranks sensors by deviation and maps them to display-only component groups. The classifier needs 48 kHz vibration recordings, which the turbine data does not contain, so the two are not connected automatically.</p>
     </section>
 
-    <section class="grid" style="--min: 300px" aria-label="Model registry">
+    <section class="grid" style="--min: 300px" aria-label="Models tried">
       <article class="card model section" style="gap: 12px">
         <div class="section-head"><span class="pill alarm">In use</span><code>care-autoencoder-v1</code></div>
-        <div><strong style="font-size: 19px">CARE autoencoder</strong><p class="caption">Detects unusual turbine behaviour and ranks the sensors behind it.</p></div>
-        <dl><dt>Data</dt><dd>CARE wind benchmark, 3 farms, 95 datasets</dd><dt>Method</dt><dd>One autoencoder per turbine, trained on its own normal data</dd><dt>Result</dt><dd><strong>CARE 0.583 (0.578 held out)</strong></dd></dl>
+        <div><strong style="font-size: 19px">Autoencoder</strong><p class="caption">Learns how a healthy turbine's sensors move together and flags readings it cannot rebuild.</p></div>
+        <dl><dt>Data</dt><dd>CARE to Compare: 3 wind farms, 95 datasets</dd><dt>Method</dt><dd>One small autoencoder per turbine period, trained on its own healthy data</dd><dt>Result</dt><dd><strong>CARE 0.606 on Farms A+B · 0.578 on held-out Farm C</strong></dd></dl>
       </article>
       <article class="card model section" style="gap: 12px">
-        <div class="section-head"><span class="pill watch">Second step</span><code>cwru-v1</code></div>
-        <div><strong style="font-size: 19px">CWRU bearing classifier</strong><p class="caption">Names the bearing fault type from a vibration recording.</p></div>
-        <dl><dt>Data</dt><dd>40 lab recordings, 48 kHz drive-end vibration</dd><dt>Method</dt><dd>XGBoost on time and frequency features</dd><dt>Result</dt><dd><strong>8/10 held out, 5/13 unseen sizes</strong></dd></dl>
+        <div class="section-head"><span class="pill normal">Replaced</span><code>residuals-v2</code></div>
+        <div><strong style="font-size: 19px">Extra Trees residual model</strong><p class="caption">Predicts component temperatures from wind, power, rotor speed and ambient temperature.</p></div>
+        <dl><dt>Data</dt><dd>Farms A and B, 37 datasets</dd><dt>Method</dt><dd>Alerts on persistent gaps between predicted and actual temperatures</dd><dt>Result</dt><dd><strong>CARE 0.484 · 2 of 18 faults alarmed</strong></dd></dl>
       </article>
       <article class="card model section" style="gap: 12px">
-        <div class="section-head"><span class="pill normal">Research only</span><code>lstm-diagnostics-2026-10-15-v1</code></div>
-        <div><strong style="font-size: 19px">Hydro plant LSTM</strong><p class="caption">Anomaly detection on six-channel hydro plant data.</p></div>
-        <dl><dt>Data</dt><dd>Small hydro plant, 5-minute readings</dd><dt>Method</dt><dd>LSTM autoencoder, normal-only training</dd><dt>Result</dt><dd><strong>1 of 3 covered faults detected</strong></dd></dl>
+        <div class="section-head"><span class="pill normal">Baseline, replaced</span><code>isolation-forest-v1</code></div>
+        <div><strong style="font-size: 19px">Isolation Forest</strong><p class="caption">Flags readings that are rare compared with the turbine's healthy history.</p></div>
+        <dl><dt>Data</dt><dd>Farms A and B, 37 datasets</dd><dt>Method</dt><dd>One forest of 100 trees per turbine period, threshold at the 99th percentile</dd><dt>Result</dt><dd><strong>CARE 0.462 · 1 of 18 faults alarmed</strong></dd></dl>
       </article>
+    </section>
+
+    <section class="section" aria-labelledby="compare-title">
+      <h2 id="compare-title">Why the autoencoder replaced the Isolation Forest</h2>
+      <p class="lead">On the same 37 Farm A and B datasets, the autoencoder raised alarms on 8 of 18 faults, against 1 for the Isolation Forest, and still raised none on the 19 normal periods.</p>
+      <div class="card section">
+        <div class="bars" role="img" aria-label="CARE score on Farms A and B: Isolation Forest 0.462, Extra Trees residual model 0.484, random detector 0.50, autoencoder 0.606">
+          <div><span class="name">Isolation Forest</span><span class="track"><i style="width: 46.2%"></i><span class="chance"></span></span><span class="value">0.462</span></div>
+          <div><span class="name">Extra Trees residual model</span><span class="track"><i style="width: 48.4%"></i><span class="chance"></span></span><span class="value">0.484</span></div>
+          <div class="ours"><span class="name">Autoencoder</span><span class="track"><i style="width: 60.6%"></i><span class="chance"></span></span><span class="value">0.606</span></div>
+        </div>
+        <p class="caption">CARE score on Farms A and B, 0 to 1. The dashed line is 0.5, what a random detector scores: both earlier models fall below it.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th class="text">Model (Farms A+B, 37 datasets)</th><th>CARE</th><th>Faults alarmed</th><th>Normal alarmed</th><th>Coverage</th><th>Earliness</th><th>Reliability</th><th>Accuracy</th></tr></thead>
+          <tbody>
+            <tr><td class="text">Isolation Forest</td><td>0.462</td><td>1/18</td><td>0/19</td><td>0.075</td><td>0.030</td><td>0.227</td><td>0.989</td></tr>
+            <tr><td class="text">Extra Trees residual model</td><td>0.484</td><td>2/18</td><td>1/19</td><td>0.110</td><td>0.024</td><td>0.333</td><td>0.977</td></tr>
+            <tr class="highlight"><td class="text"><strong>Autoencoder</strong></td><td><strong>0.606</strong></td><td><strong>8/18</strong></td><td>0/19</td><td>0.195</td><td>0.078</td><td>0.800</td><td>0.980</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid" style="--min: 260px">
+        <div class="card section" style="gap: 6px"><strong>Learns how sensors relate</strong><span class="caption">The autoencoder rebuilds all sensors together, so a bearing temperature that is wrong for the current power and wind stands out. The Isolation Forest flags rare readings, and a healthy turbine in a storm is rare too.</span></div>
+        <div class="card section" style="gap: 6px"><strong>Builds sustained evidence</strong><span class="caption">The earlier models flagged only about 3% of readings inside fault periods, so the alarm counter seldom reached 72. Smoothing the autoencoder's error over 6 hours gives steadier evidence.</span></div>
+        <div class="card section" style="gap: 6px"><strong>Explains each alert</strong><span class="caption">Each sensor's share of the error shows where to look: the top 3 included the failed component in 7 of 18 faults, against 3.3 by chance. The Isolation Forest gives one score per reading.</span></div>
+      </div>
+      <p class="caption">Same farms and the same scoring code for all three. The autoencoder's two alarm settings were chosen on these farms, so its A+B score is slightly optimistic; on untouched Farm C it scored 0.578, still above both earlier models.</p>
     </section>
 
     <section class="section" aria-labelledby="care-title">
-      <h2 id="care-title">CARE autoencoder: benchmark score</h2>
+      <h2 id="care-title">Autoencoder: benchmark score</h2>
       <div class="card section">
         <div class="bars">
           <div><span class="name">Published autoencoder</span><span class="track"><i style="width: 66%"></i></span><span class="value">0.66</span></div>
           <div class="ours"><span class="name">Ours, all 95 datasets</span><span class="track"><i style="width: 58.3%"></i></span><span class="value">0.583</span></div>
           <div class="ours"><span class="name">Ours, held-out Farm C</span><span class="track"><i style="width: 57.8%; background: #5B9BD5"></i></span><span class="value">0.578</span></div>
           <div><span class="name">Random detector</span><span class="track"><i style="width: 50%"></i></span><span class="value">0.50</span></div>
-          <div><span class="name">Our earlier models (A+B)</span><span class="track"><i style="width: 48%; background: #CBD5E1"></i></span><span class="value">≈0.48</span></div>
         </div>
         <p class="caption">CARE score, 0 to 1. 0.5 equals a random detector. Published values from the benchmark paper, Section 4.2.3.</p>
       </div>
@@ -109,34 +136,6 @@
         <div class="card section" style="gap: 6px"><strong>Frozen settings</strong><span class="caption">6-hour smoothing · threshold at the 97.5th percentile of held-back normal error · alarm when the counter reaches 72 (about 12 h), watch from 24. Chosen from 24 settings on Farms A and B only.</span></div>
         <div class="card section" style="gap: 6px"><strong>Where-to-look hint</strong><span class="caption">The top 3 sensors included the failed component in 7 of 18 faults, against 3.3 expected by chance.</span></div>
         <div class="quiet-box"><strong>Known issue: Farm C false alarms</strong><span>All 10 alarmed normal datasets are in Farm C; 3 were flagged almost throughout, suggesting behaviour shifted after the training year.</span></div>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="cwru-title">
-      <h2 id="cwru-title">CWRU bearing classifier: held-out recordings</h2>
-      <div class="split">
-        <div class="main table-wrap" style="gap: 0">
-          <table>
-            <thead><tr><th>Recording</th><th class="text">Reference</th><th class="text">Prediction</th></tr></thead>
-            <tbody>
-              <tr><td><code>100.mat</code></td><td class="text">Healthy</td><td class="text">Healthy</td></tr>
-              <tr><td><code>112.mat</code></td><td class="text">Inner race fault</td><td class="text">Inner race fault</td></tr>
-              <tr><td><code>125.mat</code></td><td class="text">Rolling element fault</td><td class="text">Rolling element fault</td></tr>
-              <tr><td><code>138.mat</code></td><td class="text">Outer race fault</td><td class="text">Outer race fault</td></tr>
-              <tr><td><code>177.mat</code></td><td class="text">Inner race fault</td><td class="text">Inner race fault</td></tr>
-              <tr><td><code>192.mat</code></td><td class="text">Rolling element fault</td><td class="text">Rolling element fault</td></tr>
-              <tr class="highlight"><td><code>204.mat</code></td><td class="text">Outer race fault</td><td class="text"><strong>Rolling element fault (wrong)</strong></td></tr>
-              <tr class="highlight"><td><code>217.mat</code></td><td class="text">Inner race fault</td><td class="text"><strong>Rolling element fault (wrong)</strong></td></tr>
-              <tr><td><code>229.mat</code></td><td class="text">Rolling element fault</td><td class="text">Rolling element fault</td></tr>
-              <tr><td><code>241.mat</code></td><td class="text">Outer race fault</td><td class="text">Outer race fault</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="side">
-          <div class="card stat"><strong>8 of 10</strong><span>held-out load recordings correct · macro-F1 0.84</span></div>
-          <div class="quiet-box"><strong style="font-size: 28px">5 of 13</strong><span>on unseen fault sizes · macro-F1 0.375. All twelve 14-mil faults were called rolling element.</span></div>
-          <p class="caption">Laboratory benchmark. Not validated on turbine or hydro plant bearings.</p>
-        </div>
       </div>
     </section>
 

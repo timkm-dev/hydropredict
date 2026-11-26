@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  awaitingReview, cleanUnit, describeDeviation, describeLead, fleetCounts, formatDate, formatHours,
+  alertTeam, awaitingReview, cleanUnit, readingTeam, sensorTeam, suggestTeam, describeDeviation, describeLead, fleetCounts, formatDate, formatHours,
   formatValue, indexAt, latestReview, likelySensorFault, linePath, STATUS_LABEL, statusOf, upperBound,
   warningLead,
 } from '../care-model.js';
@@ -97,6 +97,42 @@ test('impossible temperatures are labelled as likely sensor faults', () => {
   assert.equal(likelySensorFault(null, 'Celsius'), false);
   assert.equal(describeDeviation(850, 77, 'Celsius'),
     'Out of range for this sensor, so not a real temperature.');
+});
+
+test('sensors map to technician teams by description', () => {
+  assert.equal(sensorTeam('Temperature in generator bearing 1 (Non-Drive End)'), 'mechanical');
+  assert.equal(sensorTeam('Axis 1 Rotor bearing inner ring temperature'), 'mechanical');
+  assert.equal(sensorTeam('Gearbox oil temperature 1'), 'mechanical');
+  assert.equal(sensorTeam('Temperature inside generator in stator winding phase 1'), 'electrical');
+  assert.equal(sensorTeam('Temperature in HV transformer phase L1'), 'electrical');
+  assert.equal(sensorTeam('Temperature measured by the IGBT-driver on the grid side'), 'electrical');
+  assert.equal(sensorTeam('Battery discharge current axis 2'), 'pitch');
+  assert.equal(sensorTeam('Temperature in the hub controller'), 'pitch');
+  assert.equal(sensorTeam('Temperature oil in hydraulic group'), 'hydraulics');
+  assert.equal(sensorTeam('Motor current water cooler fan 4'), 'hydraulics');
+  assert.equal(sensorTeam('Nacelle vibration transverse 1'), 'mechanical');
+  assert.equal(sensorTeam('Tower vibration axis Y'), 'mechanical');
+  assert.equal(sensorTeam('Rotational speed aerator A'), 'hydraulics');
+  assert.equal(sensorTeam('Averaged current in phase 3'), 'electrical');
+  assert.equal(sensorTeam('Estimated windspeed'), 'context');
+  assert.equal(sensorTeam('Ambient temperature'), 'context');
+  assert.equal(sensorTeam('Board temperature'), null);
+});
+
+test('impossible readings go to instrumentation', () => {
+  assert.equal(readingTeam('Gearbox oil temperature 1', 850, 'Celsius'), 'instrumentation');
+  assert.equal(readingTeam('Gearbox oil temperature 1', 61, 'Celsius'), 'mechanical');
+});
+
+test('the suggested team is the most common, ties go to the top sensor', () => {
+  assert.equal(suggestTeam(['pitch', 'mechanical', 'mechanical']), 'mechanical');
+  assert.equal(suggestTeam(['pitch', 'mechanical']), 'pitch');
+  assert.equal(suggestTeam(['context', null, 'hydraulics']), 'hydraulics');
+  assert.equal(suggestTeam(['context', null]), null);
+  assert.equal(suggestTeam([]), null);
+  assert.equal(alertTeam({ top: ['Temperature oil in hydraulic group', 'Ambient temperature',
+    'Temperature in the nose cone'] }), 'hydraulics');
+  assert.equal(alertTeam({}), null);
 });
 
 test('warning timing is honest about alarms after the fault started', () => {

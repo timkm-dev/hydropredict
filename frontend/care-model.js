@@ -50,6 +50,59 @@ export function likelySensorFault(value, unit) {
   return value < TEMPERATURE_RANGE[0] || value > TEMPERATURE_RANGE[1];
 }
 
+// ---------- Technician teams ----------
+// A suggestion for who to send, from the sensors that moved most; the engineer decides.
+export const TEAM_LABEL = {
+  mechanical: 'Mechanical',
+  electrical: 'Electrical',
+  hydraulics: 'Hydraulics and cooling',
+  pitch: 'Pitch and hub',
+  instrumentation: 'Instrumentation',
+};
+
+// First match wins, so specific parts come before broad words such as "current".
+// 'context' marks operating conditions (weather, wind), which need no technician.
+const TEAM_RULES = [
+  ['electrical', /transformer|transformator/],
+  ['hydraulics', /hydraulic/],
+  ['mechanical', /gearbox|gear oil|rotor bearing|main bearing/],
+  ['context', /\bwind\b|wind ?speed|ambient|outside temperature|anemometer/],
+  ['electrical', /\bpower\b|reactive/],
+  ['mechanical', /generator.*bearing|bearing.*generator/],
+  ['electrical', /generator|slip ring|stator/],
+  ['mechanical', /tower|vibration/],
+  ['pitch', /pitch|blade|\baxis\b|batter|\bhub\b|spinner/],
+  ['electrical', /converter|inverter|igbt|\bvcs\b|\bvcp\b|choke/],
+  ['hydraulics', /cooling|cooler|water|aerat/],
+  ['electrical', /voltage|current|grid|frequency|consumption|busbar|\bphase\b/],
+];
+
+// Team for a sensor by its description; null when no rule fits.
+export function sensorTeam(description = '') {
+  const text = String(description).toLowerCase();
+  return TEAM_RULES.find(([, pattern]) => pattern.test(text))?.[0] ?? null;
+}
+
+// Team for one reading: an impossible value goes to instrumentation, not the part.
+export function readingTeam(description, value, unit) {
+  return likelySensorFault(value, unit) ? 'instrumentation' : sensorTeam(description);
+}
+
+// Most common team among ranked findings; ties go to the higher-ranked sensor.
+export function suggestTeam(teams) {
+  const counted = new Map();
+  for (const team of teams) {
+    if (team && team !== 'context') counted.set(team, (counted.get(team) ?? 0) + 1);
+  }
+  let best = null;
+  for (const [team, count] of counted) if (!best || count > counted.get(best)) best = team;
+  return best;
+}
+
+export function alertTeam(alert) {
+  return suggestTeam((alert.top ?? []).map(sensorTeam));
+}
+
 // Plain-language comparison of a reading with the model's expected value.
 export function describeDeviation(actual, expected, unit) {
   if (likelySensorFault(actual, unit)) return 'Out of range for this sensor, so not a real temperature.';
